@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Channel {
+  id                      String            @id
+  channelTitle            String            @map("channel_title")
+  description             String?
+  primaryNiche            String?           @map("primary_niche")
+  uploadFrequencyPerWeek  Float?            @map("upload_frequency_per_week")
+  thumbnailUrl            String?           @map("thumbnail_url")
+  createdAt               DateTime          @default(now()) @map("created_at")
+  lastSnapshotAt          DateTime?         @map("last_snapshot_at")
+  
+  snapshots               ChannelSnapshot[]
+  
+  @@map("channels")
+}
+
+model ChannelSnapshot {
+  id                    Int       @id @default(autoincrement())
+  channelId             String    @map("channel_id")
+  timestamp             DateTime  @default(now())
+  subscriberCount       Int       @map("subscriber_count")
+  monthlyViewsLong      BigInt    @map("monthly_views_long")
+  monthlyViewsShorts    BigInt    @map("monthly_views_shorts")
+  estRevenueLongUsd     Float     @map("est_revenue_long_usd")
+  estRevenueShortsUsd   Float     @map("est_revenue_shorts_usd")
+  
+  channel               Channel   @relation(fields: [channelId], references: [id])
+  
+  @@map("channel_snapshots")
+}
+
+model NicheRpmRate {
+  id                    Int       @id @default(autoincrement())
+  niche                 String    @unique
+  displayName           String    @map("display_name")
+  minRpmUsd             Float     @map("min_rpm_usd")
+  maxRpmUsd             Float     @map("max_rpm_usd")
+  averageRpmUsd         Float     @map("average_rpm_usd")
+  shortsRpmUsd          Float     @map("shorts_rpm_usd") @default(0.15)
+  confidence            String    // "high", "medium", "low"
+  dataSource            String    @map("data_source")
+  lastUpdated           DateTime  @default(now()) @map("last_updated")
+  sampleSize            String?   @map("sample_size")
+  notes                 String?
+  
+  @@map("niche_rpm_rates")
+}

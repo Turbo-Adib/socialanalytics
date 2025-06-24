@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {
+        "UPSTASH_VECTOR_REST_URL": "your-upstash-vector-url-here",
+        "UPSTASH_VECTOR_REST_TOKEN": "your-upstash-vector-token-here"
+      }
+    }
+  }
+}
