@@ -15,6 +15,7 @@ interface HistoricalChartProps {
   dataKeys: string[];
   colors: string[];
   formatValue?: (value: any) => string;
+  timeframe?: 'daily' | 'monthly';
 }
 
 const HistoricalChart: React.FC<HistoricalChartProps> = ({
@@ -22,10 +23,16 @@ const HistoricalChart: React.FC<HistoricalChartProps> = ({
   dataKeys,
   colors,
   formatValue = (value) => value.toLocaleString(),
+  timeframe = 'monthly',
 }) => {
   const formatXAxis = (tickItem: string) => {
-    const date = new Date(tickItem + '-01');
-    return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+    if (timeframe === 'daily') {
+      const date = new Date(tickItem);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    } else {
+      const date = new Date(tickItem + '-01');
+      return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+    }
   };
 
   const formatTooltipValue = (value: any, name: string) => {
@@ -55,10 +62,11 @@ const HistoricalChart: React.FC<HistoricalChartProps> = ({
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
           <XAxis 
-            dataKey="month" 
+            dataKey={timeframe === 'daily' ? 'date' : 'month'} 
             tick={{ fontSize: 12 }}
             tickFormatter={formatXAxis}
             stroke="#666"
+            interval={timeframe === 'daily' ? 2 : 0}
           />
           <YAxis 
             tick={{ fontSize: 12 }}

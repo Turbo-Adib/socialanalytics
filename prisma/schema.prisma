@@ -21,6 +21,8 @@ model Channel {
   lastSnapshotAt          DateTime?         @map("last_snapshot_at")
   
   snapshots               ChannelSnapshot[]
+  videoAnalysis           VideoAnalysis[]
+  analysisCache           AnalysisCache?
   
   @@map("channels")
 }
@@ -55,4 +57,47 @@ model NicheRpmRate {
   notes                 String?
   
   @@map("niche_rpm_rates")
+}
+
+model VideoAnalysis {
+  id                    Int       @id @default(autoincrement())
+  channelId             String    @map("channel_id")
+  videoId               String    @map("video_id")
+  title                 String
+  viewCount             BigInt    @map("view_count")
+  duration              String    // ISO 8601 format (PT4M13S)
+  isShort               Boolean   @map("is_short") // true if duration <= 60 seconds
+  publishedAt           DateTime  @map("published_at")
+  videoUrl              String    @map("video_url") // https://youtube.com/watch?v={video_id}
+  thumbnailUrl          String?   @map("thumbnail_url")
+  isOutlierLongform     Boolean   @map("is_outlier_longform") @default(false)
+  isOutlierShorts       Boolean   @map("is_outlier_shorts") @default(false)
+  longformMultiplier    Float?    @map("longform_multiplier") // vs longform average
+  shortsMultiplier      Float?    @map("shorts_multiplier") // vs shorts average
+  extractedPatterns     String?   @map("extracted_patterns") // JSON string
+  createdAt             DateTime  @default(now()) @map("created_at")
+  
+  channel               Channel   @relation(fields: [channelId], references: [id])
+  
+  @@unique([channelId, videoId])
+  @@map("video_analysis")
+}
+
+model AnalysisCache {
+  id                    Int       @id @default(autoincrement())
+  channelId             String    @unique @map("channel_id")
+  tier                  String    @default("free") // free, standard, premium
+  videosAnalyzed        Int       @map("videos_analyzed")
+  totalVideoCount       Int       @map("total_video_count")
+  lastFullFetch         DateTime  @map("last_full_fetch")
+  lastIncrementalUpdate DateTime? @map("last_incremental_update")
+  cacheExpiresAt        DateTime  @map("cache_expires_at")
+  uploadFrequency       Float?    @map("upload_frequency_per_week")
+  cacheDurationHours    Int       @map("cache_duration_hours")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+  
+  channel               Channel   @relation(fields: [channelId], references: [id])
+  
+  @@map("analysis_cache")
 }

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { YouTubeAPI } from '@/src/lib/youtube';
-import { YouTubeAccurateAPI } from '@/src/lib/youtubeAccurate';
 import { SimplifiedAnalytics } from '@/src/utils/analyticsSimplified';
 import { prisma } from '@/src/lib/prisma';
 import { validateAgainstSocialBlade } from '@/src/utils/validationAndComparison';
+import { ViewCountValidator } from '@/src/utils/viewCountValidation';
 import { ChannelAnalytics } from '@/src/types/youtube';
 
 export async function GET(request: NextRequest) {
@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
     }
 
     const api = new YouTubeAPI();
-    const accurateAPI = new YouTubeAccurateAPI();
     
     // Extract channel ID or handle from URL
     const channelIdentifier = api.extractChannelIdFromUrl(url);
@@ -44,7 +43,7 @@ export async function GET(request: NextRequest) {
           description: cachedChannel.description || '',
           thumbnailUrl: cachedChannel.thumbnailUrl || '',
           subscriberCount: lastSnapshot.subscriberCount,
-          totalViews: Number(lastSnapshot.monthlyViewsLong) + Number(lastSnapshot.monthlyViewsShorts),
+          totalViews: lastSnapshot.subscriberCount * 1000, // Rough estimate for cached data
           videoCount: 0,
           niche: cachedChannel.primaryNiche || 'General',
         },
@@ -55,6 +54,7 @@ export async function GET(request: NextRequest) {
           uploadFrequency: cachedChannel.uploadFrequencyPerWeek || 0,
         },
         historicalData: [], // Simplified - no complex historical data
+        dailyData: [], // No daily data in cache
         projections: {
           nextMonth: { views: 0, revenue: 0 },
           nextYear: { views: 0, revenue: 0 }
@@ -65,45 +65,51 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(response);
     }
 
-    // Fetch fresh, accurate data using yt-dlp and RSS feeds
-    console.log('Fetching fresh data using accurate methods...');
+    // Fetch fresh data using YouTube Data API v3
+    console.log('Fetching fresh data using YouTube API...');
     
-    // Try multiple approaches for maximum accuracy
     let channelData = null;
     
-    try {
-      // Method 1: Try yt-dlp for comprehensive data
-      channelData = await accurateAPI.getAccurateChannelData(url);
-    } catch (error) {
-      console.warn('yt-dlp failed, trying fallback methods:', error);
+    // Use YouTube Data API v3 directly (skip yt-dlp due to bot verification issues)
+    console.log('Using YouTube Data API v3...');
+    let channel;
+    if (channelIdentifier.startsWith('UC') && channelIdentifier.length === 24) {
+      channel = await api.getChannelById(channelIdentifier);
+    } else {
+      channel = await api.getChannelByHandle(channelIdentifier);
     }
+
+    if (!channel) {
+      return NextResponse.json({ error: 'Channel not found' }, { status: 404 });
+    }
+
+    // Get recent videos using the API (fetch more for daily chart data)
+    const fetchedVideos = await api.getRecentVideos(channel.id, 100);
+
+    // Log raw API data for debugging
+    console.log('=== YouTube API Channel Data ===');
+    console.log('Channel:', channel.snippet.title);
+    console.log('Total Channel Views (all-time):', channel.statistics.viewCount);
+    console.log('Subscriber Count:', channel.statistics.subscriberCount);
+    console.log('Total Video Count:', channel.statistics.videoCount);
+    console.log('Fetched Videos Count:', fetchedVideos.length);
     
-    // Method 2: Fallback to original API if yt-dlp fails
-    if (!channelData) {
-      console.log('Using fallback YouTube API...');
-      let channel;
-      if (channelIdentifier.startsWith('UC') && channelIdentifier.length === 24) {
-        channel = await api.getChannelById(channelIdentifier);
-      } else {
-        channel = await api.getChannelByHandle(channelIdentifier);
-      }
+    // Calculate total views from fetched videos
+    const sumOfFetchedVideoViews = fetchedVideos.reduce((sum, video) => sum + video.viewCount, 0);
+    console.log('Sum of Fetched Video Views:', sumOfFetchedVideoViews.toLocaleString());
+    console.log('================================');
 
-      if (!channel) {
-        return NextResponse.json({ error: 'Channel not found' }, { status: 404 });
-      }
-
-      // Convert to our format
-      channelData = {
-        id: channel.id,
-        title: channel.snippet.title,
-        subscriberCount: parseInt(channel.statistics.subscriberCount),
-        totalViews: parseInt(channel.statistics.viewCount),
-        videoCount: parseInt(channel.statistics.videoCount),
-        thumbnailUrl: channel.snippet.thumbnails.high?.url || '',
-        description: channel.snippet.description,
-        recentVideos: [] // Will be populated below
-      };
-    }
+    // Convert to our format
+    channelData = {
+      id: channel.id,
+      title: channel.snippet.title,
+      subscriberCount: parseInt(channel.statistics.subscriberCount),
+      totalViews: parseInt(channel.statistics.viewCount), // This is ALL-TIME views
+      videoCount: parseInt(channel.statistics.videoCount),
+      thumbnailUrl: channel.snippet.thumbnails.high?.url || '',
+      description: channel.snippet.description,
+      recentVideos: fetchedVideos // Now populated with actual videos
+    };
 
     if (!channelData) {
       return NextResponse.json({ error: 'Could not fetch channel data' }, { status: 404 });
@@ -111,7 +117,7 @@ export async function GET(request: NextRequest) {
 
     // Detect niche using simplified method
     const videoTitles = channelData.recentVideos.map(v => v.title);
-    const niche = accurateAPI.detectChannelNiche(videoTitles);
+    const niche = api.detectChannelNiche(videoTitles);
 
     // Calculate simplified analytics
     const currentStats = await SimplifiedAnalytics.calculateCurrentStats(channelData.recentVideos, niche);
@@ -119,7 +125,57 @@ export async function GET(request: NextRequest) {
     const projections = SimplifiedAnalytics.calculateSimpleProjections(recentPerformance);
     const contentFocus = SimplifiedAnalytics.analyzeContentFocus(channelData.recentVideos);
 
+    console.log('=== Analytics Calculation Results ===');
     console.log(`Analyzed ${channelData.recentVideos.length} videos. Content focus: ${contentFocus.primaryFocus}`);
+    console.log('Channel Total Views (all-time):', channelData.totalViews.toLocaleString());
+    console.log('Recent Videos Total Views:', currentStats.recentVideoViews.toLocaleString());
+    console.log('Long-form Views (recent):', currentStats.longFormViews.toLocaleString());
+    console.log('Shorts Views (recent):', currentStats.shortsViews.toLocaleString());
+    console.log('Data Scope:', `${currentStats.dataScope.videosAnalyzed} videos over ${currentStats.dataScope.timeSpanDays} days`);
+    console.log('=====================================');
+
+    // Validate view count data
+    const viewValidation = ViewCountValidator.validateViewCounts(
+      channelData.totalViews,
+      currentStats.recentVideoViews,
+      channelData.videoCount,
+      channelData.recentVideos.length,
+      channelData.title
+    );
+
+    // Check against known channel benchmarks
+    const knownChannelIssues = ViewCountValidator.validateKnownChannel(channelData.title, channelData.totalViews);
+    if (knownChannelIssues.length > 0) {
+      console.log('⚠️  Known Channel Validation Issues:', knownChannelIssues);
+    }
+
+    // Generate realistic chart data based on actual video upload dates  
+    const chartData = await SimplifiedAnalytics.generateRealisticChartData(channelData.recentVideos, niche);
+    const dailyData = await SimplifiedAnalytics.generateRealisticDailyData(channelData.recentVideos, niche);
+
+    // Prepare response structure for validation
+    const responseForValidation = {
+      channel: {
+        totalViews: channelData.totalViews,
+      },
+      currentStats: {
+        totalViews: currentStats.recentVideoViews,
+        longFormViews: currentStats.longFormViews,
+        shortsViews: currentStats.shortsViews,
+      },
+      dailyData
+    };
+
+    // Validate mathematical consistency
+    const mathIssues = ViewCountValidator.validateMathematicalConsistency(responseForValidation);
+    const dailyIssues = ViewCountValidator.validateDailyPatterns(dailyData);
+    
+    if (mathIssues.length > 0) {
+      console.log('⚠️  Mathematical Consistency Issues:', mathIssues);
+    }
+    if (dailyIssues.length > 0) {
+      console.log('⚠️  Daily Pattern Issues:', dailyIssues);
+    }
 
     // Prepare recent videos for response
     const recentVideos = channelData.recentVideos.slice(0, 10).map(video => ({
@@ -171,9 +227,6 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // Generate simplified chart data
-    const chartData = await SimplifiedAnalytics.generateSimpleChartData(channelData.recentVideos, niche);
-
     // Prepare response with accurate data
     const response: ChannelAnalytics = {
       channel: {
@@ -182,17 +235,18 @@ export async function GET(request: NextRequest) {
         description: channelData.description,
         thumbnailUrl: channelData.thumbnailUrl,
         subscriberCount: channelData.subscriberCount,
-        totalViews: currentStats.totalViews,
-        videoCount: channelData.recentVideos.length,
+        totalViews: channelData.totalViews, // Use actual channel total views from YouTube API
+        videoCount: channelData.videoCount, // Use actual total video count from YouTube API
         niche,
       },
       currentStats: {
-        totalViews: currentStats.totalViews,
+        totalViews: currentStats.recentVideoViews, // This is sum of recent video views only
         longFormViews: currentStats.longFormViews,
         shortsViews: currentStats.shortsViews,
         uploadFrequency: currentStats.uploadFrequency,
       },
       historicalData: chartData, // Simplified chart data
+      dailyData, // Add daily chart data
       projections,
       recentVideos,
       validation, // Add validation data
@@ -207,15 +261,16 @@ export async function GET(request: NextRequest) {
           channelAge: 0 // Not available
         },
         validation: {
-          isValid: true,
-          errors: [],
-          warnings: [],
-          confidence: 'high' as const
+          isValid: viewValidation.isValid && mathIssues.length === 0,
+          errors: viewValidation.errors.concat(mathIssues),
+          warnings: viewValidation.warnings.concat(knownChannelIssues).concat(dailyIssues),
+          confidence: (viewValidation.isValid && mathIssues.length === 0) ? 'high' as const : 'medium' as const
         },
-        anomalies: [],
+        anomalies: viewValidation.debugInfo.suspiciousMetrics,
         recommendations: contentFocus.primaryFocus === 'shorts' ? 
           ['Channel focuses on Shorts content with lower per-view revenue'] :
-          ['Channel focuses on long-form content with higher revenue potential']
+          ['Channel focuses on long-form content with higher revenue potential'],
+        viewCountDebug: viewValidation.debugInfo // Add debug info for troubleshooting
       }
     };
 

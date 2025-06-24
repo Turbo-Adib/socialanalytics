@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { ChannelAnalytics } from '@/src/types/youtube';
 import ChannelProfileCard from './ChannelProfileCard';
@@ -8,6 +8,8 @@ import ProjectionCard from './ProjectionCard';
 import RecentVideos from './RecentVideos';
 import RevenueTransparency from './RevenueTransparency';
 import DataQualityIndicator from './DataQualityIndicator';
+import DataTransparency from './DataTransparency';
+import TimeframeToggle from './TimeframeToggle';
 
 interface DashboardProps {
   analytics: ChannelAnalytics;
@@ -15,6 +17,9 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ analytics, onReset }) => {
+  const [viewsTimeframe, setViewsTimeframe] = useState<'daily' | 'monthly'>('daily');
+  const [revenueTimeframe, setRevenueTimeframe] = useState<'daily' | 'monthly'>('daily');
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -32,56 +37,73 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics, onReset }) => {
           <ChannelProfileCard channel={analytics.channel} />
         </div>
 
+        {/* Data Transparency */}
+        <DataTransparency analytics={analytics} />
+
         {/* Current Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
-            title="Total Views"
+            title="Total Channel Views"
             value={analytics.channel.totalViews.toLocaleString()}
-            subtitle="All time"
-            trend="+5.2%"
+            subtitle="Lifetime (YouTube API)"
+            trend=""
           />
           <StatCard
             title="Subscribers"
             value={analytics.channel.subscriberCount.toLocaleString()}
-            subtitle="Current"
-            trend="+2.1%"
+            subtitle="Current (YouTube API)"
+            trend=""
           />
           <StatCard
             title="Long-form Views"
             value={analytics.currentStats.longFormViews.toLocaleString()}
-            subtitle="Recent videos"
-            trend="+8.3%"
+            subtitle={`${(analytics as any).dataQuality?.viewCountDebug?.videosAnalyzed || 'Recent'} videos analyzed`}
+            trend=""
           />
           <StatCard
             title="Shorts Views"
             value={analytics.currentStats.shortsViews.toLocaleString()}
-            subtitle="Recent videos"
-            trend="+12.7%"
+            subtitle={`${(analytics as any).dataQuality?.viewCountDebug?.videosAnalyzed || 'Recent'} videos analyzed`}
+            trend=""
           />
         </div>
 
         {/* Charts and Projections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Monthly Views Trend
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                {viewsTimeframe === 'daily' ? 'Daily' : 'Monthly'} Views Trend
+              </h3>
+              <TimeframeToggle 
+                value={viewsTimeframe} 
+                onChange={setViewsTimeframe} 
+              />
+            </div>
             <HistoricalChart 
-              data={analytics.historicalData}
+              data={viewsTimeframe === 'daily' ? analytics.dailyData || analytics.historicalData : analytics.historicalData}
               dataKeys={['longFormViews', 'shortsViews']}
               colors={['#3B82F6', '#10B981']}
+              timeframe={viewsTimeframe}
             />
           </div>
           
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Estimated Revenue Trend
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                {revenueTimeframe === 'daily' ? 'Daily' : 'Monthly'} Revenue Trend
+              </h3>
+              <TimeframeToggle 
+                value={revenueTimeframe} 
+                onChange={setRevenueTimeframe} 
+              />
+            </div>
             <HistoricalChart 
-              data={analytics.historicalData}
+              data={revenueTimeframe === 'daily' ? analytics.dailyData || analytics.historicalData : analytics.historicalData}
               dataKeys={['estRevenueLong', 'estRevenueShorts']}
               colors={['#8B5CF6', '#F59E0B']}
               formatValue={(value) => `$${value.toFixed(0)}`}
+              timeframe={revenueTimeframe}
             />
           </div>
         </div>

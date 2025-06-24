@@ -81,4 +81,5 @@ export interface ChannelAnalytics {
   }[];
   validation?: any; // ValidationComparison from validationAndComparison.ts
   dataQuality?: any; // DataQualityReport from dataValidation.ts
+  dailyData?: any[]; // Daily chart data
 }
