@@ -10,29 +10,32 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
   const { overview, recentPerformance, projections } = analytics;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
         {/* Back button */}
         <button
           onClick={onReset}
-          className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+          className="mb-6 flex items-center gap-2 text-gray-600 dark:text-dark-text-secondary hover:text-gray-900 dark:hover:text-white transition-all duration-200 group"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
           Analyze Another Channel
         </button>
 
         {/* Channel Header */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="card mb-6">
           <div className="flex items-start gap-4">
             <img
               src={overview.thumbnailUrl}
               alt={overview.title}
-              className="w-20 h-20 rounded-full"
+              className="w-20 h-20 rounded-full ring-2 ring-youtube-red ring-offset-2 dark:ring-offset-dark-bg-card"
             />
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-gray-900">{overview.title}</h1>
-              <p className="text-gray-600 mt-1">{overview.niche} Channel</p>
-              <p className="text-sm text-gray-500 mt-2">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{overview.title}</h1>
+              <p className="text-gray-600 dark:text-dark-text-secondary mt-1 flex items-center gap-2">
+                <span className="inline-block w-2 h-2 bg-youtube-red rounded-full"></span>
+                {overview.niche} Channel
+              </p>
+              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mt-2">
                 Channel Age: {overview.estimatedAge.years}y {overview.estimatedAge.months}m
               </p>
             </div>
@@ -41,11 +44,13 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
 
         {/* Core Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className="card card-hover group">
             <div className="flex items-center gap-3">
-              <Users className="h-8 w-8 text-blue-600" />
+              <div className="p-2 bg-accent-blue/10 dark:bg-accent-blue/20 rounded-lg group-hover:scale-110 transition-transform">
+                <Users className="h-6 w-6 text-accent-blue" />
+              </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {overview.subscriberCount.toLocaleString()}
                 </p>
                 <p className="text-sm text-gray-500">Subscribers</p>

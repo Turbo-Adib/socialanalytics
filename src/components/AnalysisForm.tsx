@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Loader2, AlertCircle } from 'lucide-react';
+import { Search, Loader2, AlertCircle, Play } from 'lucide-react';
 
 interface AnalysisFormProps {
   onAnalyze: (url: string) => void;
@@ -18,33 +18,44 @@ const AnalysisForm: React.FC<AnalysisFormProps> = ({ onAnalyze, isLoading, error
   };
 
   return (
-    <div className="w-full max-w-4xl px-4">
-      <div className="text-center mb-8">
-        <h2 className="text-5xl font-bold text-gray-900 mb-4">
-          Analyze Any YouTube Channel Instantly
+    <div className="w-full max-w-4xl px-4 animate-slide-up">
+      <div className="text-center mb-12">
+        <div className="inline-flex items-center gap-2 mb-6">
+          <div className="relative">
+            <div className="absolute -inset-2 bg-youtube-red rounded-lg blur opacity-30 animate-pulse"></div>
+            <div className="relative bg-youtube-red p-3 rounded-lg">
+              <Play className="h-8 w-8 text-white fill-white" />
+            </div>
+          </div>
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-white">
+            YouTube Analytics
+          </h1>
+        </div>
+        <h2 className="text-3xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+          Analyze Any Channel Instantly
         </h2>
-        <p className="text-xl text-gray-600 mb-8">
-          Paste a channel URL or handle to get a complete breakdown of its performance, revenue, and growth trends.
+        <p className="text-xl text-gray-600 dark:text-dark-text-secondary max-w-2xl mx-auto">
+          Get comprehensive insights on performance, revenue potential, and growth trends with our advanced analytics.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="flex gap-3">
-          <div className="flex-grow relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-grow relative group">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-dark-text-tertiary h-5 w-5 transition-colors group-focus-within:text-youtube-red" />
             <input
               type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="e.g., youtube.com/@MrBeast or @MrBeast"
-              className="w-full pl-12 pr-4 py-4 bg-white rounded-xl text-gray-900 placeholder-gray-400 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg text-lg"
+              className="input-base pl-12 text-lg font-medium shadow-lg dark:shadow-youtube focus:shadow-xl transition-all duration-200"
               disabled={isLoading}
             />
           </div>
           <button
             type="submit"
             disabled={isLoading || !url.trim()}
-            className="px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 shadow-lg flex items-center gap-2 text-lg"
+            className="btn-primary min-w-[140px] text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {isLoading ? (
               <>
@@ -52,37 +63,44 @@ const AnalysisForm: React.FC<AnalysisFormProps> = ({ onAnalyze, isLoading, error
                 Analyzing...
               </>
             ) : (
-              'Analyze'
+              <>
+                <Search className="h-5 w-5" />
+                Analyze
+              </>
             )}
           </button>
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-            <AlertCircle className="h-5 w-5" />
-            <span>{error}</span>
+          <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-youtube-red/10 border border-red-200 dark:border-youtube-red/30 rounded-lg text-red-700 dark:text-youtube-red-light animate-fade-in">
+            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+            <span className="text-sm font-medium">{error}</span>
           </div>
         )}
       </form>
 
       {/* Example channels */}
-      <div className="mt-12 text-center">
-        <p className="text-sm text-gray-500 mb-4">Try these popular channels:</p>
-        <div className="flex flex-wrap justify-center gap-2">
+      <div className="mt-16 text-center">
+        <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-6 font-medium">Try these popular channels:</p>
+        <div className="flex flex-wrap justify-center gap-3">
           {[
-            '@MrBeast',
-            '@PewDiePie',
-            '@mkbhd',
-            '@veritasium',
-            '@theodd1sout'
-          ].map((handle) => (
+            { handle: '@MrBeast', category: 'Entertainment' },
+            { handle: '@PewDiePie', category: 'Gaming' },
+            { handle: '@mkbhd', category: 'Tech' },
+            { handle: '@veritasium', category: 'Science' },
+            { handle: '@theodd1sout', category: 'Animation' }
+          ].map(({ handle, category }) => (
             <button
               key={handle}
               onClick={() => setUrl(`youtube.com/${handle}`)}
-              className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm text-gray-600 transition-colors"
+              className="group px-4 py-2 bg-gray-100 dark:bg-dark-bg-card hover:bg-gray-200 dark:hover:bg-dark-bg-hover rounded-full text-sm font-medium text-gray-700 dark:text-dark-text-secondary transition-all duration-200 border border-gray-200 dark:border-dark-border hover:border-gray-300 dark:hover:border-dark-text-tertiary hover:shadow-md"
               disabled={isLoading}
             >
-              {handle}
+              <span className="flex items-center gap-2">
+                <Play className="h-3 w-3 text-youtube-red opacity-70 group-hover:opacity-100" />
+                {handle}
+                <span className="text-xs text-gray-500 dark:text-dark-text-tertiary">• {category}</span>
+              </span>
             </button>
           ))}
         </div>

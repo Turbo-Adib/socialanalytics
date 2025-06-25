@@ -18,26 +18,29 @@ const LoadingState: React.FC<LoadingStateProps> = ({ stage = 'fetching', channel
   const CurrentIcon = stages[currentStageIndex]?.icon || Loader2;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="max-w-md w-full mx-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-bg-primary flex items-center justify-center transition-colors duration-300">
+      <div className="max-w-md w-full mx-4 animate-fade-in">
         {/* Main Loading Card */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+        <div className="card text-center">
           <div className="mb-6">
-            <CurrentIcon className="h-12 w-12 text-blue-600 mx-auto animate-spin" />
+            <div className="relative inline-block">
+              <div className="absolute -inset-4 bg-youtube-red rounded-full blur opacity-20 animate-pulse"></div>
+              <CurrentIcon className="relative h-12 w-12 text-youtube-red mx-auto animate-spin" />
+            </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             Analyzing Channel
           </h2>
           
           {channelName && (
-            <p className="text-lg text-gray-600 mb-6">
+            <p className="text-lg text-gray-600 dark:text-dark-text-secondary mb-6">
               {channelName}
             </p>
           )}
 
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               {stages[currentStageIndex]?.label}
             </h3>
             <p className="text-sm text-gray-500">

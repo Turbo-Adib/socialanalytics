@@ -72,7 +72,7 @@ export default function HomePage() {
   // Show Outlier Analyzer
   if (showOutlierAnalyzer) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-bg-primary transition-colors duration-300">
         <Header 
           onShowRpmCalculator={() => {
             setShowRpmCalculator(true);
@@ -89,7 +89,7 @@ export default function HomePage() {
   // Show RPM Calculator
   if (showRpmCalculator) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-bg-primary transition-colors duration-300">
         <Header 
           onShowRpmCalculator={() => setShowRpmCalculator(true)}
           onShowOutlierAnalyzer={() => {
@@ -128,7 +128,7 @@ export default function HomePage() {
   // Show Analytics Dashboard
   if (analytics) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-bg-primary transition-colors duration-300">
         <Header 
           onShowRpmCalculator={() => {
             setShowRpmCalculator(true);
@@ -150,7 +150,7 @@ export default function HomePage() {
 
   // Show Main Landing Page
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-bg-primary transition-colors duration-300">
       <Header 
         onShowRpmCalculator={() => {
           setShowRpmCalculator(true);
@@ -163,7 +163,7 @@ export default function HomePage() {
         onNavigateHome={handleReset}
       />
       
-      <main className="flex-grow flex flex-col justify-center items-center px-4 py-16">
+      <main className="flex-grow flex flex-col justify-center items-center px-4 py-16 animate-fade-in">
         <div className="mb-8">
           <TailwindTest />
         </div>

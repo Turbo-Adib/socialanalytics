@@ -3,13 +3,159 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Light mode variables (default) */
+    --background: #ffffff;
+    --foreground: #000000;
+    --card: #f9fafb;
+    --card-foreground: #000000;
+    --primary: #3b82f6;
+    --primary-foreground: #ffffff;
+    --secondary: #f3f4f6;
+    --secondary-foreground: #000000;
+    --muted: #f9fafb;
+    --muted-foreground: #6b7280;
+    --accent: #f3f4f6;
+    --accent-foreground: #000000;
+    --border: #e5e7eb;
+    --input: #f3f4f6;
+    --ring: #3b82f6;
+  }
+
+  .dark {
+    /* YouTube-inspired dark mode */
+    --background: #0F0F0F;
+    --foreground: #FFFFFF;
+    --card: #212121;
+    --card-foreground: #FFFFFF;
+    --primary: #FF0000;
+    --primary-foreground: #FFFFFF;
+    --secondary: #181818;
+    --secondary-foreground: #FFFFFF;
+    --muted: #303030;
+    --muted-foreground: #AAAAAA;
+    --accent: #272727;
+    --accent-foreground: #FFFFFF;
+    --border: #303030;
+    --input: #181818;
+    --ring: #FF0000;
+  }
+
+
   html {
-    font-family: system-ui, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-white dark:bg-dark-bg-primary text-gray-900 dark:text-white;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Scrollbar styling for dark mode */
+  .dark::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  .dark::-webkit-scrollbar-track {
+    @apply bg-dark-bg-secondary;
+  }
+
+  .dark::-webkit-scrollbar-thumb {
+    @apply bg-dark-border rounded-md;
+  }
+
+  .dark::-webkit-scrollbar-thumb:hover {
+    @apply bg-dark-text-tertiary;
+  }
+
+  /* Selection color */
+  .dark ::selection {
+    @apply bg-youtube-red/30 text-white;
   }
 }
 
 @layer components {
+  /* Button styles */
   .btn-primary {
-    @apply px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors;
+    @apply px-6 py-3 bg-youtube-red text-white font-medium rounded-lg hover:bg-youtube-red-hover transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-youtube hover:shadow-youtube-hover;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-dark-bg-card dark:bg-dark-bg-card text-gray-900 dark:text-white font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-dark-bg-hover transition-all duration-200 border border-gray-200 dark:border-dark-border;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-card rounded-lg transition-all duration-200;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white dark:bg-dark-bg-card rounded-xl p-6 shadow-sm dark:shadow-card border border-gray-100 dark:border-dark-border transition-all duration-200;
+  }
+
+  .card-hover {
+    @apply hover:shadow-lg dark:hover:shadow-youtube-hover hover:border-gray-200 dark:hover:border-dark-text-tertiary transform hover:-translate-y-0.5;
+  }
+
+  /* Input styles */
+  .input-base {
+    @apply w-full px-4 py-3 bg-gray-50 dark:bg-dark-bg-secondary text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-youtube-red focus:border-transparent transition-all duration-200 placeholder-gray-500 dark:placeholder-dark-text-tertiary;
+  }
+
+  /* Text styles */
+  .text-primary {
+    @apply text-gray-900 dark:text-dark-text-primary;
+  }
+
+  .text-secondary {
+    @apply text-gray-600 dark:text-dark-text-secondary;
+  }
+
+  .text-tertiary {
+    @apply text-gray-500 dark:text-dark-text-tertiary;
+  }
+
+  /* Container styles */
+  .container-dark {
+    @apply bg-gray-50 dark:bg-dark-bg-primary;
+  }
+
+  /* Gradient text */
+  .gradient-youtube {
+    @apply bg-gradient-to-r from-youtube-red to-youtube-red-hover bg-clip-text text-transparent;
+  }
+
+  /* Loading skeleton */
+  .skeleton {
+    @apply animate-pulse bg-gray-200 dark:bg-dark-bg-card rounded;
+  }
+
+  /* Chart container */
+  .chart-container {
+    @apply bg-white dark:bg-dark-bg-card p-4 rounded-lg border border-gray-100 dark:border-dark-border;
+  }
+
+  /* Badge styles */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply bg-green-100 dark:bg-accent-green/20 text-green-800 dark:text-accent-green;
+  }
+
+  .badge-warning {
+    @apply bg-orange-100 dark:bg-accent-orange/20 text-orange-800 dark:text-accent-orange;
+  }
+
+  .badge-error {
+    @apply bg-red-100 dark:bg-youtube-red/20 text-red-800 dark:text-youtube-red-light;
+  }
+
+  /* Transition utilities */
+  .transition-theme {
+    @apply transition-colors duration-300 ease-in-out;
   }
 }
