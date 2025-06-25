@@ -5,6 +5,7 @@ import { prisma } from '@/src/lib/prisma';
 import { validateAgainstSocialBlade } from '@/src/utils/validationAndComparison';
 import { ViewCountValidator } from '@/src/utils/viewCountValidation';
 import { ChannelAnalytics } from '@/src/types/youtube';
+import { detectMonetization, needsMonetizationRefresh, formatMonetizationStatus } from '@/utils/monetization';
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,6 +35,13 @@ export async function GET(request: NextRequest) {
     const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
     if (cachedChannel && cachedChannel.lastSnapshotAt && cachedChannel.lastSnapshotAt > fifteenMinutesAgo) {
       console.log('Using cached data (less than 15 minutes old)');
+      
+      // Check if monetization data needs refresh
+      let monetizationStatus: {isMonetized: boolean, status: string, lastChecked: string|null, badge: string} | null = null;
+      if (cachedChannel.isMonetized !== null && !needsMonetizationRefresh(cachedChannel.monetizationLastChecked)) {
+        monetizationStatus = formatMonetizationStatus(cachedChannel.isMonetized, cachedChannel.monetizationLastChecked);
+      }
+      
       // Return cached data with simplified structure
       const lastSnapshot = cachedChannel.snapshots[cachedChannel.snapshots.length - 1];
       const response: ChannelAnalytics = {
@@ -46,6 +54,7 @@ export async function GET(request: NextRequest) {
           totalViews: lastSnapshot.subscriberCount * 1000, // Rough estimate for cached data
           videoCount: 0,
           niche: cachedChannel.primaryNiche || 'General',
+          monetization: monetizationStatus,
         },
         currentStats: {
           totalViews: Number(lastSnapshot.monthlyViewsLong) + Number(lastSnapshot.monthlyViewsShorts),
@@ -118,6 +127,21 @@ export async function GET(request: NextRequest) {
     // Detect niche using simplified method
     const videoTitles = channelData.recentVideos.map(v => v.title);
     const niche = api.detectChannelNiche(videoTitles);
+
+    // Detect monetization status
+    const videoStats = {
+      totalVideos: channelData.videoCount,
+      shortVideos: channelData.recentVideos.filter(v => v.isShort).length,
+      longVideos: channelData.recentVideos.filter(v => !v.isShort).length,
+      recentVideos: channelData.recentVideos
+    };
+    const isMonetized = detectMonetization({
+      subscriberCount: channelData.subscriberCount,
+      uploadFrequencyPerWeek: 0, // Will be calculated below
+      publishedAt: null, // Not available from basic API
+      videoCount: channelData.videoCount
+    }, videoStats);
+    const monetizationStatus: {isMonetized: boolean, status: string, lastChecked: string|null, badge: string} = formatMonetizationStatus(isMonetized, new Date());
 
     // Calculate simplified analytics
     const currentStats = await SimplifiedAnalytics.calculateCurrentStats(channelData.recentVideos, niche);
@@ -195,6 +219,8 @@ export async function GET(request: NextRequest) {
         primaryNiche: niche,
         uploadFrequencyPerWeek: currentStats.uploadFrequency,
         thumbnailUrl: channelData.thumbnailUrl,
+        isMonetized: isMonetized,
+        monetizationLastChecked: new Date(),
         lastSnapshotAt: new Date(),
       },
       create: {
@@ -204,6 +230,8 @@ export async function GET(request: NextRequest) {
         primaryNiche: niche,
         uploadFrequencyPerWeek: currentStats.uploadFrequency,
         thumbnailUrl: channelData.thumbnailUrl,
+        isMonetized: isMonetized,
+        monetizationLastChecked: new Date(),
         lastSnapshotAt: new Date(),
       },
     });
@@ -238,6 +266,7 @@ export async function GET(request: NextRequest) {
         totalViews: channelData.totalViews, // Use actual channel total views from YouTube API
         videoCount: channelData.videoCount, // Use actual total video count from YouTube API
         niche,
+        monetization: monetizationStatus,
       },
       currentStats: {
         totalViews: currentStats.recentVideoViews, // This is sum of recent video views only

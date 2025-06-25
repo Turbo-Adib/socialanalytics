@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Video, Calendar, Tag } from 'lucide-react';
+import { Users, Video, Calendar, Tag, DollarSign } from 'lucide-react';
 
 interface ChannelProfileCardProps {
   channel: {
@@ -10,6 +10,12 @@ interface ChannelProfileCardProps {
     subscriberCount: number;
     videoCount: number;
     niche?: string;
+    monetization?: {
+      isMonetized: boolean;
+      status: string;
+      lastChecked: string | null;
+      badge: string;
+    } | null;
   };
 }
 
@@ -33,12 +39,24 @@ const ChannelProfileCard: React.FC<ChannelProfileCardProps> = ({ channel }) => {
               <h1 className="text-2xl font-bold text-gray-900 mb-2">
                 {channel.title}
               </h1>
-              {channel.niche && (
-                <div className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-3">
-                  <Tag className="h-3 w-3" />
-                  {channel.niche}
-                </div>
-              )}
+              <div className="flex flex-wrap gap-2 mb-3">
+                {channel.niche && (
+                  <div className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                    <Tag className="h-3 w-3" />
+                    {channel.niche}
+                  </div>
+                )}
+                {channel.monetization && (
+                  <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
+                    channel.monetization.isMonetized 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    <DollarSign className="h-3 w-3" />
+                    {channel.monetization.status}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 

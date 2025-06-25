@@ -17,6 +17,8 @@ model Channel {
   primaryNiche            String?           @map("primary_niche")
   uploadFrequencyPerWeek  Float?            @map("upload_frequency_per_week")
   thumbnailUrl            String?           @map("thumbnail_url")
+  isMonetized             Boolean?          @map("is_monetized")
+  monetizationLastChecked DateTime?         @map("monetization_last_checked")
   createdAt               DateTime          @default(now()) @map("created_at")
   lastSnapshotAt          DateTime?         @map("last_snapshot_at")
   

@@ -26,6 +26,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
   const [analysisResults, setAnalysisResults] = useState<AnalysisResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedTier, setSelectedTier] = useState<AnalysisTier>('free');
+  const [formatFilter, setFormatFilter] = useState<'both' | 'longform' | 'shorts'>('both');
 
   const handleAnalyze = async () => {
     if (!channelUrl.trim()) {
@@ -38,7 +39,8 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
     setAnalysisResults(null);
 
     try {
-      const response = await fetch(`/api/outlier-analysis?url=${encodeURIComponent(channelUrl)}&tier=${selectedTier}`);
+      const formatParam = formatFilter === 'both' ? '' : `&format=${formatFilter}`;
+      const response = await fetch(`/api/outlier-analysis?url=${encodeURIComponent(channelUrl)}&tier=${selectedTier}${formatParam}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -76,11 +78,30 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
 
   const OutlierVideoCard: React.FC<{ video: OutlierVideo; index: number }> = ({ video, index }) => (
     <div className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-4">
         <div className="flex-shrink-0">
-          <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+          <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-semibold mb-2">
             {index + 1}
           </div>
+          {video.thumbnailUrl && (
+            <a
+              href={video.videoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block group"
+            >
+              <div className="relative">
+                <img
+                  src={video.thumbnailUrl}
+                  alt={video.title}
+                  className="w-32 h-20 object-cover rounded-lg group-hover:opacity-80 transition-opacity"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Play className="h-8 w-8 text-white" />
+                </div>
+              </div>
+            </a>
+          )}
         </div>
         
         <div className="flex-1 min-w-0">
@@ -107,8 +128,12 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
             </div>
             <div className="flex items-center gap-1">
               <TrendingUp className="h-4 w-4 text-green-600" />
-              <span className="font-semibold text-green-600">{video.multiplier}x</span>
+              <span className="font-semibold text-green-600">#{index + 1} Top</span>
             </div>
+          </div>
+          
+          <div className="text-xs text-gray-500 mt-1">
+            Published: {new Date(video.publishedAt).toLocaleDateString()}
           </div>
           
           {video.patternTags.length > 0 && (
@@ -166,11 +191,72 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
 
     return (
       <div className="space-y-6">
+        {/* Executive Summary */}
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200 mb-6">
+          <h3 className="text-xl font-bold text-green-900 mb-4 flex items-center gap-2">
+            <Target className="h-6 w-6" />
+            📊 Executive Summary - {formatName} Analysis
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-green-900">{analysis.totalVideos}</div>
+              <div className="text-sm text-green-700">Videos Analyzed</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-green-900">{formatViews(analysis.averageViews)}</div>
+              <div className="text-sm text-green-700">Channel Average</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-green-900">{analysis.outliers.length}</div>
+              <div className="text-sm text-green-700">Top Performers</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-green-900">{analysis.patterns.length}</div>
+              <div className="text-sm text-green-700">Success Patterns</div>
+            </div>
+          </div>
+          
+          {/* Quick Insights */}
+          <div className="bg-white rounded-lg p-4 border border-green-200">
+            <h4 className="font-semibold text-green-900 mb-2">🎯 Key Insights:</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="font-medium text-green-800">Best performing topic:</span>
+                <span className="text-green-700 ml-2">
+                  {analysis.bestPerformingTopics.length > 0 
+                    ? `"${analysis.bestPerformingTopics[0].topic}" (${formatViews(analysis.bestPerformingTopics[0].avgViews)} avg)`
+                    : 'Analyzing...'}
+                </span>
+              </div>
+              <div>
+                <span className="font-medium text-green-800">Top pattern:</span>
+                <span className="text-green-700 ml-2">
+                  {analysis.patterns.length > 0 
+                    ? `${analysis.patterns[0].description} (${formatViews(analysis.patterns[0].avgViews)} avg)`
+                    : 'Analyzing...'}
+                </span>
+              </div>
+              <div>
+                <span className="font-medium text-green-800">Optimal length:</span>
+                <span className="text-green-700 ml-2">
+                  {analysis.contentSpecs?.optimalLength.range || 'Analyzing...'}
+                </span>
+              </div>
+              <div>
+                <span className="font-medium text-green-800">Best upload day:</span>
+                <span className="text-green-700 ml-2">
+                  {analysis.contentSpecs?.uploadTiming.bestDays[0] || 'Analyzing...'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Performance Overview */}
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
           <h3 className="text-lg font-semibold text-blue-900 mb-4 flex items-center gap-2">
             <BarChart3 className="h-5 w-5" />
-            {formatName} Performance Overview
+            {formatName} Performance Breakdown
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
@@ -183,7 +269,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-900">{analysis.outliers.length}</div>
-              <div className="text-sm text-blue-700">Outliers Found</div>
+              <div className="text-sm text-blue-700">Top Performers</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-900">{analysis.patterns.length}</div>
@@ -192,7 +278,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
           </div>
         </div>
 
-        {/* Top Outliers */}
+        {/* Top Performers */}
         {analysis.outliers.length > 0 && (
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
@@ -200,9 +286,12 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
               Top Performing {formatName} Videos
             </h3>
             <div className="space-y-3">
-              {analysis.outliers.slice(0, 5).map((video, index) => (
+              {analysis.outliers.map((video, index) => (
                 <OutlierVideoCard key={video.id} video={video} index={index} />
               ))}
+            </div>
+            <div className="mt-3 text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+              💡 <strong>Note:</strong> Showing top {analysis.outliers.length} highest-viewed videos from the last 100 analyzed, regardless of performance multiplier.
             </div>
           </div>
         )}
@@ -225,18 +314,246 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
         {/* Best Topics */}
         {analysis.bestPerformingTopics.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Best Performing Topics</h3>
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <div className="space-y-2">
-                {analysis.bestPerformingTopics.map((topic, index) => (
-                  <div key={topic.topic} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
-                    <div>
-                      <span className="font-medium text-gray-900">"{topic.topic}"</span>
-                      <span className="text-sm text-gray-500 ml-2">({topic.count} videos)</span>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Star className="h-5 w-5 text-yellow-600" />
+              Best Performing Topics
+            </h3>
+            <div className="space-y-4">
+              {analysis.bestPerformingTopics.map((topic, index) => (
+                <div key={topic.topic} className="bg-white rounded-lg border border-gray-200 p-6">
+                  {/* Topic Header */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-xl font-bold text-gray-900">"{topic.topic}"</span>
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-1 bg-blue-100 text-blue-800 text-sm rounded-full font-medium">
+                            {topic.count} videos
+                          </span>
+                          <div className="flex items-center gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-4 w-4 ${
+                                  i < Math.round(topic.performanceScore / 2)
+                                    ? 'text-yellow-400 fill-current'
+                                    : 'text-gray-300'
+                                }`}
+                              />
+                            ))}
+                            <span className="text-sm text-gray-600 ml-1">
+                              {topic.performanceScore}/10
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-2xl font-bold text-green-600 mb-1">
+                        {formatViews(topic.avgViews)} average views
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {topic.audienceAppeal}
+                      </div>
                     </div>
-                    <span className="font-semibold text-green-600">{formatViews(topic.avgViews)} avg</span>
                   </div>
-                ))}
+
+                  {/* Success Analysis */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                      <h5 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
+                        <Target className="h-4 w-4" />
+                        Success Factors
+                      </h5>
+                      <ul className="space-y-1">
+                        {topic.successFactors.map((factor, idx) => (
+                          <li key={idx} className="text-sm text-green-800 flex items-start gap-2">
+                            <span className="text-green-600 mt-1 text-xs">•</span>
+                            {factor}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                      <h5 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                        <Lightbulb className="h-4 w-4" />
+                        Recommended Actions
+                      </h5>
+                      <ul className="space-y-1">
+                        {topic.recommendedActions.map((action, idx) => (
+                          <li key={idx} className="text-sm text-blue-800 flex items-start gap-2">
+                            <span className="text-blue-600 mt-1 text-xs">•</span>
+                            {action}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Competitive Advantage */}
+                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-200 mb-4">
+                    <h5 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
+                      <Crown className="h-4 w-4" />
+                      Competitive Advantage
+                    </h5>
+                    <p className="text-sm text-purple-800">{topic.competitiveAdvantage}</p>
+                  </div>
+
+                  {/* Video Examples */}
+                  {topic.examples && topic.examples.length > 0 && (
+                    <div>
+                      <h5 className="font-medium text-gray-900 mb-3">Top Performing Examples</h5>
+                      <div className="flex gap-3 overflow-x-auto">
+                        {topic.examples.slice(0, 3).map((example, idx) => (
+                          <a
+                            key={idx}
+                            href={example.videoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-shrink-0 group"
+                          >
+                            <div className="w-32">
+                              {example.thumbnailUrl && (
+                                <div className="relative mb-2">
+                                  <img
+                                    src={example.thumbnailUrl}
+                                    alt={example.title}
+                                    className="w-32 h-20 object-cover rounded border group-hover:opacity-80 transition-opacity"
+                                  />
+                                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Play className="h-6 w-6 text-white" />
+                                  </div>
+                                  <div className="absolute top-1 right-1 bg-black bg-opacity-75 text-white text-xs px-1 rounded">
+                                    {formatViews(example.viewCount)}
+                                  </div>
+                                </div>
+                              )}
+                              <p className="text-xs text-gray-600 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                                {example.title}
+                              </p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Title Analysis */}
+        {analysis.titleAnalysis && analysis.titleAnalysis.mostCommonWords.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Title Success Patterns</h3>
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Most Common Words */}
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-3">High-Performing Words</h4>
+                  <div className="space-y-2">
+                    {analysis.titleAnalysis.mostCommonWords.slice(0, 8).map((word, index) => (
+                      <div key={word.word} className="flex items-center justify-between text-sm">
+                        <span className="font-medium text-gray-700">"{word.word}"</span>
+                        <div className="text-right">
+                          <div className="text-green-600 font-semibold">{formatViews(word.avgViews)}</div>
+                          <div className="text-xs text-gray-500">{word.count} uses</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Title Formats */}
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-3">
+                    Successful Title Formats
+                    <span className="text-sm text-gray-500 ml-2">(Avg: {analysis.titleAnalysis.avgTitleLength} chars)</span>
+                  </h4>
+                  <div className="space-y-2">
+                    {analysis.titleAnalysis.titleFormats.slice(0, 6).map((format, index) => (
+                      <div key={format.format} className="text-sm">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-medium text-gray-700">{format.format}</span>
+                          <div className="text-right">
+                            <div className="text-green-600 font-semibold">{formatViews(format.avgViews)}</div>
+                            <div className="text-xs text-gray-500">{format.count} videos</div>
+                          </div>
+                        </div>
+                        {format.examples.length > 0 && (
+                          <div className="text-xs text-gray-500 italic">
+                            Example: "{format.examples[0].length > 50 ? format.examples[0].substring(0, 50) + '...' : format.examples[0]}"
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Content Specifications */}
+        {analysis.contentSpecs && (
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-purple-600" />
+              Optimal Content Specifications
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Optimal Length */}
+              <div className="bg-purple-50 rounded-lg border border-purple-200 p-4">
+                <h4 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Optimal Length
+                </h4>
+                <div className="text-2xl font-bold text-purple-900 mb-1">
+                  {analysis.contentSpecs.optimalLength.range}
+                </div>
+                <div className="text-sm text-purple-700 mb-2">
+                  {formatViews(analysis.contentSpecs.optimalLength.avgViews)} avg views
+                </div>
+                <p className="text-xs text-purple-600">
+                  {analysis.contentSpecs.optimalLength.description}
+                </p>
+              </div>
+
+              {/* Upload Timing */}
+              <div className="bg-blue-50 rounded-lg border border-blue-200 p-4">
+                <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  Best Upload Days
+                </h4>
+                <div className="space-y-1 mb-2">
+                  {analysis.contentSpecs.uploadTiming.bestDays.length > 0 ? (
+                    analysis.contentSpecs.uploadTiming.bestDays.map((day, idx) => (
+                      <div key={idx} className="text-sm font-medium text-blue-900">
+                        {idx === 0 ? '🥇' : '🥈'} {day}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-sm text-blue-700">Analyzing...</div>
+                  )}
+                </div>
+                <p className="text-xs text-blue-600">
+                  {analysis.contentSpecs.uploadTiming.insight}
+                </p>
+              </div>
+
+              {/* Series vs Standalone */}
+              <div className="bg-green-50 rounded-lg border border-green-200 p-4">
+                <h4 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
+                  <Video className="h-4 w-4" />
+                  Content Format
+                </h4>
+                <div className="space-y-1 mb-2">
+                  <div className="text-xs text-green-700">Series: {formatViews(analysis.contentSpecs.seriesVsStandalone.seriesPerformance)} avg</div>
+                  <div className="text-xs text-green-700">Standalone: {formatViews(analysis.contentSpecs.seriesVsStandalone.standalonePerformance)} avg</div>
+                </div>
+                <p className="text-xs text-green-600">
+                  {analysis.contentSpecs.seriesVsStandalone.recommendation}
+                </p>
               </div>
             </div>
           </div>
@@ -247,17 +564,24 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Lightbulb className="h-5 w-5 text-yellow-600" />
-              Content Recommendations
+              🎯 Actionable Strategy Recommendations
             </h3>
-            <div className="bg-yellow-50 rounded-lg border border-yellow-200 p-4">
-              <ul className="space-y-2">
+            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200 p-6">
+              <div className="space-y-3">
                 {analysis.recommendations.map((rec, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <span className="text-yellow-600 mt-1">•</span>
-                    <span className="text-yellow-900">{rec}</span>
-                  </li>
+                  <div key={index} className="flex items-start gap-3 p-3 bg-white rounded-lg border border-yellow-100">
+                    <div className="flex-shrink-0 w-6 h-6 bg-yellow-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                      {index + 1}
+                    </div>
+                    <span className="text-yellow-900 font-medium">{rec}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
+              <div className="mt-4 p-3 bg-yellow-100 rounded-lg">
+                <p className="text-yellow-800 text-sm font-medium">
+                  💡 <strong>Pro Tip:</strong> Implement these recommendations one at a time and measure results before adding more changes.
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -285,44 +609,91 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
             Outlier Video Pattern Analyzer
           </h1>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Discover what makes your best content successful. Find videos that outperform 2x+ and learn the patterns behind their success.
+            Get actionable insights from your top-performing content. Advanced pattern recognition analyzes your last 100 videos to identify winning formulas for titles, topics, timing, and content strategy.
           </p>
         </div>
 
         {/* Channel Input */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                YouTube Channel URL
-              </label>
-              <input
-                type="text"
-                value={channelUrl}
-                onChange={(e) => setChannelUrl(e.target.value)}
-                placeholder="https://youtube.com/@channelname or https://youtube.com/channel/UC..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                disabled={isAnalyzing}
-              />
+          <div className="space-y-4">
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  YouTube Channel URL
+                </label>
+                <input
+                  type="text"
+                  value={channelUrl}
+                  onChange={(e) => setChannelUrl(e.target.value)}
+                  placeholder="https://youtube.com/@channelname or https://youtube.com/channel/UC..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  disabled={isAnalyzing}
+                />
+              </div>
+              <div className="flex-shrink-0 self-end">
+                <button
+                  onClick={handleAnalyze}
+                  disabled={isAnalyzing}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      <Search className="h-4 w-4" />
+                      Analyze
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
-            <div className="flex-shrink-0 self-end">
-              <button
-                onClick={handleAnalyze}
-                disabled={isAnalyzing}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
-              >
-                {isAnalyzing ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Analyzing...
-                  </>
-                ) : (
-                  <>
-                    <Search className="h-4 w-4" />
-                    Analyze
-                  </>
-                )}
-              </button>
+            
+            {/* Format Filter */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Content Format to Analyze
+              </label>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setFormatFilter('both')}
+                  disabled={isAnalyzing}
+                  className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                    formatFilter === 'both'
+                      ? 'bg-blue-600 text-white border-blue-600'
+                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  } ${isAnalyzing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  📊 Both Formats
+                </button>
+                <button
+                  onClick={() => setFormatFilter('longform')}
+                  disabled={isAnalyzing}
+                  className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                    formatFilter === 'longform'
+                      ? 'bg-blue-600 text-white border-blue-600'
+                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  } ${isAnalyzing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  🎬 Long-form Only
+                </button>
+                <button
+                  onClick={() => setFormatFilter('shorts')}
+                  disabled={isAnalyzing}
+                  className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                    formatFilter === 'shorts'
+                      ? 'bg-blue-600 text-white border-blue-600'
+                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  } ${isAnalyzing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  ⚡ Shorts Only
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Filter to specific format to reduce API costs and focus analysis on your preferred content type
+              </p>
             </div>
           </div>
         </div>
@@ -389,7 +760,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
               </div>
               
               <div className="flex items-center gap-4 text-sm text-blue-700">
-                <span>📊 {analysisResults.videosAnalyzed.toLocaleString()} of {analysisResults.totalVideoCount.toLocaleString()} videos analyzed</span>
+                <span>📊 {analysisResults.videosAnalyzed.toLocaleString()} of {analysisResults.totalVideoCount.toLocaleString()} videos analyzed (last 100 videos for cost efficiency)</span>
                 {analysisResults.fromCache && (
                   <span>🕒 Cached from {new Date(analysisResults.analyzedAt).toLocaleString()}</span>
                 )}
@@ -473,7 +844,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
                           {analysisResults.longform.totalVideos} videos, averaging {formatViews(analysisResults.longform.averageViews)} views
                         </p>
                         <p className="text-green-800 text-sm">
-                          {analysisResults.longform.outliers.length} high-performing outliers found
+                          {analysisResults.longform.outliers.length} top performers identified
                         </p>
                       </div>
                       <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
@@ -482,7 +853,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
                           {analysisResults.shorts.totalVideos} videos, averaging {formatViews(analysisResults.shorts.averageViews)} views
                         </p>
                         <p className="text-blue-800 text-sm">
-                          {analysisResults.shorts.outliers.length} high-performing outliers found
+                          {analysisResults.shorts.outliers.length} top performers identified
                         </p>
                       </div>
                     </div>
@@ -498,26 +869,45 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
           </>
         )}
 
-        {/* Info Box */}
+        {/* Enhanced Info Box */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-semibold text-blue-900 mb-3">How It Works</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <h3 className="font-semibold text-blue-900 mb-3">🚀 Advanced Content Analysis Engine</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm mb-4">
             <div>
-              <h4 className="font-medium text-blue-900 mb-2">📊 Fetches All Videos</h4>
+              <h4 className="font-medium text-blue-900 mb-2">🔍 Smart Detection</h4>
               <p className="text-blue-800">
-                Analyzes your entire channel history, separating Shorts (≤60s) from long-form content (&gt;60s).
+                Enhanced Shorts detection with 4-layer validation: duration, hashtags, format indicators, and vertical hints.
               </p>
             </div>
             <div>
-              <h4 className="font-medium text-blue-900 mb-2">🎯 Identifies Outliers</h4>
+              <h4 className="font-medium text-blue-900 mb-2">🎯 Pattern Recognition</h4>
               <p className="text-blue-800">
-                Finds videos performing 2x+ better than your channel average and analyzes what makes them successful.
+                40+ advanced patterns including power words, emotional triggers, title structures, and content formats.
               </p>
             </div>
             <div>
-              <h4 className="font-medium text-blue-900 mb-2">💡 Extracts Patterns</h4>
+              <h4 className="font-medium text-blue-900 mb-2">📈 Topic Intelligence</h4>
               <p className="text-blue-800">
-                Discovers title formulas, topics, and formats that consistently drive higher engagement.
+                AI-powered topic categorization across 15+ niches with performance scoring and success insights.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-medium text-blue-900 mb-2">⏰ Timing Analysis</h4>
+              <p className="text-blue-800">
+                Optimal length detection, upload timing patterns, and series vs standalone performance comparison.
+              </p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-800 text-sm">
+                💰 <strong>Cost Efficient:</strong> Analyzes last 100 videos only - reduces API costs from $0.15-$0.30 to $0.0048 per channel (98% savings).
+              </p>
+            </div>
+            <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
+              <p className="text-purple-800 text-sm">
+                🎯 <strong>Actionable Results:</strong> Specific recommendations with emojis, performance metrics, and step-by-step implementation guides.
               </p>
             </div>
           </div>

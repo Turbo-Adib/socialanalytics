@@ -48,6 +48,12 @@ export interface ChannelAnalytics {
     totalViews: number;
     videoCount: number;
     niche?: string;
+    monetization?: {
+      isMonetized: boolean;
+      status: string;
+      lastChecked: string | null;
+      badge: string;
+    } | null;
   };
   currentStats: {
     totalViews: number;

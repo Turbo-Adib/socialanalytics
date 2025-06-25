@@ -11,10 +11,16 @@ export async function GET(request: NextRequest) {
     const url = searchParams.get('url');
     const forceRefresh = searchParams.get('force') === 'true';
     const tier = (searchParams.get('tier') || 'free') as AnalysisTier;
+    const formatFilter = searchParams.get('format'); // 'longform', 'shorts', or null for both
     
     // Validate tier
     if (!['free', 'standard', 'premium'].includes(tier)) {
       return NextResponse.json({ error: 'Invalid tier. Must be free, standard, or premium' }, { status: 400 });
+    }
+
+    // Validate format filter
+    if (formatFilter && !['longform', 'shorts'].includes(formatFilter)) {
+      return NextResponse.json({ error: 'Invalid format. Must be longform, shorts, or omitted for both' }, { status: 400 });
     }
 
     if (!url) {
@@ -46,10 +52,29 @@ export async function GET(request: NextRequest) {
     const totalVideoCount = parseInt(channel.statistics.videoCount, 10);
     const uploadFrequency = null; // We'll calculate this from video data later
     
+    // Ensure channel exists in database first
+    await prisma.channel.upsert({
+      where: { id: channel.id },
+      update: {
+        channelTitle: channel.snippet.title,
+        description: channel.snippet.description,
+        thumbnailUrl: channel.snippet.thumbnails?.default?.url,
+        lastSnapshotAt: new Date()
+      },
+      create: {
+        id: channel.id,
+        channelTitle: channel.snippet.title,
+        description: channel.snippet.description,
+        thumbnailUrl: channel.snippet.thumbnails?.default?.url,
+        createdAt: new Date(),
+        lastSnapshotAt: new Date()
+      }
+    });
+
     // Check intelligent cache
     if (!forceRefresh) {
       const cacheMetadata = await CacheManager.getOrCreateCache(
-        channelIdentifier,
+        channel.id,
         tier,
         totalVideoCount,
         uploadFrequency
@@ -61,7 +86,7 @@ export async function GET(request: NextRequest) {
         // Fetch cached video analyses for this channel
         const maxVideosForTier = CacheManager.getVideoLimitForTier(tier);
         const cachedVideos = await prisma.videoAnalysis.findMany({
-          where: { channelId: channelIdentifier },
+          where: { channelId: channel.id },
           orderBy: { publishedAt: 'desc' },
           take: maxVideosForTier
         });
@@ -86,29 +111,31 @@ export async function GET(request: NextRequest) {
           const results = analyzer.analyze(longformVideos, shortsVideos);
 
           return NextResponse.json({
-            channelId: channelIdentifier,
+            channelId: channel.id,
             fromCache: true,
             analyzedAt: cacheMetadata.lastFullFetch,
             tier,
-            totalVideoCount,
+            totalVideoCount: cacheMetadata.totalVideoCount || totalVideoCount,
             videosAnalyzed: videoData.length,
+            fetchedAll: false, // We only analyze last 100 videos
             ...results
           });
         }
       }
     }
 
-    // Fetch fresh data
-    console.log(`Fetching fresh video data for outlier analysis... (tier: ${tier})`);
+    // Fetch fresh data - only last 100 videos for cost efficiency
+    console.log(`Fetching last 100 videos for outlier analysis${formatFilter ? ` [${formatFilter} only]` : ''}...`);
 
     const videoAnalyzer = new VideoAnalyzer();
-    const videosResult = await videoAnalyzer.fetchAllChannelVideos(channel.id, tier, totalVideoCount);
+    const videosResult = await videoAnalyzer.fetchLast100Videos(channel.id, formatFilter || undefined);
 
     if (videosResult.totalVideos === 0) {
       return NextResponse.json({ 
         error: 'No videos found for this channel',
         channelId: channel.id,
-        totalVideos: 0
+        totalVideos: 0,
+        actualTotalVideos: videosResult.actualTotalVideos
       }, { status: 200 });
     }
 
@@ -185,9 +212,9 @@ export async function GET(request: NextRequest) {
       fromCache: false,
       analyzedAt: new Date(),
       tier,
-      totalVideoCount,
+      totalVideoCount: videosResult.actualTotalVideos,
       videosAnalyzed: videosResult.totalVideos,
-      fetchedAll: videosResult.fetchedAll,
+      fetchedAll: false, // We only fetched last 100 videos
       ...results
     });
 
