@@ -82,7 +82,7 @@ export class PerformancePatternEngine {
 
     return {
       successFactors: this.identifySuccessFactors(videos, avgViews, topPerformers, bottomPerformers),
-      performancePatterns: this.analyzePerformancePatterns(videos, avgViews),
+      performancePatterns: this.analyzeContentPatterns(videos, avgViews),
       optimizationOpportunities: this.identifyOptimizationOpportunities(channelData, videos, avgViews),
       engagementPatterns: this.analyzeEngagementPatterns(videos, topPerformers),
       channelSpecificInsights: this.generateChannelSpecificInsights(channelData, videos, topPerformers),
@@ -411,13 +411,13 @@ export class PerformancePatternEngine {
   /**
    * Analyze performance patterns across videos
    */
-  private analyzePerformancePatterns(videos: EnhancedVideoData[], avgViews: number): PerformancePattern[] {
+  private analyzeContentPatterns(videos: EnhancedVideoData[], avgViews: number): PerformancePattern[] {
     const patterns: PerformancePattern[] = [];
 
     // Analyze different content patterns
     patterns.push(...this.analyzeContentFormatPatterns(videos, avgViews));
     patterns.push(...this.analyzeTopicPatterns(videos, avgViews));
-    patterns.push(...this.analyzeEngagementPatterns(videos, avgViews));
+    patterns.push(...this.analyzeEngagementPerformancePatterns(videos, avgViews));
 
     return patterns
       .filter(p => p.avgPerformanceBoost > 1.1 && p.consistency > 0.6)
@@ -665,7 +665,7 @@ export class PerformancePatternEngine {
     return patterns;
   }
 
-  private analyzeEngagementPatterns(videos: EnhancedVideoData[], avgViews: number): PerformancePattern[] {
+  private analyzeEngagementPerformancePatterns(videos: EnhancedVideoData[], avgViews: number): PerformancePattern[] {
     // This method would analyze engagement-specific patterns
     // Implementation would depend on having engagement data
     return [];

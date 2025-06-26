@@ -11,7 +11,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ArrowLeft, Loader2, Plus, Gift, Users, BarChart3 } from 'lucide-react'
+import { ArrowLeft, Loader2, Plus, Gift, Users, BarChart3, Shield } from 'lucide-react'
+import Link from 'next/link'
 
 interface DiscountCode {
   id: string
@@ -42,9 +43,13 @@ export default function AdminPage() {
     }
 
     if (session?.user) {
-      // Check if user is admin (you can add proper admin role later)
+      // Check if user is admin
       const adminEmails = ['admin@insightsync.io', 'support@insightsync.io']
-      if (!adminEmails.includes(session.user.email)) {
+      const isAdmin = adminEmails.includes(session.user.email) || 
+                     session.user.role === 'SAAS_SUBSCRIBER' ||
+                     session.user.email.startsWith('course_admin-')
+      
+      if (!isAdmin) {
         router.push('/dashboard')
         return
       }
@@ -118,7 +123,11 @@ export default function AdminPage() {
   }
 
   const adminEmails = ['admin@insightsync.io', 'support@insightsync.io']
-  if (!adminEmails.includes(session.user.email)) {
+  const isAdmin = adminEmails.includes(session.user.email) || 
+                 session.user.role === 'SAAS_SUBSCRIBER' ||
+                 session.user.email.startsWith('course_admin-')
+  
+  if (!isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Card>
@@ -169,15 +178,43 @@ export default function AdminPage() {
           </TabsList>
 
           <TabsContent value="codes" className="space-y-6">
+            {/* Admin Access Codes */}
+            <Card className="border-accent-purple/30 bg-accent-purple/5">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-accent-purple">
+                  <Shield className="h-5 w-5" />
+                  Admin Access Codes
+                </CardTitle>
+                <CardDescription>
+                  Use these codes to access admin tools without email authentication
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="bg-card p-4 rounded-lg border border-accent-purple/20">
+                    <p className="text-sm text-muted-foreground mb-2">Master Admin Code:</p>
+                    <code className="text-lg font-mono text-accent-purple">ADMIN-MASTER-2025</code>
+                  </div>
+                  <div className="bg-card p-4 rounded-lg border border-accent-purple/20">
+                    <p className="text-sm text-muted-foreground mb-2">Bypass Key:</p>
+                    <code className="text-lg font-mono text-accent-purple">ADMIN-BYPASS-KEY</code>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-4">
+                    Access admin tools directly at <Link href="/auth/signin" className="text-primary hover:underline">/auth/signin</Link> → Admin tab
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Generate New Codes */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Plus className="h-5 w-5" />
-                  Generate Discount Codes
+                  Generate Course Codes
                 </CardTitle>
                 <CardDescription>
-                  Create new 100% discount codes for course members
+                  Create course codes that grant free COURSE_MEMBER access
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
