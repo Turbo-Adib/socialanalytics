@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Calculator, DollarSign, TrendingUp, ArrowRight, Tag, Sparkles, Loader2, Zap } from 'lucide-react';
+import { Search, Calculator, DollarSign, TrendingUp, ArrowRight, Tag, Sparkles, Loader2, Zap, AlertTriangle } from 'lucide-react';
 import { NicheMapper, parentCategories, type NicheData, type ParentCategory } from '@/data/nicheDatabase';
 
 interface RpmCalculatorProps {
@@ -121,11 +121,11 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
 
   const getMatchTypeColor = (matchType: string) => {
     switch (matchType) {
-      case 'exact': return 'text-green-600 bg-green-50 border-green-200';
-      case 'partial': return 'text-blue-600 bg-blue-50 border-blue-200';
-      case 'fuzzy': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      case 'intelligent': return 'text-purple-600 bg-purple-50 border-purple-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+      case 'exact': return 'text-accent-green bg-accent-green/10 border-accent-green/30';
+      case 'partial': return 'text-accent-blue bg-accent-blue/10 border-accent-blue/30';
+      case 'fuzzy': return 'text-accent-yellow bg-accent-yellow/10 border-accent-yellow/30';
+      case 'intelligent': return 'text-accent-purple bg-accent-purple/10 border-accent-purple/30';
+      default: return 'text-muted-foreground bg-muted/50 border-border';
     }
   };
 
@@ -188,7 +188,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                 placeholder="Try: React, Minecraft, Bitcoin, Cooking..."
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full pl-10 pr-12 py-3 border border-border bg-muted text-white rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-transparent text-base placeholder:text-muted-foreground/60"
+                className="w-full pl-10 pr-12 py-3 border border-border bg-background text-foreground rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-transparent text-base placeholder:text-muted-foreground/60"
                 disabled={isSearching}
               />
               
@@ -325,7 +325,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                           <button
                             key={suggestion}
                             onClick={() => setSearchTerm(suggestion)}
-                            className="px-2 py-1 bg-muted hover:bg-muted/80 text-xs text-white rounded border border-border transition-colors"
+                            className="px-2 py-1 bg-dark-bg-secondary hover:bg-dark-bg-hover text-xs text-white rounded border border-border transition-colors"
                           >
                             {suggestion}
                           </button>
@@ -372,7 +372,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                       className={`w-full text-left p-3 rounded-lg border transition-colors ${
                         selectedParentCategory?.id === category.id
                           ? 'border-accent-blue bg-accent-blue/10'
-                          : 'border-border hover:bg-muted/80'
+                          : 'border-border hover:bg-dark-bg-hover'
                       }`}
                     >
                       <div className="font-medium text-white">{category.name}</div>
@@ -426,7 +426,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                       className={`p-3 rounded-lg border text-center transition-colors ${
                         contentType === 'longform'
                           ? 'border-accent-green bg-accent-green/10 text-accent-green'
-                          : 'border-border hover:bg-muted/80 text-white'
+                          : 'border-border hover:bg-dark-bg-hover text-white'
                       }`}
                     >
                       <div className="font-medium">Long-form</div>
@@ -439,7 +439,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                       className={`p-3 rounded-lg border text-center transition-colors ${
                         contentType === 'shorts'
                           ? 'border-accent-blue bg-accent-blue/10 text-accent-blue'
-                          : 'border-border hover:bg-muted/80 text-white'
+                          : 'border-border hover:bg-dark-bg-hover text-white'
                       }`}
                     >
                       <div className="font-medium">Shorts</div>
@@ -457,7 +457,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                     type="number"
                     value={views}
                     onChange={(e) => setViews(Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-border bg-muted text-white rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-transparent placeholder:text-muted-foreground/60"
+                    className="w-full px-3 py-2 border border-border bg-background text-foreground rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-transparent placeholder:text-muted-foreground/60"
                     placeholder="Enter expected views"
                     min="0"
                   />
@@ -523,8 +523,42 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
           </div>
         </div>
 
+        {/* RPM Disclaimer */}
+        <div className="mt-8 bg-accent-yellow/10 border border-accent-yellow/30 rounded-lg p-6">
+          <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-accent-yellow" />
+            Important RPM Disclaimer
+          </h3>
+          <div className="space-y-3 text-sm">
+            <div>
+              <h4 className="font-medium text-accent-yellow mb-1">📊 Long-form Content Variables</h4>
+              <p className="text-muted-foreground">
+                RPM rates for long-form content vary significantly based on: <span className="text-white">video length</span> (10+ min videos earn more), 
+                <span className="text-white"> language</span> (English typically highest), <span className="text-white">format</span> (tutorials vs vlogs), 
+                <span className="text-white"> target audience</span> (age, location, income level), <span className="text-white">seasonality</span> (Q4 highest), 
+                and <span className="text-white"> advertiser demand</span>. The rates shown are averages for English content in tier-1 countries.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-medium text-accent-yellow mb-1">⚡ Shorts RPM Variables</h4>
+              <p className="text-muted-foreground">
+                YouTube Shorts RPM is primarily affected by <span className="text-white">language and geography</span>. Countries with lower GDP per capita 
+                typically see rates as low as <span className="text-white">$0.01-0.05</span> per 1K views, while tier-1 English-speaking countries average 
+                <span className="text-white">$0.10-0.20</span>. The $0.15 rate shown is a global average.
+              </p>
+            </div>
+            <div className="p-3 bg-accent-yellow/5 rounded border border-accent-yellow/20">
+              <p className="text-xs text-muted-foreground">
+                <strong className="text-accent-yellow">💡 Pro Tip:</strong> These are estimates based on creator reports and industry data. 
+                Your actual RPM will depend on your specific audience demographics, content quality, and engagement rates. 
+                Always check your YouTube Analytics for accurate earnings data.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Enhanced Info Box */}
-        <div className="mt-8 bg-gradient-to-r from-accent-blue/20 via-accent-blue/10 to-accent-blue/20 border border-accent-blue/30 rounded-lg p-6">
+        <div className="mt-6 bg-gradient-to-r from-accent-blue/20 via-accent-blue/10 to-accent-blue/20 border border-accent-blue/30 rounded-lg p-6">
           <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
             <Search className="h-5 w-5 text-accent-blue" />
             Smart Niche Classification System

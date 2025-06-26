@@ -128,34 +128,6 @@ export class YouTubeAPI {
     }
   }
 
-  extractChannelIdFromUrl(url: string): string | null {
-    // Handle different YouTube URL formats
-    const patterns = [
-      /youtube\.com\/channel\/([a-zA-Z0-9_-]+)/,
-      /youtube\.com\/@([a-zA-Z0-9_.-]+)/,
-      /youtube\.com\/c\/([a-zA-Z0-9_-]+)/,
-      /youtube\.com\/user\/([a-zA-Z0-9_-]+)/,
-    ];
-
-    for (const pattern of patterns) {
-      const match = url.match(pattern);
-      if (match) {
-        return match[1];
-      }
-    }
-
-    // If no pattern matches, check if it's already a channel ID or handle
-    if (url.startsWith('UC') && url.length === 24) {
-      return url;
-    }
-
-    // Check if it's a handle
-    if (url.startsWith('@') || !url.includes('/')) {
-      return url;
-    }
-
-    return null;
-  }
 
   isVideoShort(video: YouTubeVideo): boolean {
     // YouTube Shorts can be up to 3 minutes (180 seconds) as of 2024

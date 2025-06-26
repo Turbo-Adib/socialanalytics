@@ -203,16 +203,16 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
               <div className="text-sm text-accent-green">Videos Analyzed</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-green-900">{formatViews(analysis.averageViews)}</div>
-              <div className="text-sm text-green-700">Channel Average</div>
+              <div className="text-3xl font-bold text-accent-green">{formatViews(analysis.averageViews)}</div>
+              <div className="text-sm text-accent-green/80">Channel Average</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-green-900">{analysis.outliers.length}</div>
-              <div className="text-sm text-green-700">Top Performers</div>
+              <div className="text-3xl font-bold text-accent-green">{analysis.outliers.length}</div>
+              <div className="text-sm text-accent-green/80">Top Performers</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-green-900">{analysis.patterns.length}</div>
-              <div className="text-sm text-green-700">Success Patterns</div>
+              <div className="text-3xl font-bold text-accent-green">{analysis.patterns.length}</div>
+              <div className="text-sm text-accent-green/80">Success Patterns</div>
             </div>
           </div>
           
@@ -264,16 +264,16 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
               <div className="text-sm text-accent-blue">Total Videos</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-900">{formatViews(analysis.averageViews)}</div>
-              <div className="text-sm text-blue-700">Average Views</div>
+              <div className="text-2xl font-bold text-accent-blue">{formatViews(analysis.averageViews)}</div>
+              <div className="text-sm text-accent-blue/80">Average Views</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-900">{analysis.outliers.length}</div>
-              <div className="text-sm text-blue-700">Top Performers</div>
+              <div className="text-2xl font-bold text-accent-blue">{analysis.outliers.length}</div>
+              <div className="text-sm text-accent-blue/80">Top Performers</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-900">{analysis.patterns.length}</div>
-              <div className="text-sm text-blue-700">Patterns Detected</div>
+              <div className="text-2xl font-bold text-accent-blue">{analysis.patterns.length}</div>
+              <div className="text-sm text-accent-blue/80">Patterns Detected</div>
             </div>
           </div>
         </div>
@@ -347,10 +347,10 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
                           </div>
                         </div>
                       </div>
-                      <div className="text-2xl font-bold text-green-600 mb-1">
+                      <div className="text-2xl font-bold text-accent-green mb-1">
                         {formatViews(topic.avgViews)} average views
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-dark-text-secondary">
                         {topic.audienceAppeal}
                       </div>
                     </div>
@@ -358,30 +358,30 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
 
                   {/* Success Analysis */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                      <h5 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
+                    <div className="bg-accent-green/10 rounded-lg p-4 border border-accent-green/30">
+                      <h5 className="font-semibold text-white mb-2 flex items-center gap-2">
                         <Target className="h-4 w-4" />
                         Success Factors
                       </h5>
                       <ul className="space-y-1">
                         {topic.successFactors.map((factor, idx) => (
-                          <li key={idx} className="text-sm text-green-800 flex items-start gap-2">
-                            <span className="text-green-600 mt-1 text-xs">•</span>
+                          <li key={idx} className="text-sm text-dark-text-secondary flex items-start gap-2">
+                            <span className="text-accent-green mt-1 text-xs">•</span>
                             {factor}
                           </li>
                         ))}
                       </ul>
                     </div>
 
-                    <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                      <h5 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                    <div className="bg-accent-blue/10 rounded-lg p-4 border border-accent-blue/30">
+                      <h5 className="font-semibold text-white mb-2 flex items-center gap-2">
                         <Lightbulb className="h-4 w-4" />
                         Recommended Actions
                       </h5>
                       <ul className="space-y-1">
                         {topic.recommendedActions.map((action, idx) => (
-                          <li key={idx} className="text-sm text-blue-800 flex items-start gap-2">
-                            <span className="text-blue-600 mt-1 text-xs">•</span>
+                          <li key={idx} className="text-sm text-dark-text-secondary flex items-start gap-2">
+                            <span className="text-accent-blue mt-1 text-xs">•</span>
                             {action}
                           </li>
                         ))}
@@ -390,18 +390,18 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
                   </div>
 
                   {/* Competitive Advantage */}
-                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-200 mb-4">
-                    <h5 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
+                  <div className="bg-accent-purple/10 rounded-lg p-4 border border-accent-purple/30 mb-4">
+                    <h5 className="font-semibold text-white mb-2 flex items-center gap-2">
                       <Crown className="h-4 w-4" />
                       Competitive Advantage
                     </h5>
-                    <p className="text-sm text-purple-800">{topic.competitiveAdvantage}</p>
+                    <p className="text-sm text-dark-text-secondary">{topic.competitiveAdvantage}</p>
                   </div>
 
                   {/* Video Examples */}
                   {topic.examples && topic.examples.length > 0 && (
                     <div>
-                      <h5 className="font-medium text-gray-900 mb-3">Top Performing Examples</h5>
+                      <h5 className="font-medium text-white mb-3">Top Performing Examples</h5>
                       <div className="flex gap-3 overflow-x-auto">
                         {topic.examples.slice(0, 3).map((example, idx) => (
                           <a
@@ -427,7 +427,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
                                   </div>
                                 </div>
                               )}
-                              <p className="text-xs text-gray-600 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                              <p className="text-xs text-dark-text-secondary line-clamp-2 group-hover:text-accent-blue transition-colors">
                                 {example.title}
                               </p>
                             </div>
@@ -445,19 +445,19 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
         {/* Title Analysis */}
         {analysis.titleAnalysis && analysis.titleAnalysis.mostCommonWords.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Title Success Patterns</h3>
-            <div className="bg-card rounded-lg border border-border p-4">
+            <h3 className="text-lg font-semibold text-white mb-4">Title Success Patterns</h3>
+            <div className="bg-dark-bg-card rounded-lg border border-dark-border p-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Most Common Words */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">High-Performing Words</h4>
+                  <h4 className="font-medium text-white mb-3">High-Performing Words</h4>
                   <div className="space-y-2">
                     {analysis.titleAnalysis.mostCommonWords.slice(0, 8).map((word, index) => (
                       <div key={word.word} className="flex items-center justify-between text-sm">
-                        <span className="font-medium text-gray-700">"{word.word}"</span>
+                        <span className="font-medium text-dark-text-secondary">"{word.word}"</span>
                         <div className="text-right">
-                          <div className="text-green-600 font-semibold">{formatViews(word.avgViews)}</div>
-                          <div className="text-xs text-gray-500">{word.count} uses</div>
+                          <div className="text-accent-green font-semibold">{formatViews(word.avgViews)}</div>
+                          <div className="text-xs text-dark-text-tertiary">{word.count} uses</div>
                         </div>
                       </div>
                     ))}
@@ -466,22 +466,22 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
 
                 {/* Title Formats */}
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">
+                  <h4 className="font-medium text-white mb-3">
                     Successful Title Formats
-                    <span className="text-sm text-gray-500 ml-2">(Avg: {analysis.titleAnalysis.avgTitleLength} chars)</span>
+                    <span className="text-sm text-dark-text-tertiary ml-2">(Avg: {analysis.titleAnalysis.avgTitleLength} chars)</span>
                   </h4>
                   <div className="space-y-2">
                     {analysis.titleAnalysis.titleFormats.slice(0, 6).map((format, index) => (
                       <div key={format.format} className="text-sm">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-medium text-gray-700">{format.format}</span>
+                          <span className="font-medium text-dark-text-secondary">{format.format}</span>
                           <div className="text-right">
-                            <div className="text-green-600 font-semibold">{formatViews(format.avgViews)}</div>
-                            <div className="text-xs text-gray-500">{format.count} videos</div>
+                            <div className="text-accent-green font-semibold">{formatViews(format.avgViews)}</div>
+                            <div className="text-xs text-dark-text-tertiary">{format.count} videos</div>
                           </div>
                         </div>
                         {format.examples.length > 0 && (
-                          <div className="text-xs text-gray-500 italic">
+                          <div className="text-xs text-dark-text-tertiary italic">
                             Example: "{format.examples[0].length > 50 ? format.examples[0].substring(0, 50) + '...' : format.examples[0]}"
                           </div>
                         )}
@@ -497,61 +497,61 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
         {/* Content Specifications */}
         {analysis.contentSpecs && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-purple-600" />
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-accent-purple" />
               Optimal Content Specifications
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Optimal Length */}
-              <div className="bg-purple-50 rounded-lg border border-purple-200 p-4">
-                <h4 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
+              <div className="bg-accent-purple/10 rounded-lg border border-accent-purple/30 p-4">
+                <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   Optimal Length
                 </h4>
-                <div className="text-2xl font-bold text-purple-900 mb-1">
+                <div className="text-2xl font-bold text-accent-purple mb-1">
                   {analysis.contentSpecs.optimalLength.range}
                 </div>
-                <div className="text-sm text-purple-700 mb-2">
+                <div className="text-sm text-accent-purple/80 mb-2">
                   {formatViews(analysis.contentSpecs.optimalLength.avgViews)} avg views
                 </div>
-                <p className="text-xs text-purple-600">
+                <p className="text-xs text-dark-text-secondary">
                   {analysis.contentSpecs.optimalLength.description}
                 </p>
               </div>
 
               {/* Upload Timing */}
-              <div className="bg-blue-50 rounded-lg border border-blue-200 p-4">
-                <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+              <div className="bg-accent-blue/10 rounded-lg border border-accent-blue/30 p-4">
+                <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
                   <TrendingUp className="h-4 w-4" />
                   Best Upload Days
                 </h4>
                 <div className="space-y-1 mb-2">
                   {analysis.contentSpecs.uploadTiming.bestDays.length > 0 ? (
                     analysis.contentSpecs.uploadTiming.bestDays.map((day, idx) => (
-                      <div key={idx} className="text-sm font-medium text-blue-900">
+                      <div key={idx} className="text-sm font-medium text-accent-blue">
                         {idx === 0 ? '🥇' : '🥈'} {day}
                       </div>
                     ))
                   ) : (
-                    <div className="text-sm text-blue-700">Analyzing...</div>
+                    <div className="text-sm text-accent-blue/80">Analyzing...</div>
                   )}
                 </div>
-                <p className="text-xs text-blue-600">
+                <p className="text-xs text-dark-text-secondary">
                   {analysis.contentSpecs.uploadTiming.insight}
                 </p>
               </div>
 
               {/* Series vs Standalone */}
-              <div className="bg-green-50 rounded-lg border border-green-200 p-4">
-                <h4 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
+              <div className="bg-accent-green/10 rounded-lg border border-accent-green/30 p-4">
+                <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
                   <Video className="h-4 w-4" />
                   Content Format
                 </h4>
                 <div className="space-y-1 mb-2">
-                  <div className="text-xs text-green-700">Series: {formatViews(analysis.contentSpecs.seriesVsStandalone.seriesPerformance)} avg</div>
-                  <div className="text-xs text-green-700">Standalone: {formatViews(analysis.contentSpecs.seriesVsStandalone.standalonePerformance)} avg</div>
+                  <div className="text-xs text-accent-green/80">Series: {formatViews(analysis.contentSpecs.seriesVsStandalone.seriesPerformance)} avg</div>
+                  <div className="text-xs text-accent-green/80">Standalone: {formatViews(analysis.contentSpecs.seriesVsStandalone.standalonePerformance)} avg</div>
                 </div>
-                <p className="text-xs text-green-600">
+                <p className="text-xs text-dark-text-secondary">
                   {analysis.contentSpecs.seriesVsStandalone.recommendation}
                 </p>
               </div>
@@ -562,23 +562,23 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
         {/* Recommendations */}
         {analysis.recommendations.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Lightbulb className="h-5 w-5 text-yellow-600" />
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <Lightbulb className="h-5 w-5 text-accent-yellow" />
               🎯 Actionable Strategy Recommendations
             </h3>
-            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200 p-6">
+            <div className="bg-gradient-to-r from-accent-yellow/20 to-accent-orange/10 rounded-lg border border-accent-yellow/30 p-6">
               <div className="space-y-3">
                 {analysis.recommendations.map((rec, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 bg-card rounded-lg border border-border">
-                    <div className="flex-shrink-0 w-6 h-6 bg-yellow-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                  <div key={index} className="flex items-start gap-3 p-3 bg-dark-bg-card rounded-lg border border-dark-border">
+                    <div className="flex-shrink-0 w-6 h-6 bg-accent-yellow text-black rounded-full flex items-center justify-center text-sm font-semibold">
                       {index + 1}
                     </div>
-                    <span className="text-yellow-900 font-medium">{rec}</span>
+                    <span className="text-white font-medium">{rec}</span>
                   </div>
                 ))}
               </div>
-              <div className="mt-4 p-3 bg-yellow-100 rounded-lg">
-                <p className="text-yellow-800 text-sm font-medium">
+              <div className="mt-4 p-3 bg-accent-yellow/10 rounded-lg">
+                <p className="text-accent-yellow text-sm font-medium">
                   💡 <strong>Pro Tip:</strong> Implement these recommendations one at a time and measure results before adding more changes.
                 </p>
               </div>
@@ -621,11 +621,11 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
+          <h1 className="text-3xl font-bold text-white mb-4 flex items-center justify-center gap-3">
             <TrendingUp className="h-8 w-8 text-blue-600" />
             Outlier Video Pattern Analyzer
           </h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg text-dark-text-secondary max-w-3xl mx-auto">
             Get actionable insights from your top-performing content. Advanced pattern recognition analyzes your last 100 videos to identify winning formulas for titles, topics, timing, and content strategy.
           </p>
         </div>
@@ -635,7 +635,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
           <div className="space-y-4">
             <div className="flex gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white mb-2">
                   YouTube Channel URL
                 </label>
                 <input
@@ -643,7 +643,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
                   value={channelUrl}
                   onChange={(e) => setChannelUrl(e.target.value)}
                   placeholder="https://youtube.com/@channelname or https://youtube.com/channel/UC..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-dark-bg-secondary text-white placeholder:text-dark-text-tertiary border border-dark-border rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-transparent"
                   disabled={isAnalyzing}
                 />
               </div>
@@ -860,14 +860,14 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
                           <Lightbulb className="h-5 w-5" />
                           Expert Knowledge Base Analysis
                         </h4>
-                        <p className="text-sm text-orange-700 mb-4">
+                        <p className="text-sm text-accent-orange/80 mb-4">
                           Advanced insights powered by comprehensive short-form content creation knowledge base
                         </p>
                         <div className="space-y-3">
                           {analysisResults.combined.enhancedCombinedInsights.map((insight, index) => (
                             <div key={index} className="flex items-start gap-3">
-                              <span className="text-orange-600 mt-1 text-lg">•</span>
-                              <span className="text-orange-900 text-sm leading-relaxed">{insight}</span>
+                              <span className="text-accent-orange mt-1 text-lg">•</span>
+                              <span className="text-white text-sm leading-relaxed">{insight}</span>
                             </div>
                           ))}
                         </div>
@@ -875,21 +875,21 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
                     )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                        <h4 className="font-semibold text-green-900 mb-2">Long-form Summary</h4>
-                        <p className="text-green-800 text-sm">
+                      <div className="bg-accent-green/10 rounded-lg p-4 border border-accent-green/30">
+                        <h4 className="font-semibold text-white mb-2">Long-form Summary</h4>
+                        <p className="text-dark-text-secondary text-sm">
                           {analysisResults.longform.totalVideos} videos, averaging {formatViews(analysisResults.longform.averageViews)} views
                         </p>
-                        <p className="text-green-800 text-sm">
+                        <p className="text-dark-text-secondary text-sm">
                           {analysisResults.longform.outliers.length} top performers identified
                         </p>
                       </div>
-                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                        <h4 className="font-semibold text-blue-900 mb-2">Shorts Summary</h4>
-                        <p className="text-blue-800 text-sm">
+                      <div className="bg-accent-blue/10 rounded-lg p-4 border border-accent-blue/30">
+                        <h4 className="font-semibold text-white mb-2">Shorts Summary</h4>
+                        <p className="text-dark-text-secondary text-sm">
                           {analysisResults.shorts.totalVideos} videos, averaging {formatViews(analysisResults.shorts.averageViews)} views
                         </p>
-                        <p className="text-blue-800 text-sm">
+                        <p className="text-dark-text-secondary text-sm">
                           {analysisResults.shorts.outliers.length} top performers identified
                         </p>
                       </div>
@@ -907,43 +907,43 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
         )}
 
         {/* Enhanced Info Box */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-semibold text-blue-900 mb-3">🚀 Advanced Content Analysis Engine</h3>
+        <div className="bg-dark-bg-card border border-dark-border rounded-lg p-6">
+          <h3 className="font-semibold text-white mb-3">🚀 Advanced Content Analysis Engine</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm mb-4">
             <div>
-              <h4 className="font-medium text-blue-900 mb-2">🔍 Smart Detection</h4>
-              <p className="text-blue-800">
+              <h4 className="font-medium text-white mb-2">🔍 Smart Detection</h4>
+              <p className="text-dark-text-secondary">
                 Enhanced Shorts detection with 4-layer validation: duration, hashtags, format indicators, and vertical hints.
               </p>
             </div>
             <div>
-              <h4 className="font-medium text-blue-900 mb-2">🎯 Pattern Recognition</h4>
-              <p className="text-blue-800">
+              <h4 className="font-medium text-white mb-2">🎯 Pattern Recognition</h4>
+              <p className="text-dark-text-secondary">
                 40+ advanced patterns including power words, emotional triggers, title structures, and content formats.
               </p>
             </div>
             <div>
-              <h4 className="font-medium text-blue-900 mb-2">📈 Topic Intelligence</h4>
-              <p className="text-blue-800">
+              <h4 className="font-medium text-white mb-2">📈 Topic Intelligence</h4>
+              <p className="text-dark-text-secondary">
                 AI-powered topic categorization across 15+ niches with performance scoring and success insights.
               </p>
             </div>
             <div>
-              <h4 className="font-medium text-blue-900 mb-2">⏰ Timing Analysis</h4>
-              <p className="text-blue-800">
+              <h4 className="font-medium text-white mb-2">⏰ Timing Analysis</h4>
+              <p className="text-dark-text-secondary">
                 Optimal length detection, upload timing patterns, and series vs standalone performance comparison.
               </p>
             </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-green-800 text-sm">
+            <div className="p-3 bg-accent-green/10 border border-accent-green/30 rounded-lg">
+              <p className="text-accent-green text-sm">
                 💰 <strong>Cost Efficient:</strong> Analyzes last 100 videos only - reduces API costs from $0.15-$0.30 to $0.0048 per channel (98% savings).
               </p>
             </div>
-            <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
-              <p className="text-purple-800 text-sm">
+            <div className="p-3 bg-accent-purple/10 border border-accent-purple/30 rounded-lg">
+              <p className="text-accent-purple text-sm">
                 🎯 <strong>Actionable Results:</strong> Specific recommendations with emojis, performance metrics, and step-by-step implementation guides.
               </p>
             </div>
@@ -954,7 +954,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
           <div className="mt-6 text-center">
             <button
               onClick={onClose}
-              className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              className="px-6 py-2 bg-dark-bg-secondary text-white rounded-lg hover:bg-dark-bg-hover transition-colors"
             >
               Back to Dashboard
             </button>

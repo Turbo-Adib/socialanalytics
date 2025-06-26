@@ -25,11 +25,28 @@ const ChannelProfileCard: React.FC<ChannelProfileCardProps> = ({ channel }) => {
       <div className="flex flex-col md:flex-row gap-6">
         {/* Channel Avatar */}
         <div className="flex-shrink-0">
-          <img
-            src={channel.thumbnailUrl || '/default-avatar.png'}
-            alt={channel.title}
-            className="w-24 h-24 rounded-full object-cover border-4 border-dark-border"
-          />
+          {channel.thumbnailUrl ? (
+            <img
+              src={channel.thumbnailUrl}
+              alt={channel.title}
+              className="w-24 h-24 rounded-full object-cover border-4 border-dark-border"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent) {
+                  const defaultAvatar = document.createElement('div');
+                  defaultAvatar.className = 'w-24 h-24 rounded-full border-4 border-dark-border bg-gradient-to-br from-youtube-red to-youtube-red-hover flex items-center justify-center text-white font-bold text-3xl';
+                  defaultAvatar.textContent = channel.title?.charAt(0).toUpperCase() || 'Y';
+                  parent.appendChild(defaultAvatar);
+                }
+              }}
+            />
+          ) : (
+            <div className="w-24 h-24 rounded-full border-4 border-dark-border bg-gradient-to-br from-youtube-red to-youtube-red-hover flex items-center justify-center text-white font-bold text-3xl">
+              {channel.title?.charAt(0).toUpperCase() || 'Y'}
+            </div>
+          )}
         </div>
 
         {/* Channel Info */}

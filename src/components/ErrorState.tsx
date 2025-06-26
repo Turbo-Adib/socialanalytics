@@ -143,17 +143,15 @@ const ErrorState: React.FC<ErrorStateProps> = ({ error, onRetry, onReset, channe
           </div>
         </div>
 
-        {/* Technical Error Details (for development) */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mt-4 p-4 bg-youtube-red/10 border border-youtube-red/30 rounded-lg">
-            <h4 className="text-sm font-semibold text-youtube-red mb-2">
-              Technical Details (Development):
-            </h4>
-            <p className="text-xs font-mono text-white break-all">
-              {error}
-            </p>
-          </div>
-        )}
+        {/* Technical Error Details */}
+        <div className="mt-4 p-4 bg-youtube-red/10 border border-youtube-red/30 rounded-lg">
+          <h4 className="text-sm font-semibold text-youtube-red mb-2">
+            Technical Details:
+          </h4>
+          <p className="text-xs font-mono text-white break-all">
+            {error}
+          </p>
+        </div>
       </div>
     </div>
   );

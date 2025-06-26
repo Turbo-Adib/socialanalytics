@@ -41,16 +41,22 @@ const AnalysisFormSection: React.FC<AnalysisFormSectionProps> = ({ onAnalyze, is
         <div className="text-center mb-16">
           <Badge className="mb-6 px-4 py-2 text-sm font-medium bg-accent-purple/20 text-accent-purple border-accent-purple/30">
             <Sparkles className="h-4 w-4 mr-2" />
-            Free Channel Analysis
+            Demo Analysis - Sample Data
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Analyze Any YouTube Channel
-            <span className="block text-youtube-red">In 30 Seconds</span>
+            Try Our Analytics Platform
+            <span className="block text-youtube-red">With Sample Data</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Enter any YouTube channel URL or handle to get instant insights on revenue potential, 
-            performance patterns, and growth opportunities—completely free.
+            See how our analytics platform works with sample channel data. 
+            Sign up for a free account to analyze real YouTube channels.
           </p>
+          <div className="mt-4 p-3 bg-muted/50 rounded-lg max-w-2xl mx-auto">
+            <p className="text-sm text-muted-foreground">
+              <strong>Demo Note:</strong> This shows sample data regardless of the channel URL you enter. 
+              Create a free account to get real analytics for any YouTube channel.
+            </p>
+          </div>
         </div>
 
         {/* Analysis Form */}

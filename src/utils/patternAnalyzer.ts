@@ -631,7 +631,7 @@ export class PatternAnalyzer {
       }
     }
 
-    return [...new Set(topics)]; // Remove duplicates
+    return Array.from(new Set(topics)); // Remove duplicates
   }
 
   /**
@@ -1049,7 +1049,7 @@ export class PatternAnalyzer {
       let bestRange = '31-45s';
       let bestAvgViews = 0;
 
-      for (const [range, data] of durationBuckets.entries()) {
+      for (const [range, data] of Array.from(durationBuckets.entries())) {
         if (data.videos.length >= 2) { // Need at least 2 videos for confidence
           const avgViews = data.totalViews / data.videos.length;
           if (avgViews > bestAvgViews) {
@@ -1090,7 +1090,7 @@ export class PatternAnalyzer {
       let bestRange = '7-10 min';
       let bestAvgViews = 0;
 
-      for (const [range, data] of durationBuckets.entries()) {
+      for (const [range, data] of Array.from(durationBuckets.entries())) {
         if (data.videos.length >= 1) {
           const avgViews = data.totalViews / data.videos.length;
           if (avgViews > bestAvgViews) {

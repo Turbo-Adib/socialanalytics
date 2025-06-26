@@ -19,7 +19,7 @@ const tokenStore = new Map<string, { count: number; resetTime: number }>()
 // Clean up expired tokens every 5 minutes
 setInterval(() => {
   const now = Date.now()
-  for (const [key, value] of tokenStore.entries()) {
+  for (const [key, value] of Array.from(tokenStore.entries())) {
     if (value.resetTime < now) {
       tokenStore.delete(key)
     }
@@ -120,8 +120,8 @@ export function getClientIP(request: NextRequest): string {
     return cfConnectingIP
   }
   
-  // Fallback to connection IP
-  return request.ip || 'unknown'
+  // Fallback to default
+  return 'unknown'
 }
 
 export function getRateLimitHeaders(result: RateLimitResult): Record<string, string> {

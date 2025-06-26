@@ -367,7 +367,7 @@ export class VideoAnalyzer {
             videoUrl: this.generateVideoUrl(video.id),
             thumbnailUrl: video.snippet.thumbnails?.medium?.url || video.snippet.thumbnails?.default?.url,
           };
-        }).filter(video => {
+        }).filter((video: any) => {
           // Apply format filter if specified
           if (formatFilter === 'longform') return !video.isShort;
           if (formatFilter === 'shorts') return video.isShort;
