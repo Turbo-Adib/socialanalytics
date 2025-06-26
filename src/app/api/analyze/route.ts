@@ -10,11 +10,20 @@ import { IntelligentAnalysisEngine } from '@/lib/intelligentAnalysis';
 import { getSession, checkUsageLimit, incrementUsage } from '@/lib/auth-utils';
 
 export async function GET(request: NextRequest) {
+  console.log('[Analyze API] Starting analysis request');
+  
   try {
     // Check authentication
     const session = await getSession();
+    console.log('[Analyze API] Session:', session ? 'Found' : 'Not found');
+    
     if (!session?.user) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      console.error('[Analyze API] No authenticated user');
+      return NextResponse.json({ 
+        error: 'Authentication required. Please sign in to analyze channels.',
+        details: 'You must be logged in to use this feature',
+        help: 'Sign in or create an account to continue'
+      }, { status: 401 });
     }
 
     // Check usage limits
@@ -36,15 +45,37 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'URL parameter is required' }, { status: 400 });
     }
 
-    const api = new YouTubeAPI();
+    // Check if YouTube API key is available
+    if (!process.env.YOUTUBE_API_KEY) {
+      console.error('[Analyze API] YouTube API key not found in environment variables');
+      return NextResponse.json({ 
+        error: 'YouTube API key is not configured. Please add YOUTUBE_API_KEY to your .env.local file.',
+        details: 'Missing YOUTUBE_API_KEY environment variable',
+        help: 'Get your API key from https://console.cloud.google.com/apis/credentials'
+      }, { status: 500 });
+    }
+    
+    let api;
+    try {
+      api = new YouTubeAPI();
+    } catch (apiError) {
+      console.error('[Analyze API] Failed to initialize YouTube API:', apiError);
+      return NextResponse.json({ 
+        error: 'Failed to initialize YouTube API',
+        details: apiError instanceof Error ? apiError.message : 'Unknown error'
+      }, { status: 500 });
+    }
     
     // Extract channel ID or handle from URL
     const channelIdentifier = api.extractChannelIdFromUrl(url);
+    console.log(`[Analyze API] URL: ${url}, Extracted identifier: ${channelIdentifier}`);
+    
     if (!channelIdentifier) {
+      console.error('[Analyze API] Failed to extract channel identifier from URL');
       return NextResponse.json({ error: 'Invalid YouTube channel URL' }, { status: 400 });
     }
 
-    console.log(`Analyzing channel: ${url} (${channelIdentifier})`);
+    console.log(`[Analyze API] Analyzing channel: ${url} (${channelIdentifier})`);
 
     // Check cache first (reduced cache time to 15 minutes for more accurate data)
     const cachedChannel = await prisma.channel.findUnique({
@@ -100,15 +131,32 @@ export async function GET(request: NextRequest) {
     let channelData = null;
     
     // Use YouTube Data API v3 directly (skip yt-dlp due to bot verification issues)
-    console.log('Using YouTube Data API v3...');
+    console.log('[Analyze API] Using YouTube Data API v3...');
     let channel;
-    if (channelIdentifier.startsWith('UC') && channelIdentifier.length === 24) {
-      channel = await api.getChannelById(channelIdentifier);
-    } else {
-      channel = await api.getChannelByHandle(channelIdentifier);
+    try {
+      if (channelIdentifier.startsWith('UC') && channelIdentifier.length === 24) {
+        console.log('[Analyze API] Fetching channel by ID:', channelIdentifier);
+        channel = await api.getChannelById(channelIdentifier);
+      } else {
+        console.log('[Analyze API] Fetching channel by handle:', channelIdentifier);
+        channel = await api.getChannelByHandle(channelIdentifier);
+      }
+    } catch (apiError) {
+      console.error('[Analyze API] YouTube API call failed:', apiError);
+      if (apiError instanceof Error && apiError.message.includes('API key')) {
+        return NextResponse.json({ 
+          error: 'YouTube API key is invalid or missing',
+          details: 'Please check API configuration'
+        }, { status: 500 });
+      }
+      return NextResponse.json({ 
+        error: 'Failed to fetch channel data from YouTube',
+        details: apiError instanceof Error ? apiError.message : 'Unknown error'
+      }, { status: 500 });
     }
 
     if (!channel) {
+      console.error('[Analyze API] Channel not found for identifier:', channelIdentifier);
       return NextResponse.json({ error: 'Channel not found' }, { status: 404 });
     }
 
@@ -387,9 +435,34 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response);
   } catch (error) {
     console.error('API error:', error);
-    if (error instanceof Error && error.message.includes('API key')) {
-      return NextResponse.json({ error: 'YouTube API key is not configured' }, { status: 500 });
+    
+    // Provide more detailed error messages
+    if (error instanceof Error) {
+      if (error.message.includes('API key')) {
+        return NextResponse.json({ 
+          error: 'YouTube API key is invalid or not configured',
+          details: error.message,
+          help: 'Check that your YOUTUBE_API_KEY in .env.local is valid'
+        }, { status: 500 });
+      }
+      
+      if (error.message.includes('quota')) {
+        return NextResponse.json({ 
+          error: 'YouTube API quota exceeded',
+          details: 'Daily API limit reached. Try again tomorrow.',
+          help: 'YouTube Data API v3 has daily quota limits'
+        }, { status: 429 });
+      }
+      
+      return NextResponse.json({ 
+        error: 'Failed to analyze channel',
+        details: error.message
+      }, { status: 500 });
     }
-    return NextResponse.json({ error: 'Failed to analyze channel' }, { status: 500 });
+    
+    return NextResponse.json({ 
+      error: 'An unexpected error occurred',
+      details: 'Please try again or contact support'
+    }, { status: 500 });
   }
 }

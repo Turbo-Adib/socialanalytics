@@ -7,11 +7,39 @@ interface MinimalDashboardProps {
 }
 
 const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset }) => {
-  const { overview, recentPerformance, projections } = analytics;
+  const { overview, recentPerformance, projections, demoNote, requestedUrl } = analytics;
 
   return (
     <div className="min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+        {/* Demo Notice */}
+        {demoNote && (
+          <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                  Demo Mode - Sample Data
+                </p>
+                <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
+                  {demoNote}
+                </p>
+                {requestedUrl && (
+                  <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2">
+                    You requested: {requestedUrl}
+                  </p>
+                )}
+                <a 
+                  href="/auth/signup" 
+                  className="inline-flex items-center gap-1 mt-3 text-sm font-medium text-yellow-900 dark:text-yellow-100 hover:underline"
+                >
+                  Sign up for free to analyze real channels →
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Back button */}
         <button
           onClick={onReset}
@@ -24,11 +52,28 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
         {/* Channel Header */}
         <div className="card mb-6">
           <div className="flex items-start gap-4">
-            <img
-              src={overview.thumbnailUrl}
-              alt={overview.title}
-              className="w-20 h-20 rounded-full ring-2 ring-youtube-red ring-offset-2 dark:ring-offset-dark-bg-card"
-            />
+            {overview.thumbnailUrl ? (
+              <img
+                src={overview.thumbnailUrl}
+                alt={overview.title}
+                className="w-20 h-20 rounded-full ring-2 ring-youtube-red ring-offset-2 dark:ring-offset-dark-bg-card object-cover"
+                onError={(e) => {
+                  const target = e.currentTarget as HTMLImageElement;
+                  target.style.display = 'none';
+                  const parent = target.parentElement;
+                  if (parent) {
+                    const defaultAvatar = document.createElement('div');
+                    defaultAvatar.className = 'w-20 h-20 rounded-full ring-2 ring-youtube-red ring-offset-2 dark:ring-offset-dark-bg-card bg-gradient-to-br from-youtube-red to-youtube-red-hover flex items-center justify-center text-white font-bold text-2xl';
+                    defaultAvatar.textContent = overview.title?.charAt(0).toUpperCase() || 'Y';
+                    parent.appendChild(defaultAvatar);
+                  }
+                }}
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-full ring-2 ring-youtube-red ring-offset-2 dark:ring-offset-dark-bg-card bg-gradient-to-br from-youtube-red to-youtube-red-hover flex items-center justify-center text-white font-bold text-2xl">
+                {overview.title?.charAt(0).toUpperCase() || 'Y'}
+              </div>
+            )}
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{overview.title}</h1>
               <p className="text-gray-600 dark:text-dark-text-secondary mt-1 flex items-center gap-2">
@@ -36,7 +81,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
                 {overview.niche} Channel
               </p>
               <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mt-2">
-                Channel Age: {overview.estimatedAge.years}y {overview.estimatedAge.months}m
+                Channel Age: {overview?.estimatedAge?.years || 0}y {overview?.estimatedAge?.months || 0}m
               </p>
             </div>
           </div>
@@ -51,7 +96,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
               </div>
               <div>
                 <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate">
-                  {overview.subscriberCount.toLocaleString()}
+                  {overview?.subscriberCount?.toLocaleString() || '0'}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Subscribers</p>
               </div>
@@ -65,7 +110,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
               </div>
               <div>
                 <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate">
-                  {overview.totalViews.toLocaleString()}
+                  {overview?.totalViews?.toLocaleString() || '0'}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Total Views</p>
               </div>
@@ -79,7 +124,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
               </div>
               <div>
                 <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate">
-                  {overview.videoCount.toLocaleString()}
+                  {overview?.videoCount?.toLocaleString() || '0'}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Total Videos</p>
               </div>
@@ -93,7 +138,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
               </div>
               <div>
                 <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate">
-                  ${overview.monthlyRevenue.estimated.toLocaleString()}
+                  ${overview?.monthlyRevenue?.estimated?.toLocaleString() || '0'}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Monthly Revenue</p>
               </div>
@@ -107,7 +152,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
             <TrendingUp className="h-5 w-5 text-accent-blue" />
             Recent Performance
             <span className="text-sm font-normal text-gray-500 dark:text-dark-text-tertiary">
-              (Last {recentPerformance.totalVideos} videos)
+              (Last {recentPerformance?.totalVideos || 0} videos)
             </span>
           </h2>
           
@@ -115,10 +160,10 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
             <div>
               <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-1">Average Views</p>
               <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
-                {recentPerformance.averageViews.toLocaleString()}
+                {recentPerformance?.averageViews?.toLocaleString() || '0'}
               </p>
               <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mt-1">
-                Upload frequency: {recentPerformance.uploadFrequency} videos/month
+                Upload frequency: {recentPerformance?.uploadFrequency || 0} videos/month
               </p>
             </div>
 
@@ -127,13 +172,13 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
               <div className="flex gap-4">
                 <div>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {recentPerformance.contentMix.longFormPercentage}%
+                    {recentPerformance?.contentMix?.longFormPercentage || 0}%
                   </p>
                   <p className="text-xs text-gray-500 dark:text-dark-text-tertiary">Long-form</p>
                 </div>
                 <div>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {recentPerformance.contentMix.shortsPercentage}%
+                    {recentPerformance?.contentMix?.shortsPercentage || 0}%
                   </p>
                   <p className="text-xs text-gray-500 dark:text-dark-text-tertiary">Shorts</p>
                 </div>
@@ -143,10 +188,10 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
             <div>
               <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-1">Revenue Estimate</p>
               <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
-                ${recentPerformance.revenueEstimate.monthly.toLocaleString()}/mo
+                ${recentPerformance?.revenueEstimate?.monthly?.toLocaleString() || '0'}/mo
               </p>
               <p className="text-xs text-gray-500 dark:text-dark-text-tertiary mt-1">
-                Range: ${overview.monthlyRevenue.min} - ${overview.monthlyRevenue.max}
+                Range: ${overview?.monthlyRevenue?.min || 0} - ${overview?.monthlyRevenue?.max || 0}
               </p>
             </div>
           </div>
@@ -161,21 +206,21 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
             </h3>
             <div>
               <p className="font-medium text-gray-900 dark:text-white line-clamp-2">
-                {recentPerformance.bestVideo.title}
+                {recentPerformance?.bestVideo?.title || 'No videos found'}
               </p>
               <p className="text-lg font-bold text-accent-green mt-2">
-                {recentPerformance.bestVideo.views?.toLocaleString()} views
+                {recentPerformance?.bestVideo?.views?.toLocaleString() || '0'} views
               </p>
               <div className="flex items-center gap-2 mt-2">
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
-                  recentPerformance.bestVideo.performance === 'excellent' ? 'bg-accent-green/20 text-accent-green' :
-                  recentPerformance.bestVideo.performance === 'good' ? 'bg-accent-blue/20 text-accent-blue' :
+                  recentPerformance?.bestVideo?.performance === 'excellent' ? 'bg-accent-green/20 text-accent-green' :
+                  recentPerformance?.bestVideo?.performance === 'good' ? 'bg-accent-blue/20 text-accent-blue' :
                   'bg-dark-bg-secondary text-dark-text-secondary'
                 }`}>
-                  {recentPerformance.bestVideo.performance}
+                  {recentPerformance?.bestVideo?.performance || 'average'}
                 </span>
                 <span className="text-xs text-gray-500 dark:text-dark-text-tertiary">
-                  {recentPerformance.bestVideo.isShort ? 'Short' : 'Long-form'}
+                  {recentPerformance?.bestVideo?.isShort ? 'Short' : 'Long-form'}
                 </span>
               </div>
             </div>
@@ -188,20 +233,20 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
             </h3>
             <div>
               <p className="font-medium text-gray-900 dark:text-white line-clamp-2">
-                {recentPerformance.worstVideo.title}
+                {recentPerformance?.worstVideo?.title || 'No videos found'}
               </p>
               <p className="text-lg font-bold text-youtube-red mt-2">
-                {recentPerformance.worstVideo.views?.toLocaleString()} views
+                {recentPerformance?.worstVideo?.views?.toLocaleString() || '0'} views
               </p>
               <div className="flex items-center gap-2 mt-2">
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
-                  recentPerformance.worstVideo.performance === 'poor' ? 'bg-youtube-red/20 text-youtube-red' :
+                  recentPerformance?.worstVideo?.performance === 'poor' ? 'bg-youtube-red/20 text-youtube-red' :
                   'bg-dark-bg-secondary text-dark-text-secondary'
                 }`}>
-                  {recentPerformance.worstVideo.performance}
+                  {recentPerformance?.worstVideo?.performance || 'average'}
                 </span>
                 <span className="text-xs text-gray-500 dark:text-dark-text-tertiary">
-                  {recentPerformance.worstVideo.isShort ? 'Short' : 'Long-form'}
+                  {recentPerformance?.worstVideo?.isShort ? 'Short' : 'Long-form'}
                 </span>
               </div>
             </div>
@@ -219,13 +264,13 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
             <div>
               <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-2">Next Subscriber Milestone</p>
               <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-                {projections.subscribers.nextMilestone.toLocaleString()}
+                {projections?.subscribers?.nextMilestone?.toLocaleString() || '0'}
               </p>
               <p className="text-sm text-gray-600 dark:text-dark-text-secondary mt-1">
-                {projections.subscribers.estimatedDays} days to reach
+                {projections?.subscribers?.estimatedDays || '0'} days to reach
               </p>
               <p className="text-xs text-gray-500 dark:text-dark-text-tertiary mt-1">
-                Growth rate: {projections.subscribers.growthRate.toLocaleString()}/month
+                Growth rate: {projections?.subscribers?.growthRate?.toLocaleString() || '0'}/month
               </p>
             </div>
 
@@ -234,10 +279,10 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
               <div className="space-y-2">
                 <div>
                   <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
-                    ${projections.revenue.nextMonth.toLocaleString()}/mo
+                    ${projections?.revenue?.nextMonth?.toLocaleString() || '0'}/mo
                   </p>
                   <p className="text-sm text-gray-600 dark:text-dark-text-secondary">
-                    ${projections.revenue.nextYear.toLocaleString()}/yr
+                    ${projections?.revenue?.nextYear?.toLocaleString() || '0'}/yr
                   </p>
                 </div>
               </div>

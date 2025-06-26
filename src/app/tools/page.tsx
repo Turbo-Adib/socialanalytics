@@ -13,6 +13,7 @@ import OutlierAnalyzer from '@/components/OutlierAnalyzer';
 import MinimalDashboard from '@/components/MinimalDashboard';
 import LoadingState from '@/components/LoadingState';
 import ErrorState from '@/components/ErrorState';
+import { convertToMinimalAnalytics } from '@/utils/convertAnalyticsFormat';
 
 export default function ToolsPage() {
   const { data: session, status } = useSession();
@@ -92,13 +93,29 @@ export default function ToolsPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to analyze channel');
+        // Extract more detailed error information
+        const errorMessage = data.error || 'Failed to analyze channel';
+        const errorDetails = data.details || '';
+        const errorHelp = data.help || '';
+        
+        // Combine error messages for better debugging
+        let fullError = errorMessage;
+        if (errorDetails) {
+          fullError += `. ${errorDetails}`;
+        }
+        if (errorHelp) {
+          fullError += ` ${errorHelp}`;
+        }
+        
+        throw new Error(fullError);
       }
 
       setLoadingStage('finalizing');
       await new Promise(resolve => setTimeout(resolve, 200));
       
-      setAnalytics(data);
+      // Convert to MinimalAnalytics format for MinimalDashboard
+      const minimalAnalytics = convertToMinimalAnalytics(data);
+      setAnalytics(minimalAnalytics);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
