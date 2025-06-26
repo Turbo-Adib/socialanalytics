@@ -1,4 +1,4 @@
-import { VideoData } from '@/src/lib/videoAnalyzer';
+import { VideoData } from '@/lib/videoAnalyzer';
 
 export interface OutlierVideo extends VideoData {
   multiplier: number; // How many times above average
@@ -68,6 +68,7 @@ export interface AnalysisResults {
   combined: {
     totalVideos: number;
     crossFormatInsights: string[];
+    enhancedCombinedInsights?: string[];
   };
 }
 
@@ -692,57 +693,23 @@ export class PatternAnalyzer {
   }
 
   /**
-   * Generate deep insights for a specific topic
+   * Generate deep insights for a specific topic based on actual video content
    */
   private analyzeTopicInsights(topic: string, examples: OutlierVideo[], avgViews: number): Omit<TopicInsight, 'topic' | 'avgViews' | 'count' | 'examples'> {
     // Calculate performance score (1-10 scale based on relative performance)
-    const maxViews = Math.max(...examples.map(v => v.viewCount));
     const performanceScore = Math.min(10, Math.max(1, Math.round((avgViews / 10000) * 2)));
 
-    // Analyze topic characteristics for insights
-    const topicLower = topic.toLowerCase();
+    // Analyze actual content of these videos
+    const actualTitles = examples.map(v => v.title);
+    const actualContent = actualTitles.join(' ').toLowerCase();
     
-    // Determine audience appeal based on topic
-    let audienceAppeal: string;
-    let successFactors: string[];
-    let recommendedActions: string[];
-    let competitiveAdvantage: string;
-
-    if (topicLower.includes('unboxing')) {
-      audienceAppeal = "Tech enthusiasts, potential buyers, and product researchers";
-      successFactors = ["First impressions excitement", "Product discovery", "Authentic reactions"];
-      recommendedActions = ["Show clear product shots", "Highlight unique features", "Include size comparisons"];
-      competitiveAdvantage = "Builds trust through authentic first-time reactions and detailed product showcase";
-    } else if (topicLower.includes('review')) {
-      audienceAppeal = "Purchase decision-makers and product comparison shoppers";
-      successFactors = ["Honest assessment", "Detailed analysis", "Real-world testing"];
-      recommendedActions = ["Test in realistic scenarios", "Compare with alternatives", "Share pros and cons"];
-      competitiveAdvantage = "Provides valuable buying guidance that viewers actively seek out";
-    } else if (topicLower.includes('tutorial') || topicLower.includes('how')) {
-      audienceAppeal = "Learners and problem-solvers seeking step-by-step guidance";
-      successFactors = ["Clear instructions", "Visual demonstrations", "Problem-solving focus"];
-      recommendedActions = ["Break down complex steps", "Show common mistakes", "Provide alternative methods"];
-      competitiveAdvantage = "Offers practical value that viewers bookmark and share";
-    } else if (topicLower.includes('gaming') || topicLower.includes('game')) {
-      audienceAppeal = "Gamers, entertainment seekers, and gaming community members";
-      successFactors = ["Engaging gameplay", "Skill demonstration", "Community connection"];
-      recommendedActions = ["Show impressive moments", "Explain strategies", "Engage with comments"];
-      competitiveAdvantage = "Taps into passionate gaming community with high engagement rates";
-    } else if (topicLower.match(/\b(phone|smartphone|tablet|laptop|computer)\b/)) {
-      audienceAppeal = "Tech consumers researching purchases and upgrades";
-      successFactors = ["Latest technology focus", "Performance comparisons", "Value assessment"];
-      recommendedActions = ["Test real-world performance", "Compare with competitors", "Discuss pricing"];
-      competitiveAdvantage = "Serves high-intent audience actively making purchase decisions";
-    } else {
-      // Generic analysis for other topics
-      audienceAppeal = "Engaged viewers interested in specialized content";
-      successFactors = ["Niche expertise", "Consistent quality", "Community building"];
-      recommendedActions = ["Develop topic expertise", "Create series content", "Engage with niche community"];
-      competitiveAdvantage = "Establishes authority in specific content vertical";
-    }
+    // Extract what actually makes these videos successful
+    const successFactors = this.extractActualSuccessFactors(examples, actualContent);
+    const audienceAppeal = this.extractActualAudienceAppeal(examples, actualContent);
+    const recommendedActions = this.extractActualRecommendations(examples, actualContent);
+    const competitiveAdvantage = this.extractActualCompetitiveAdvantage(examples, actualContent);
 
     // Determine trend direction based on recent performance
-    // For now, marking all as stable since we'd need historical data for trend analysis
     const trendDirection: 'rising' | 'stable' | 'declining' = 'stable';
 
     return {
@@ -753,6 +720,165 @@ export class PatternAnalyzer {
       competitiveAdvantage,
       performanceScore
     };
+  }
+
+  /**
+   * Extract success factors based on actual video performance
+   */
+  private extractActualSuccessFactors(examples: OutlierVideo[], content: string): string[] {
+    const factors: string[] = [];
+    
+    // Analyze what these specific videos do well
+    if (examples.some(v => v.title.includes('?'))) {
+      factors.push(`Question format creates curiosity - seen in "${examples.find(v => v.title.includes('?'))?.title}"`);
+    }
+    
+    if (examples.some(v => /\d+/.test(v.title))) {
+      const numberedVideo = examples.find(v => /\d+/.test(v.title));
+      factors.push(`Numbered content provides clear structure - like "${numberedVideo?.title}"`);
+    }
+    
+    if (content.includes('honest') || content.includes('brutal')) {
+      factors.push(`Authentic, unfiltered approach builds trust with audience`);
+    }
+    
+    if (content.includes('rating') || content.includes('subscribers')) {
+      factors.push(`Interactive community elements drive high engagement and repeat viewership`);
+    }
+    
+    if (content.includes('you') || content.includes('your')) {
+      factors.push(`Direct audience address creates personal connection and relevance`);
+    }
+    
+    // Analyze title length patterns
+    const avgTitleLength = examples.reduce((sum, v) => sum + v.title.length, 0) / examples.length;
+    if (avgTitleLength < 50) {
+      factors.push(`Concise titles (avg ${Math.round(avgTitleLength)} chars) improve mobile readability`);
+    } else if (avgTitleLength > 70) {
+      factors.push(`Detailed titles (avg ${Math.round(avgTitleLength)} chars) provide comprehensive context`);
+    }
+    
+    // If no specific patterns found, analyze performance multipliers
+    if (factors.length === 0) {
+      const topPerformer = examples.sort((a, b) => b.multiplier - a.multiplier)[0];
+      factors.push(`Top performer "${topPerformer.title}" uses unique approach that resonates with your audience`);
+      factors.push(`Consistent content quality drives above-average performance across this topic`);
+    }
+    
+    return factors.slice(0, 4);
+  }
+
+  /**
+   * Extract audience appeal based on actual content
+   */
+  private extractActualAudienceAppeal(examples: OutlierVideo[], content: string): string {
+    // Analyze what type of audience these videos actually attract
+    if (content.includes('rating') && content.includes('subscribers')) {
+      return "Community-focused viewers who enjoy interactive content and creator-audience connection";
+    }
+    
+    if (content.includes('tips') || content.includes('how to') || content.includes('guide')) {
+      return "Goal-oriented viewers seeking practical advice and actionable solutions";
+    }
+    
+    if (content.includes('honest') || content.includes('real') || content.includes('authentic')) {
+      return "Authenticity-seeking viewers who value genuine opinions and unfiltered perspectives";
+    }
+    
+    if (content.includes('review') || content.includes('vs') || content.includes('comparison')) {
+      return "Research-oriented viewers making informed decisions about products or choices";
+    }
+    
+    if (content.includes('personal') || content.includes('my') || content.includes('story')) {
+      return "Connection-seeking viewers interested in personal journeys and relatable experiences";
+    }
+    
+    // Default based on performance
+    return "Engaged viewers who respond well to your unique content approach and personality";
+  }
+
+  /**
+   * Extract recommendations based on actual successful content
+   */
+  private extractActualRecommendations(examples: OutlierVideo[], content: string): string[] {
+    const actions: string[] = [];
+    
+    // Specific recommendations based on what works
+    const topTitle = examples.sort((a, b) => b.multiplier - a.multiplier)[0]?.title;
+    if (topTitle) {
+      actions.push(`Replicate the approach used in "${topTitle}" - your highest performer`);
+    }
+    
+    if (examples.some(v => v.title.includes('?'))) {
+      actions.push(`Create more question-based titles following your successful pattern`);
+    }
+    
+    if (content.includes('rating') || content.includes('subscribers')) {
+      actions.push(`Expand interactive subscriber content - it's your strongest engagement driver`);
+    }
+    
+    if (content.includes('honest') || content.includes('brutal')) {
+      actions.push(`Continue brutally honest approach - it differentiates you from competitors`);
+    }
+    
+    if (examples.length >= 3) {
+      actions.push(`Create content series around this topic - you have proven audience interest`);
+    }
+    
+    // Analyze common elements for patterns
+    const commonWords = this.findCommonWords(examples.map(v => v.title));
+    if (commonWords.length > 0) {
+      actions.push(`Use similar keywords like "${commonWords[0]}" in future titles`);
+    }
+    
+    return actions.slice(0, 3);
+  }
+
+  /**
+   * Extract competitive advantage based on actual performance
+   */
+  private extractActualCompetitiveAdvantage(examples: OutlierVideo[], content: string): string {
+    // Analyze what makes this content unique
+    if (content.includes('rating') && content.includes('subscribers')) {
+      return "Unique subscriber rating format creates authentic community interaction that competitors cannot easily replicate";
+    }
+    
+    if (content.includes('honest') && content.includes('brutal')) {
+      return "Fearlessly authentic communication style builds unshakeable audience trust in an over-polished digital landscape";
+    }
+    
+    if (content.includes('personal') || content.includes('my')) {
+      return "Personal storytelling approach creates emotional connection and parasocial relationships that drive loyalty";
+    }
+    
+    if (examples.some(v => v.multiplier > 3)) {
+      const viral = examples.find(v => v.multiplier > 3);
+      return `Proven ability to create viral content like "${viral?.title}" demonstrates unique audience understanding`;
+    }
+    
+    // Default advantage
+    return "Consistent content quality and unique approach creates differentiated position in your niche";
+  }
+
+  /**
+   * Find common words across successful titles
+   */
+  private findCommonWords(titles: string[]): string[] {
+    const wordCounts = new Map<string, number>();
+    
+    titles.forEach(title => {
+      const words = title.toLowerCase().match(/\b\w+\b/g) || [];
+      words.forEach(word => {
+        if (word.length > 3 && !this.isStopWord(word)) {
+          wordCounts.set(word, (wordCounts.get(word) || 0) + 1);
+        }
+      });
+    });
+    
+    return Array.from(wordCounts.entries())
+      .filter(([_, count]) => count >= 2)
+      .sort((a, b) => b[1] - a[1])
+      .map(([word]) => word);
   }
 
   /**
@@ -1182,12 +1308,86 @@ export class PatternAnalyzer {
   }
 
   /**
+   * Generate enhanced combined insights based on knowledge base principles
+   */
+  private generateEnhancedCombinedInsights(longform: FormatAnalysis, shorts: FormatAnalysis): string[] {
+    const insights: string[] = [];
+    
+    // Volume Analysis (KB: 80/20 Distribution Rule)
+    const totalVideos = longform.totalVideos + shorts.totalVideos;
+    const avgUploadsPerWeek = totalVideos / 12; // Assuming 12 weeks of data
+    
+    if (avgUploadsPerWeek < 7) {
+      insights.push(`📊 VOLUME OPPORTUNITY: Currently ${avgUploadsPerWeek.toFixed(1)} uploads/week. Knowledge Base shows daily posting (7+/week) yields 3-5x more total views through the 80/20 viral distribution principle.`);
+    }
+    
+    // Format Distribution Analysis (KB: Monetization vs Reach Strategy)
+    const shortsRatio = shorts.totalVideos / totalVideos;
+    if (shortsRatio > 0.8) {
+      insights.push(`💰 MONETIZATION OPTIMIZATION: 80%+ Shorts content maximizes reach but limits revenue. Knowledge Base suggests adding long-form content for 10-50x higher RPM rates while maintaining Shorts for audience building.`);
+    } else if (shortsRatio < 0.3) {
+      insights.push(`🚀 REACH EXPANSION: Heavy focus on long-form content. Knowledge Base recommends 70/30 Shorts-to-longform ratio to leverage algorithm distribution while maintaining revenue potential.`);
+    }
+    
+    // Performance Gap Analysis (KB: Copy First, Innovate Later)
+    if (shorts.averageViews > longform.averageViews * 3) {
+      insights.push(`⚡ FORMAT REPLICATION: Shorts significantly outperform long-form. Apply the "Copy First" principle - identify what makes Shorts successful and adapt elements to long-form content.`);
+    }
+    
+    // Production Efficiency (KB: Quality-Volume-Sustainability Framework)
+    const hasConsistentPerformers = (longform.outliers.length + shorts.outliers.length) > 0;
+    if (hasConsistentPerformers) {
+      insights.push(`🎯 SYSTEMATIC SCALING: Strong outlier performance indicates replicable success patterns. Knowledge Base emphasizes systematizing these winning elements for sustainable scaling beyond 2-hour daily production limit.`);
+    }
+    
+    // Cross-Platform Opportunity (KB: Cross-Platform Arbitrage)
+    const recentHighPerformers = [...longform.outliers, ...shorts.outliers].filter(v => {
+      const daysAgo = (Date.now() - v.publishedAt.getTime()) / (1000 * 60 * 60 * 24);
+      return daysAgo < 30;
+    });
+    
+    if (recentHighPerformers.length > 0) {
+      insights.push(`🔥 TREND CAPITALIZATION: Recent viral content detected. Knowledge Base strategy: immediately test these successful formats across other platforms for first-mover advantage while trend momentum exists.`);
+    }
+    
+    // Competitive Positioning (KB: High-Barrier-to-Entry Evolution)
+    const uniqueTopics = new Set([
+      ...longform.bestPerformingTopics.map(t => t.topic),
+      ...shorts.bestPerformingTopics.map(t => t.topic)
+    ]);
+    
+    if (uniqueTopics.size > 5) {
+      insights.push(`🏰 COMPETITIVE MOAT: Diverse successful topics indicate broad expertise. Knowledge Base recommends investing viral video profits into high-barrier content creation to build defensible competitive advantages.`);
+    }
+    
+    // Algorithm Alignment (KB: Performance Metrics Focus)
+    const avgTitleLength = (longform.titleAnalysis.avgTitleLength + shorts.titleAnalysis.avgTitleLength) / 2;
+    if (avgTitleLength > 70) {
+      insights.push(`📱 MOBILE OPTIMIZATION: Average title length ${avgTitleLength} chars exceeds mobile optimization. Knowledge Base emphasizes 60-character limit for optimal swipe-through rates (target: 75-80%+).`);
+    }
+    
+    // Content Recycling Opportunity (KB: Cross-Era Recycling)
+    const oldestPerformer = [...longform.outliers, ...shorts.outliers]
+      .sort((a, b) => a.publishedAt.getTime() - b.publishedAt.getTime())[0];
+    
+    if (oldestPerformer) {
+      const monthsOld = (Date.now() - oldestPerformer.publishedAt.getTime()) / (1000 * 60 * 60 * 24 * 30);
+      if (monthsOld > 6) {
+        insights.push(`♻️ CONTENT RECYCLING: Evergreen content from ${monthsOld.toFixed(0)} months ago still performing. Knowledge Base suggests repackaging successful older content with modern editing for renewed viral potential.`);
+      }
+    }
+    
+    return insights.slice(0, 6); // Limit to top 6 most actionable insights
+  }
+
+  /**
    * Main analysis function
    */
   analyze(longformVideos: VideoData[], shortsVideos: VideoData[]): AnalysisResults {
     const longformAnalysis = this.analyzeFormat(longformVideos, 'Long-form');
     const shortsAnalysis = this.analyzeFormat(shortsVideos, 'Shorts');
     const crossFormatInsights = this.generateCrossFormatInsights(longformAnalysis, shortsAnalysis);
+    const enhancedCombinedInsights = this.generateEnhancedCombinedInsights(longformAnalysis, shortsAnalysis);
 
     return {
       longform: longformAnalysis,
@@ -1195,6 +1395,7 @@ export class PatternAnalyzer {
       combined: {
         totalVideos: longformVideos.length + shortsVideos.length,
         crossFormatInsights,
+        enhancedCombinedInsights, // Add the new enhanced insights
       },
     };
   }
