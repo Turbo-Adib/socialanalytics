@@ -216,7 +216,7 @@ export const designSystem = {
 
 // Utility functions for design system
 export const getColor = (path: string) => {
-  return path.split('.').reduce((obj, key) => obj?.[key], designSystem.colors);
+  return path.split('.').reduce((obj: any, key: string) => obj?.[key], designSystem.colors);
 };
 
 export const getSpacing = (size: keyof typeof designSystem.spacing) => {

@@ -171,7 +171,7 @@ export class DynamicContentAnalyzer {
 
     topics.push(...sortedConcepts);
 
-    return [...new Set(topics)];
+    return Array.from(new Set(topics));
   }
 
   /**

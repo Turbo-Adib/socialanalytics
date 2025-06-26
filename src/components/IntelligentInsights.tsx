@@ -236,7 +236,7 @@ const IntelligentInsights: React.FC<IntelligentInsightsProps> = ({ channelId }) 
                         <h3 className="font-semibold text-gray-900 dark:text-white">
                           {insight.title}
                         </h3>
-                        <span className="text-xs px-2 py-1 bg-white dark:bg-gray-800 rounded-full">
+                        <span className="text-xs px-2 py-1 bg-muted text-muted-foreground rounded-full">
                           Score: {insight.score.toFixed(0)}
                         </span>
                       </div>

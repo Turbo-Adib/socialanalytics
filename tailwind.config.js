@@ -41,9 +41,9 @@ module.exports = {
   				DEFAULT: 'hsl(var(--accent))',
   				foreground: 'hsl(var(--accent-foreground))',
   				blue: '#3EA6FF',
-  				green: '#2BA640',
+  				green: '#10b981', /* PRD Success Color */
   				purple: '#9147FF',
-  				orange: '#FF7626',
+  				orange: '#f59e0b', /* PRD Warning Color */
   				yellow: '#FFD600'
   			},
   			popover: {
@@ -61,17 +61,17 @@ module.exports = {
   			},
   			dark: {
   				bg: {
-  					primary: '#0F0F0F',
+  					primary: '#0f1419', /* PRD Background */
   					secondary: '#181818',
-  					card: '#212121',
+  					card: '#1a1f26', /* PRD Cards */
   					hover: '#272727',
   					elevated: '#282828'
   				},
   				border: '#303030',
   				text: {
-  					primary: '#FFFFFF',
-  					secondary: '#AAAAAA',
-  					tertiary: '#717171'
+  					primary: '#ffffff', /* PRD White */
+  					secondary: '#e1e5e9', /* PRD Light Gray */
+  					tertiary: '#aaaaaa' /* Improved contrast */
   				}
   			},
   			sidebar: {
@@ -100,8 +100,22 @@ module.exports = {
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-  			'fade-in': 'fadeIn 0.2s ease-in-out',
-  			'slide-up': 'slideUp 0.3s ease-out'
+  			'fade-in': 'fadeIn 0.6s ease-out',
+  			'fade-in-delayed': 'fadeIn 0.6s ease-out 0.2s both',
+  			'slide-up': 'slideUp 0.6s ease-out',
+  			'slide-up-delayed': 'slideUp 0.6s ease-out 0.3s both',
+  			'slide-in-left': 'slideInLeft 0.8s ease-out',
+  			'slide-in-right': 'slideInRight 0.8s ease-out',
+  			'scale-in': 'scaleIn 0.5s ease-out',
+  			'bounce-gentle': 'bounceGentle 2s ease-in-out infinite',
+  			'pulse-gentle': 'pulseGentle 2s ease-in-out infinite',
+  			'shimmer': 'shimmer 2s linear infinite',
+  			'counter-up': 'counterUp 2s ease-out',
+  			'typing': 'typing 3s steps(40) 1s both',
+  			'blink': 'blink 1s infinite',
+  			'ripple': 'ripple 0.6s ease-out',
+  			'progress': 'progress 3s ease-out',
+  			'float': 'float 6s ease-in-out infinite'
   		},
   		keyframes: {
   			'accordion-down': {
@@ -130,12 +144,118 @@ module.exports = {
   			},
   			slideUp: {
   				'0%': {
-  					transform: 'translateY(10px)',
+  					transform: 'translateY(30px)',
   					opacity: '0'
   				},
   				'100%': {
   					transform: 'translateY(0)',
   					opacity: '1'
+  				}
+  			},
+  			slideInLeft: {
+  				'0%': {
+  					transform: 'translateX(-50px)',
+  					opacity: '0'
+  				},
+  				'100%': {
+  					transform: 'translateX(0)',
+  					opacity: '1'
+  				}
+  			},
+  			slideInRight: {
+  				'0%': {
+  					transform: 'translateX(50px)',
+  					opacity: '0'
+  				},
+  				'100%': {
+  					transform: 'translateX(0)',
+  					opacity: '1'
+  				}
+  			},
+  			scaleIn: {
+  				'0%': {
+  					transform: 'scale(0.8)',
+  					opacity: '0'
+  				},
+  				'100%': {
+  					transform: 'scale(1)',
+  					opacity: '1'
+  				}
+  			},
+  			bounceGentle: {
+  				'0%, 100%': {
+  					transform: 'translateY(0)'
+  				},
+  				'50%': {
+  					transform: 'translateY(-5px)'
+  				}
+  			},
+  			pulseGentle: {
+  				'0%, 100%': {
+  					opacity: '1'
+  				},
+  				'50%': {
+  					opacity: '0.7'
+  				}
+  			},
+  			shimmer: {
+  				'0%': {
+  					backgroundPosition: '-200% 0'
+  				},
+  				'100%': {
+  					backgroundPosition: '200% 0'
+  				}
+  			},
+  			counterUp: {
+  				'0%': {
+  					transform: 'translateY(20px)',
+  					opacity: '0'
+  				},
+  				'100%': {
+  					transform: 'translateY(0)',
+  					opacity: '1'
+  				}
+  			},
+  			typing: {
+  				'0%': {
+  					width: '0'
+  				},
+  				'100%': {
+  					width: '100%'
+  				}
+  			},
+  			blink: {
+  				'0%, 50%': {
+  					opacity: '1'
+  				},
+  				'51%, 100%': {
+  					opacity: '0'
+  				}
+  			},
+  			ripple: {
+  				'0%': {
+  					transform: 'scale(0)',
+  					opacity: '1'
+  				},
+  				'100%': {
+  					transform: 'scale(4)',
+  					opacity: '0'
+  				}
+  			},
+  			progress: {
+  				'0%': {
+  					width: '0%'
+  				},
+  				'100%': {
+  					width: '100%'
+  				}
+  			},
+  			float: {
+  				'0%, 100%': {
+  					transform: 'translateY(0px)'
+  				},
+  				'50%': {
+  					transform: 'translateY(-10px)'
   				}
   			}
   		},

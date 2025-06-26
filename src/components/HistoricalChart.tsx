@@ -77,10 +77,11 @@ const HistoricalChart: React.FC<HistoricalChartProps> = ({
             formatter={formatTooltipValue}
             labelFormatter={(label) => formatXAxis(label)}
             contentStyle={{
-              backgroundColor: 'white',
-              border: '1px solid #e5e7eb',
+              backgroundColor: 'hsl(var(--card))',
+              border: '1px solid hsl(var(--border))',
               borderRadius: '6px',
               boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+              color: 'hsl(var(--card-foreground))',
             }}
           />
           <Legend 

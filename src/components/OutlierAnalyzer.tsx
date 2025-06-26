@@ -446,7 +446,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
         {analysis.titleAnalysis && analysis.titleAnalysis.mostCommonWords.length > 0 && (
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Title Success Patterns</h3>
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-card rounded-lg border border-border p-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Most Common Words */}
                 <div>
@@ -569,7 +569,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
             <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200 p-6">
               <div className="space-y-3">
                 {analysis.recommendations.map((rec, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 bg-white rounded-lg border border-yellow-100">
+                  <div key={index} className="flex items-start gap-3 p-3 bg-card rounded-lg border border-border">
                     <div className="flex-shrink-0 w-6 h-6 bg-yellow-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
                       {index + 1}
                     </div>
@@ -617,7 +617,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-background py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8">

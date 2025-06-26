@@ -50,7 +50,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
                 <Users className="h-6 w-6 text-accent-blue" />
               </div>
               <div>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-all">
+                <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate">
                   {overview.subscriberCount.toLocaleString()}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Subscribers</p>
@@ -64,7 +64,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
                 <Eye className="h-6 w-6 text-accent-green" />
               </div>
               <div>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-all">
+                <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate">
                   {overview.totalViews.toLocaleString()}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Total Views</p>
@@ -78,7 +78,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
                 <Video className="h-6 w-6 text-accent-purple" />
               </div>
               <div>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-all">
+                <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate">
                   {overview.videoCount.toLocaleString()}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Total Videos</p>
@@ -92,7 +92,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
                 <DollarSign className="h-6 w-6 text-accent-yellow" />
               </div>
               <div>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-all">
+                <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate">
                   ${overview.monthlyRevenue.estimated.toLocaleString()}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Monthly Revenue</p>
@@ -114,7 +114,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-1">Average Views</p>
-              <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white break-all">
+              <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
                 {recentPerformance.averageViews.toLocaleString()}
               </p>
               <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mt-1">
@@ -142,8 +142,8 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
 
             <div>
               <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-1">Revenue Estimate</p>
-              <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white break-all">
-                ${recentPerformance.revenueEstimate.monthly.toLocaleString()}/month
+              <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+                ${recentPerformance.revenueEstimate.monthly.toLocaleString()}/mo
               </p>
               <p className="text-xs text-gray-500 dark:text-dark-text-tertiary mt-1">
                 Range: ${overview.monthlyRevenue.min} - ${overview.monthlyRevenue.max}
@@ -218,7 +218,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-2">Next Subscriber Milestone</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                 {projections.subscribers.nextMilestone.toLocaleString()}
               </p>
               <p className="text-sm text-gray-600 dark:text-dark-text-secondary mt-1">
@@ -233,11 +233,11 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
               <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-2">Revenue Projections</p>
               <div className="space-y-2">
                 <div>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    ${projections.revenue.nextMonth.toLocaleString()}/month
+                  <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+                    ${projections.revenue.nextMonth.toLocaleString()}/mo
                   </p>
                   <p className="text-sm text-gray-600 dark:text-dark-text-secondary">
-                    ${projections.revenue.nextYear.toLocaleString()}/year
+                    ${projections.revenue.nextYear.toLocaleString()}/yr
                   </p>
                 </div>
               </div>

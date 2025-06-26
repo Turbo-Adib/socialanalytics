@@ -35,7 +35,7 @@ const ProjectionCard: React.FC<ProjectionCardProps> = ({
             <Eye className="h-4 w-4 text-dark-text-tertiary" />
             <span className="text-sm font-medium text-dark-text-secondary">Views</span>
           </div>
-          <span className="text-lg font-bold text-white">
+          <span className="text-base sm:text-lg font-bold text-white break-words">
             {views.toLocaleString()}
           </span>
         </div>
@@ -45,7 +45,7 @@ const ProjectionCard: React.FC<ProjectionCardProps> = ({
             <DollarSign className="h-4 w-4 text-dark-text-tertiary" />
             <span className="text-sm font-medium text-dark-text-secondary">Revenue</span>
           </div>
-          <span className="text-lg font-bold text-accent-green">
+          <span className="text-base sm:text-lg font-bold text-accent-green break-words">
             ${revenue.toLocaleString(undefined, { 
               minimumFractionDigits: 0, 
               maximumFractionDigits: 0 

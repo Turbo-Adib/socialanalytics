@@ -267,7 +267,7 @@ export class EnhancedYouTubeAPI {
       );
 
     // Get unique keywords
-    const uniqueWords = [...new Set(words)];
+    const uniqueWords = Array.from(new Set(words));
     
     // Return top 20 most relevant keywords
     return uniqueWords.slice(0, 20);

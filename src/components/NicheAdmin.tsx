@@ -91,7 +91,7 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div className="bg-card rounded-lg shadow-sm border border-border mb-6">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6">
               {[
@@ -155,7 +155,7 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
                         .reduce((sum, niche) => sum + niche.keywords.length + niche.aliases.length, 0);
                       
                       return (
-                        <div key={category.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div key={category.id} className="bg-card border border-border rounded-lg p-4">
                           <h4 className="font-medium text-gray-900">{category.name}</h4>
                           <div className="mt-2 space-y-1 text-sm text-gray-600">
                             <div>RPM: ${category.longFormRpm}/1K views</div>
@@ -206,7 +206,7 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
                     const isEditing = editingNiche?.id === niche.id;
                     
                     return (
-                      <div key={niche.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                      <div key={niche.id} className="bg-card border border-border rounded-lg p-4">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
@@ -296,7 +296,7 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
               <div className="space-y-6">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Search Analytics (Last 30 Days)</h3>
-                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="bg-card border border-border rounded-lg overflow-hidden">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
@@ -314,7 +314,7 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
+                      <tbody className="bg-card divide-y divide-border">
                         {Object.entries(searchAnalytics)
                           .sort(([,a], [,b]) => b - a)
                           .map(([term, count]) => {

@@ -12,7 +12,7 @@ const TimeframeToggle: React.FC<TimeframeToggleProps> = ({ value, onChange }) =>
         onClick={() => onChange('daily')}
         className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${
           value === 'daily'
-            ? 'bg-white text-gray-900 shadow-sm'
+            ? 'bg-primary text-primary-foreground shadow-sm'
             : 'text-gray-500 hover:text-gray-700'
         }`}
       >
@@ -22,7 +22,7 @@ const TimeframeToggle: React.FC<TimeframeToggleProps> = ({ value, onChange }) =>
         onClick={() => onChange('monthly')}
         className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${
           value === 'monthly'
-            ? 'bg-white text-gray-900 shadow-sm'
+            ? 'bg-primary text-primary-foreground shadow-sm'
             : 'text-gray-500 hover:text-gray-700'
         }`}
       >

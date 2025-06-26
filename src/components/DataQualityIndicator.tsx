@@ -33,7 +33,7 @@ export default function DataQualityIndicator({ dataQuality }: DataQualityProps) 
   const completenessPercentage = Math.round(quality.dataCompleteness);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="bg-card rounded-lg shadow-sm border border-border">
       {/* Header */}
       <div 
         className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"

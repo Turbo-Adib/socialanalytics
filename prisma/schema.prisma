@@ -10,6 +10,123 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// NextAuth.js required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id                String         @id @default(cuid())
+  name              String?
+  email             String         @unique
+  emailVerified     DateTime?      @map("email_verified")
+  image             String?
+  password          String?        // For credentials provider
+  role              UserRole       @default(FREE_TRIAL)
+  subscriptionId    String?        @map("subscription_id") // Stripe subscription ID
+  customerId        String?        @map("customer_id") // Stripe customer ID
+  discountCodeUsed  String?        @map("discount_code_used") // Track which code was redeemed
+  usageCount        Int            @default(0) @map("usage_count")
+  dailyUsageCount   Int            @default(0) @map("daily_usage_count")
+  lastUsageReset    DateTime       @default(now()) @map("last_usage_reset")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+  
+  accounts          Account[]
+  sessions          Session[]
+  analyses          ChannelAnalysis[]
+  auditLogs         AuditLog[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+enum UserRole {
+  FREE_TRIAL
+  SAAS_SUBSCRIBER
+  COURSE_MEMBER
+  ADMIN
+}
+
+model ChannelAnalysis {
+  id              String    @id @default(cuid())
+  userId          String    @map("user_id")
+  channelId       String    @map("channel_id") // YouTube channel ID
+  channelName     String    @map("channel_name")
+  channelHandle   String?   @map("channel_handle")
+  subscriberCount Int       @map("subscriber_count")
+  totalViews      BigInt    @map("total_views")
+  videoCount      Int       @map("video_count")
+  estimatedNiche  String    @map("estimated_niche")
+  analysisData    Json      @map("analysis_data") // Stores outlier analysis results
+  createdAt       DateTime  @default(now()) @map("created_at")
+  
+  user            User      @relation(fields: [userId], references: [id])
+
+  @@map("channel_analyses")
+}
+
+model Niche {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  longFormRpm Float    @map("long_form_rpm") // RPM for long-form content
+  shortsRpm   Float    @default(0.15) @map("shorts_rpm") // Always $0.15 for Shorts
+  keywords    String // JSON string of keywords that map to this niche
+  category    String   // Broader category grouping
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("niches")
+}
+
+model DiscountCode {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  email       String?   // Optional: restrict to specific email
+  usedBy      String?   @map("used_by") // User ID who redeemed
+  usedAt      DateTime? @map("used_at")
+  cohort      String?   // "course_batch_january_2025"
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("discount_codes")
+}
+
 model Channel {
   id                      String            @id
   channelTitle            String            @map("channel_title")
@@ -186,4 +303,24 @@ model NicheAnalysis {
   lastUpdated           DateTime  @default(now()) @map("last_updated")
   
   @@map("niche_analysis")
+}
+
+model AuditLog {
+  id            String    @id @default(cuid())
+  userId        String    @map("user_id")
+  userEmail     String    @map("user_email")
+  action        String    // "admin_login", "discount_code_generated", "user_role_changed", etc.
+  resource      String?   // What was affected (user_id, discount_code, etc.)
+  details       String?   // JSON object with additional details
+  ipAddress     String    @map("ip_address")
+  userAgent     String?   @map("user_agent")
+  severity      String    @default("info") // "info", "warning", "error", "critical"
+  createdAt     DateTime  @default(now()) @map("created_at")
+  
+  user          User      @relation(fields: [userId], references: [id])
+  
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
 }

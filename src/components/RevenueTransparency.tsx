@@ -31,7 +31,7 @@ export default function RevenueTransparency({ comparison }: RevenueTransparencyP
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
       {/* Header */}
       <div 
         className="p-4 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"

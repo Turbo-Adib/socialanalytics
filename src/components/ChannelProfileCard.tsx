@@ -69,7 +69,7 @@ const ChannelProfileCard: React.FC<ChannelProfileCardProps> = ({ channel }) => {
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-dark-text-tertiary" />
               <div>
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-white break-words">
                   {channel.subscriberCount.toLocaleString()}
                 </p>
                 <p className="text-xs text-dark-text-tertiary">Subscribers</p>
@@ -79,7 +79,7 @@ const ChannelProfileCard: React.FC<ChannelProfileCardProps> = ({ channel }) => {
             <div className="flex items-center gap-2">
               <Video className="h-4 w-4 text-dark-text-tertiary" />
               <div>
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-white break-words">
                   {channel.videoCount.toLocaleString()}
                 </p>
                 <p className="text-xs text-dark-text-tertiary">Videos</p>

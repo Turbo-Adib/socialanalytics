@@ -159,7 +159,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="min-h-screen bg-dark-bg-primary py-8">
+    <div className="min-h-screen bg-background py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -167,14 +167,14 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
             <Calculator className="h-8 w-8 text-accent-blue" />
             RPM Calculator
           </h1>
-          <p className="text-lg text-dark-text-secondary max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Calculate potential YouTube revenue based on niche-specific RPM rates
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column: Smart Niche Search */}
-          <div className="bg-dark-bg-card rounded-lg shadow-sm border border-dark-border p-6">
+          <div className="bg-card rounded-lg shadow-sm border border-border p-6">
             <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-accent-blue" />
               Smart Niche Search
@@ -182,13 +182,13 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
             
             {/* Search Bar with Suggestions */}
             <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-dark-text-tertiary" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
               <input
                 type="text"
                 placeholder="Try: React, Minecraft, Bitcoin, Cooking..."
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full pl-10 pr-12 py-3 border border-dark-border bg-dark-bg-secondary text-white rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-transparent text-base placeholder-dark-text-tertiary"
+                className="w-full pl-10 pr-12 py-3 border border-border bg-muted text-white rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-transparent text-base placeholder:text-muted-foreground/60"
                 disabled={isSearching}
               />
               
@@ -208,15 +208,15 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
               
               {/* Search Suggestions Dropdown */}
               {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-dark-bg-card border border-dark-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                <div className="absolute z-10 w-full mt-1 bg-card border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
                   {suggestions.map((suggestion) => (
                     <button
                       key={suggestion.id}
                       onClick={() => handleSuggestionClick(suggestion)}
-                      className="w-full text-left p-3 hover:bg-dark-bg-hover border-b border-dark-border last:border-b-0"
+                      className="w-full text-left p-3 hover:bg-muted/80 border-b border-border last:border-b-0"
                     >
                       <div className="font-medium text-white">{suggestion.displayName}</div>
-                      <div className="text-sm text-dark-text-tertiary mt-1">{suggestion.description}</div>
+                      <div className="text-sm text-muted-foreground/60 mt-1">{suggestion.description}</div>
                     </button>
                   ))}
                 </div>
@@ -239,7 +239,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                     <h4 className="text-sm font-medium text-accent-yellow mb-1">
                       New Niche Detected: "{searchTerm}"
                     </h4>
-                    <p className="text-sm text-dark-text-secondary mb-3">
+                    <p className="text-sm text-muted-foreground mb-3">
                       We couldn't find a specific category for this niche, so we're using general rates ($4/1K RPM). 
                       Our team has been notified and will review adding this as a new category.
                     </p>
@@ -277,7 +277,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                         {getMatchTypeLabel(searchResult.matchType)}
                       </span>
                       {searchResult.confidence !== undefined && (
-                        <span className="text-xs text-dark-text-tertiary bg-dark-bg-secondary px-2 py-1 rounded">
+                        <span className="text-xs text-muted-foreground/60 bg-muted px-2 py-1 rounded">
                           {Math.round(searchResult.confidence)}% confidence
                         </span>
                       )}
@@ -289,28 +289,28 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                   
                   <div className="flex items-center gap-2 mb-3">
                     <span className="font-medium text-white">"{searchTerm}"</span>
-                    <ArrowRight className="h-4 w-4 text-dark-text-tertiary" />
+                    <ArrowRight className="h-4 w-4 text-muted-foreground/60" />
                     <span className="font-semibold text-white">{searchResult.parentCategory.name}</span>
                   </div>
                   
                   {/* AI Reasoning */}
                   {searchResult.reasoning && (
-                    <div className="mb-3 p-3 bg-dark-bg-card bg-opacity-50 rounded-lg">
+                    <div className="mb-3 p-3 bg-card bg-opacity-50 rounded-lg">
                       <h4 className="text-sm font-medium text-white mb-1">Why this category?</h4>
-                      <p className="text-sm text-dark-text-secondary">{searchResult.reasoning}</p>
+                      <p className="text-sm text-muted-foreground">{searchResult.reasoning}</p>
                     </div>
                   )}
                   
-                  <div className="text-sm text-dark-text-secondary mb-3">
+                  <div className="text-sm text-muted-foreground mb-3">
                     {searchResult.niche.description}
                   </div>
                   
                   <div className="flex gap-4 text-sm mb-3">
-                    <div className="flex items-center gap-1 text-dark-text-secondary">
+                    <div className="flex items-center gap-1 text-muted-foreground">
                       <div className="w-2 h-2 bg-accent-green rounded-full"></div>
                       <span>Long-form: ${searchResult.parentCategory.longFormRpm}/1K views</span>
                     </div>
-                    <div className="flex items-center gap-1 text-dark-text-secondary">
+                    <div className="flex items-center gap-1 text-muted-foreground">
                       <div className="w-2 h-2 bg-accent-blue rounded-full"></div>
                       <span>Shorts: $0.15/1K views</span>
                     </div>
@@ -318,14 +318,14 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
 
                   {/* Related Suggestions */}
                   {searchResult.suggestions && searchResult.suggestions.length > 0 && (
-                    <div className="pt-3 border-t border-dark-border">
+                    <div className="pt-3 border-t border-border">
                       <h4 className="text-sm font-medium text-white mb-2">Related keywords in this category:</h4>
                       <div className="flex flex-wrap gap-1">
                         {searchResult.suggestions.slice(0, 6).map((suggestion) => (
                           <button
                             key={suggestion}
                             onClick={() => setSearchTerm(suggestion)}
-                            className="px-2 py-1 bg-dark-bg-secondary hover:bg-dark-bg-hover text-xs text-white rounded border border-dark-border transition-colors"
+                            className="px-2 py-1 bg-muted hover:bg-muted/80 text-xs text-white rounded border border-border transition-colors"
                           >
                             {suggestion}
                           </button>
@@ -372,11 +372,11 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                       className={`w-full text-left p-3 rounded-lg border transition-colors ${
                         selectedParentCategory?.id === category.id
                           ? 'border-accent-blue bg-accent-blue/10'
-                          : 'border-dark-border hover:bg-dark-bg-hover'
+                          : 'border-border hover:bg-muted/80'
                       }`}
                     >
                       <div className="font-medium text-white">{category.name}</div>
-                      <div className="text-sm text-dark-text-tertiary mt-1">{category.description}</div>
+                      <div className="text-sm text-muted-foreground/60 mt-1">{category.description}</div>
                       <div className="flex gap-4 mt-2 text-xs">
                         <span className="text-accent-green font-medium">
                           Long-form: ${category.longFormRpm}/1K views
@@ -393,7 +393,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
           </div>
 
           {/* Right Column: Calculator */}
-          <div className="bg-dark-bg-card rounded-lg shadow-sm border border-dark-border p-6">
+          <div className="bg-card rounded-lg shadow-sm border border-border p-6">
             <h2 className="text-lg font-semibold text-white mb-4">Calculate Revenue</h2>
             
             {(selectedNiche || selectedParentCategory) ? (
@@ -403,7 +403,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                   <h3 className="font-medium text-white">
                     {selectedNiche ? selectedNiche.displayName : selectedParentCategory?.name}
                   </h3>
-                  <p className="text-sm text-dark-text-secondary mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     {selectedNiche ? selectedNiche.description : selectedParentCategory?.description}
                   </p>
                   {searchResult && searchResult.matchType !== 'default' && (
@@ -426,7 +426,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                       className={`p-3 rounded-lg border text-center transition-colors ${
                         contentType === 'longform'
                           ? 'border-accent-green bg-accent-green/10 text-accent-green'
-                          : 'border-dark-border hover:bg-dark-bg-hover text-white'
+                          : 'border-border hover:bg-muted/80 text-white'
                       }`}
                     >
                       <div className="font-medium">Long-form</div>
@@ -439,7 +439,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                       className={`p-3 rounded-lg border text-center transition-colors ${
                         contentType === 'shorts'
                           ? 'border-accent-blue bg-accent-blue/10 text-accent-blue'
-                          : 'border-dark-border hover:bg-dark-bg-hover text-white'
+                          : 'border-border hover:bg-muted/80 text-white'
                       }`}
                     >
                       <div className="font-medium">Shorts</div>
@@ -457,14 +457,14 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                     type="number"
                     value={views}
                     onChange={(e) => setViews(Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-dark-border bg-dark-bg-secondary text-white rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-transparent placeholder-dark-text-tertiary"
+                    className="w-full px-3 py-2 border border-border bg-muted text-white rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-transparent placeholder:text-muted-foreground/60"
                     placeholder="Enter expected views"
                     min="0"
                   />
                 </div>
 
                 {/* Results */}
-                <div className="p-6 bg-dark-bg-secondary rounded-lg">
+                <div className="p-6 bg-muted rounded-lg">
                   <div className="flex items-center gap-2 mb-3">
                     <DollarSign className="h-5 w-5 text-accent-green" />
                     <h3 className="text-lg font-semibold text-white">Revenue Estimate</h3>
@@ -472,7 +472,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                   
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-dark-text-secondary">RPM Rate:</span>
+                      <span className="text-muted-foreground">RPM Rate:</span>
                       <span className="font-medium text-white">
                         ${contentType === 'longform' 
                           ? (selectedNiche || selectedParentCategory)?.longFormRpm 
@@ -481,7 +481,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                     </div>
                     
                     <div className="flex justify-between items-center">
-                      <span className="text-dark-text-secondary">Views:</span>
+                      <span className="text-muted-foreground">Views:</span>
                       <span className="font-medium text-white">{views.toLocaleString()}</span>
                     </div>
                     
@@ -502,11 +502,11 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                       </h4>
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <div className="text-dark-text-tertiary">Per Month</div>
+                          <div className="text-muted-foreground/60">Per Month</div>
                           <div className="font-semibold text-white">{formatCurrency(calculateRevenue())}</div>
                         </div>
                         <div>
-                          <div className="text-dark-text-tertiary">Per Year</div>
+                          <div className="text-muted-foreground/60">Per Year</div>
                           <div className="font-semibold text-white">{formatCurrency(calculateRevenue() * 12)}</div>
                         </div>
                       </div>
@@ -515,8 +515,8 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                 </div>
               </div>
             ) : (
-              <div className="text-center py-12 text-dark-text-secondary">
-                <Calculator className="h-12 w-12 mx-auto mb-4 text-dark-text-tertiary" />
+              <div className="text-center py-12 text-muted-foreground">
+                <Calculator className="h-12 w-12 mx-auto mb-4 text-muted-foreground/60" />
                 <p>Select a niche to start calculating</p>
               </div>
             )}
@@ -532,7 +532,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
               <h4 className="font-medium text-white mb-2">🎯 Intelligent Matching</h4>
-              <p className="text-dark-text-secondary">
+              <p className="text-muted-foreground">
                 Our system uses multiple matching strategies: exact keyword matches, partial matches, 
                 and fuzzy matching for typos. If we can't find your niche, you'll get general rates 
                 while we review it for addition.
@@ -540,7 +540,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
             </div>
             <div>
               <h4 className="font-medium text-white mb-2">💡 Unknown Niche Handling</h4>
-              <p className="text-dark-text-secondary">
+              <p className="text-muted-foreground">
                 Can't find your niche? No problem! We'll use general content rates ($4/1K RPM) 
                 and notify our team to review adding your specific niche to our database.
               </p>
@@ -581,7 +581,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
                 </div>
               </div>
             </div>
-            <div className="text-xs text-dark-text-secondary">
+            <div className="text-xs text-muted-foreground">
               <strong>💡 Smart Fallback:</strong> If we don't recognize your niche yet, we'll use general rates 
               and log it for review. Help us improve by trying new niches!
             </div>
@@ -592,7 +592,7 @@ const RpmCalculator: React.FC<RpmCalculatorProps> = ({ onClose }) => {
           <div className="mt-6 text-center">
             <button
               onClick={onClose}
-              className="px-6 py-2 bg-dark-bg-card text-white rounded-lg hover:bg-dark-bg-hover transition-colors border border-dark-border"
+              className="px-6 py-2 bg-card text-white rounded-lg hover:bg-muted/80 transition-colors border border-border"
             >
               Back to Dashboard
             </button>

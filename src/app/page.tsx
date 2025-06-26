@@ -2,21 +2,22 @@
 
 import { useState } from 'react';
 import Header from '@/components/Header';
-import AnalysisForm from '@/components/AnalysisForm';
+import HeroSection from '@/components/HeroSection';
+import AnalysisFormSection from '@/components/AnalysisFormSection';
+import FeaturesSection from '@/components/FeaturesSection';
+import SocialProofSection from '@/components/SocialProofSection';
+import PricingSection from '@/components/PricingSection';
+import CTASection from '@/components/CTASection';
+import Footer from '@/components/Footer';
 import MinimalDashboard from '@/components/MinimalDashboard';
-import TailwindTest from '@/components/TailwindTest';
 import LoadingState from '@/components/LoadingState';
 import ErrorState from '@/components/ErrorState';
-import RpmCalculator from '@/components/RpmCalculator';
-import OutlierAnalyzer from '@/components/OutlierAnalyzer';
 
 export default function HomePage() {
   const [analytics, setAnalytics] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentUrl, setCurrentUrl] = useState<string>('');
-  const [showRpmCalculator, setShowRpmCalculator] = useState(false);
-  const [showOutlierAnalyzer, setShowOutlierAnalyzer] = useState(false);
   const [loadingStage, setLoadingStage] = useState<'fetching' | 'analyzing' | 'calculating' | 'finalizing'>('fetching');
 
   const handleAnalyze = async (url: string, timeRange: string = '30', contentType: string = 'all') => {
@@ -24,8 +25,6 @@ export default function HomePage() {
     setError(null);
     setAnalytics(null);
     setCurrentUrl(url);
-    setShowRpmCalculator(false);
-    setShowOutlierAnalyzer(false);
 
     try {
       // Simulate loading stages for better UX
@@ -59,8 +58,6 @@ export default function HomePage() {
     setAnalytics(null);
     setError(null);
     setCurrentUrl('');
-    setShowRpmCalculator(false);
-    setShowOutlierAnalyzer(false);
   };
 
   const handleRetry = () => {
@@ -69,39 +66,12 @@ export default function HomePage() {
     }
   };
 
-  // Show Outlier Analyzer
-  if (showOutlierAnalyzer) {
-    return (
-      <div className="min-h-screen bg-background transition-colors duration-300">
-        <Header 
-          onShowRpmCalculator={() => {
-            setShowRpmCalculator(true);
-            setShowOutlierAnalyzer(false);
-          }}
-          onShowOutlierAnalyzer={() => setShowOutlierAnalyzer(true)}
-          onNavigateHome={handleReset}
-        />
-        <OutlierAnalyzer onClose={() => setShowOutlierAnalyzer(false)} />
-      </div>
-    );
-  }
-
-  // Show RPM Calculator
-  if (showRpmCalculator) {
-    return (
-      <div className="min-h-screen bg-background transition-colors duration-300">
-        <Header 
-          onShowRpmCalculator={() => setShowRpmCalculator(true)}
-          onShowOutlierAnalyzer={() => {
-            setShowOutlierAnalyzer(true);
-            setShowRpmCalculator(false);
-          }}
-          onNavigateHome={handleReset}
-        />
-        <RpmCalculator onClose={() => setShowRpmCalculator(false)} />
-      </div>
-    );
-  }
+  const scrollToAnalysis = () => {
+    const analysisSection = document.getElementById('analysis-section');
+    if (analysisSection) {
+      analysisSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   // Show Loading State
   if (isLoading) {
@@ -125,54 +95,53 @@ export default function HomePage() {
     );
   }
 
-  // Show Analytics Dashboard
+  // Show Analytics Dashboard (Free Trial Results)
   if (analytics) {
     return (
       <div className="min-h-screen bg-background transition-colors duration-300">
-        <Header 
-          onShowRpmCalculator={() => {
-            setShowRpmCalculator(true);
-            setShowOutlierAnalyzer(false);
-          }}
-          onShowOutlierAnalyzer={() => {
-            setShowOutlierAnalyzer(true);
-            setShowRpmCalculator(false);
-          }}
-          onNavigateHome={handleReset}
-        />
+        <Header onNavigateHome={handleReset} />
         <MinimalDashboard 
           analytics={analytics} 
           onReset={handleReset}
         />
+        <Footer />
       </div>
     );
   }
 
-  // Show Main Landing Page
+  // Show Main Landing/Sales Page
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
-      <Header 
-        onShowRpmCalculator={() => {
-          setShowRpmCalculator(true);
-          setShowOutlierAnalyzer(false);
-        }}
-        onShowOutlierAnalyzer={() => {
-          setShowOutlierAnalyzer(true);
-          setShowRpmCalculator(false);
-        }}
-        onNavigateHome={handleReset}
-      />
+      <Header />
       
-      <main className="flex-grow flex flex-col justify-center items-center px-4 py-16 animate-fade-in">
-        <AnalysisForm 
-          onAnalyze={handleAnalyze} 
-          isLoading={isLoading}
-          error={error}
-        />
-        <div className="mt-16">
-          <TailwindTest />
+      <main className="animate-fade-in">
+        {/* Hero Section */}
+        <HeroSection onStartAnalysis={scrollToAnalysis} />
+        
+        {/* Analysis Form Section */}
+        <div id="analysis-section">
+          <AnalysisFormSection 
+            onAnalyze={handleAnalyze} 
+            isLoading={isLoading}
+            error={error}
+          />
         </div>
+        
+        {/* Features Section */}
+        <FeaturesSection />
+        
+        {/* Social Proof Section */}
+        <SocialProofSection />
+        
+        {/* Pricing Section */}
+        <PricingSection />
+        
+        {/* Final CTA Section */}
+        <CTASection onStartAnalysis={scrollToAnalysis} />
       </main>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

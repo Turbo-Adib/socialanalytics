@@ -286,7 +286,7 @@ export class ContentAnalyzer {
   /**
    * Detect themes in individual videos
    */
-  private detectVideoThemes(video: EnhancedVideoData[]): { theme: string, keywords: string[], emotionalTone: any, contentType: any }[] {
+  private detectVideoThemes(video: EnhancedVideoData): { theme: string, keywords: string[], emotionalTone: any, contentType: any }[] {
     const title = video.title.toLowerCase();
     const description = video.description.toLowerCase();
     const content = `${title} ${description}`;

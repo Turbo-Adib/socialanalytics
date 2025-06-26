@@ -1,15 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { YouTubeAPI } from '@/lib/youtube';
 import { SimplifiedAnalytics } from '@/utils/analyticsSimplified';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 import { validateAgainstSocialBlade } from '@/utils/validationAndComparison';
 import { ViewCountValidator } from '@/utils/viewCountValidation';
 import { ChannelAnalytics } from '@/types/youtube';
 import { detectMonetization, needsMonetizationRefresh, formatMonetizationStatus } from '@/utils/monetization';
 import { IntelligentAnalysisEngine } from '@/lib/intelligentAnalysis';
+import { getSession, checkUsageLimit, incrementUsage } from '@/lib/auth-utils';
 
 export async function GET(request: NextRequest) {
   try {
+    // Check authentication
+    const session = await getSession();
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    // Check usage limits
+    const usageCheck = await checkUsageLimit(session.user.id);
+    if (!usageCheck.allowed) {
+      return NextResponse.json({
+        error: 'Usage limit exceeded',
+        limit: usageCheck.limit,
+        remaining: usageCheck.remaining,
+        resetAt: usageCheck.resetAt,
+        role: session.user.role
+      }, { status: 429 });
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const url = searchParams.get('url');
 
@@ -346,6 +365,24 @@ export async function GET(request: NextRequest) {
         viewCountDebug: viewValidation.debugInfo // Add debug info for troubleshooting
       }
     };
+
+    // Increment user usage count after successful analysis
+    await incrementUsage(session.user.id);
+
+    // Save analysis record for user
+    await prisma.channelAnalysis.create({
+      data: {
+        userId: session.user.id,
+        channelId: channelData.id,
+        channelName: channelData.title,
+        channelHandle: (channelData as any).customUrl || null,
+        subscriberCount: channelData.subscriberCount,
+        totalViews: BigInt(channelData.totalViews),
+        videoCount: channelData.videoCount,
+        estimatedNiche: niche,
+        analysisData: response as any, // Store full analysis as JSON
+      }
+    });
 
     return NextResponse.json(response);
   } catch (error) {

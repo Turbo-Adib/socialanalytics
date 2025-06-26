@@ -24,7 +24,7 @@ const StatCard: React.FC<StatCardProps> = ({
       <div className="flex items-start justify-between">
         <div className="flex-grow">
           <p className="text-sm font-medium text-gray-500 dark:text-dark-text-tertiary mb-2">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white mb-1 transition-transform duration-200 group-hover:scale-105">{value}</p>
+          <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-200 group-hover:text-accent-blue break-words">{value}</p>
           <p className="text-xs text-gray-400 dark:text-dark-text-tertiary">{subtitle}</p>
         </div>
         
