@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ValidationComparison, generateTransparencyReport } from '@/src/utils/validationAndComparison';
+import { ValidationComparison, generateTransparencyReport } from '@/utils/validationAndComparison';
 import { ChevronDown, ChevronUp, Info, CheckCircle, AlertTriangle } from 'lucide-react';
 
 interface RevenueTransparencyProps {

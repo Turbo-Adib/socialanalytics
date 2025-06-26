@@ -1,5 +1,5 @@
-import { AccurateVideoData } from '@/src/lib/youtubeAccurate';
-import { calculateLongFormRevenue, calculateShortsRevenue } from '@/src/utils/revenueCalculations';
+import { AccurateVideoData } from '@/lib/youtubeAccurate';
+import { calculateLongFormRevenue, calculateShortsRevenue } from '@/utils/revenueCalculations';
 
 export interface SimplifiedStats {
   recentVideoViews: number; // Sum of analyzed recent videos only

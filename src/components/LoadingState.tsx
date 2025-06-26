@@ -18,7 +18,7 @@ const LoadingState: React.FC<LoadingStateProps> = ({ stage = 'fetching', channel
   const CurrentIcon = stages[currentStageIndex]?.icon || Loader2;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-bg-primary flex items-center justify-center transition-colors duration-300">
+    <div className="min-h-screen bg-dark-bg-primary flex items-center justify-center transition-colors duration-300">
       <div className="max-w-md w-full mx-4 animate-fade-in">
         {/* Main Loading Card */}
         <div className="card text-center">
@@ -43,7 +43,7 @@ const LoadingState: React.FC<LoadingStateProps> = ({ stage = 'fetching', channel
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               {stages[currentStageIndex]?.label}
             </h3>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-dark-text-tertiary">
               {stages[currentStageIndex]?.description}
             </p>
           </div>
@@ -60,17 +60,17 @@ const LoadingState: React.FC<LoadingStateProps> = ({ stage = 'fetching', channel
                   key={stageItem.key}
                   className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
                     isActive
-                      ? 'bg-blue-50 border border-blue-200'
+                      ? 'bg-accent-blue/20 border border-accent-blue/30'
                       : isCompleted
-                      ? 'bg-green-50 border border-green-200'
-                      : 'bg-gray-50 border border-gray-200'
+                      ? 'bg-accent-green/20 border border-accent-green/30'
+                      : 'bg-dark-bg-secondary border border-dark-border'
                   }`}
                 >
                   <div className={`flex-shrink-0 ${
-                    isActive ? 'text-blue-600' : isCompleted ? 'text-green-600' : 'text-gray-400'
+                    isActive ? 'text-accent-blue' : isCompleted ? 'text-accent-green' : 'text-dark-text-tertiary'
                   }`}>
                     {isCompleted ? (
-                      <div className="h-5 w-5 bg-green-600 rounded-full flex items-center justify-center">
+                      <div className="h-5 w-5 bg-accent-green rounded-full flex items-center justify-center">
                         <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
@@ -82,7 +82,7 @@ const LoadingState: React.FC<LoadingStateProps> = ({ stage = 'fetching', channel
                   
                   <div className="text-left">
                     <div className={`text-sm font-medium ${
-                      isActive ? 'text-blue-900' : isCompleted ? 'text-green-900' : 'text-gray-500'
+                      isActive ? 'text-accent-blue' : isCompleted ? 'text-accent-green' : 'text-dark-text-tertiary'
                     }`}>
                       {stageItem.label}
                     </div>
@@ -94,13 +94,13 @@ const LoadingState: React.FC<LoadingStateProps> = ({ stage = 'fetching', channel
 
           {/* Loading Bar */}
           <div className="mt-6">
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-dark-bg-secondary rounded-full h-2">
               <div 
-                className="bg-blue-600 h-2 rounded-full transition-all duration-500 ease-out"
+                className="bg-accent-blue h-2 rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${((currentStageIndex + 1) / stages.length) * 100}%` }}
               />
             </div>
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-dark-text-tertiary mt-2">
               {Math.round(((currentStageIndex + 1) / stages.length) * 100)}% Complete
             </p>
           </div>
@@ -108,7 +108,7 @@ const LoadingState: React.FC<LoadingStateProps> = ({ stage = 'fetching', channel
 
         {/* Info Text */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-dark-text-tertiary">
             This usually takes 10-30 seconds depending on channel size
           </p>
         </div>

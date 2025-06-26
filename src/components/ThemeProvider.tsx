@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
-type Theme = 'light' | 'dark'
+type Theme = 'dark'
 
 interface ThemeContextType {
   theme: Theme
@@ -12,33 +12,20 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark')
+  const [theme] = useState<Theme>('dark')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
-    // Check for saved theme preference or default to dark mode
-    const savedTheme = localStorage.getItem('theme') as Theme | null
-    if (savedTheme) {
-      setTheme(savedTheme)
-    } else {
-      // Default to dark mode
-      setTheme('dark')
-      localStorage.setItem('theme', 'dark')
-    }
+    // Always use dark mode
+    const root = window.document.documentElement
+    root.classList.add('dark')
+    localStorage.setItem('theme', 'dark')
   }, [])
 
-  useEffect(() => {
-    if (mounted) {
-      const root = window.document.documentElement
-      root.classList.remove('light', 'dark')
-      root.classList.add(theme)
-      localStorage.setItem('theme', theme)
-    }
-  }, [theme, mounted])
-
+  // No-op function since we only have dark theme
   const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light')
+    // Theme toggle disabled - dark mode only
   }
 
   // Prevent flash of unstyled content

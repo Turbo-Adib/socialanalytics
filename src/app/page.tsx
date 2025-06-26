@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import Header from '@/src/components/Header';
-import AnalysisForm from '@/src/components/AnalysisForm';
-import MinimalDashboard from '@/src/components/MinimalDashboard';
-import TailwindTest from '@/src/components/TailwindTest';
-import LoadingState from '@/src/components/LoadingState';
-import ErrorState from '@/src/components/ErrorState';
-import RpmCalculator from '@/src/components/RpmCalculator';
-import OutlierAnalyzer from '@/src/components/OutlierAnalyzer';
+import Header from '@/components/Header';
+import AnalysisForm from '@/components/AnalysisForm';
+import MinimalDashboard from '@/components/MinimalDashboard';
+import TailwindTest from '@/components/TailwindTest';
+import LoadingState from '@/components/LoadingState';
+import ErrorState from '@/components/ErrorState';
+import RpmCalculator from '@/components/RpmCalculator';
+import OutlierAnalyzer from '@/components/OutlierAnalyzer';
 
 export default function HomePage() {
   const [analytics, setAnalytics] = useState<any>(null);
@@ -19,7 +19,7 @@ export default function HomePage() {
   const [showOutlierAnalyzer, setShowOutlierAnalyzer] = useState(false);
   const [loadingStage, setLoadingStage] = useState<'fetching' | 'analyzing' | 'calculating' | 'finalizing'>('fetching');
 
-  const handleAnalyze = async (url: string) => {
+  const handleAnalyze = async (url: string, timeRange: string = '30', contentType: string = 'all') => {
     setIsLoading(true);
     setError(null);
     setAnalytics(null);
@@ -33,7 +33,7 @@ export default function HomePage() {
       await new Promise(resolve => setTimeout(resolve, 500));
       
       setLoadingStage('analyzing');
-      const response = await fetch(`/api/analyze-minimal?url=${encodeURIComponent(url)}`);
+      const response = await fetch(`/api/demo?url=${encodeURIComponent(url)}&timeRange=${timeRange}&contentType=${contentType}`);
       
       setLoadingStage('calculating');
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -72,7 +72,7 @@ export default function HomePage() {
   // Show Outlier Analyzer
   if (showOutlierAnalyzer) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-dark-bg-primary transition-colors duration-300">
+      <div className="min-h-screen bg-background transition-colors duration-300">
         <Header 
           onShowRpmCalculator={() => {
             setShowRpmCalculator(true);
@@ -89,7 +89,7 @@ export default function HomePage() {
   // Show RPM Calculator
   if (showRpmCalculator) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-dark-bg-primary transition-colors duration-300">
+      <div className="min-h-screen bg-background transition-colors duration-300">
         <Header 
           onShowRpmCalculator={() => setShowRpmCalculator(true)}
           onShowOutlierAnalyzer={() => {
@@ -128,7 +128,7 @@ export default function HomePage() {
   // Show Analytics Dashboard
   if (analytics) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-dark-bg-primary transition-colors duration-300">
+      <div className="min-h-screen bg-background transition-colors duration-300">
         <Header 
           onShowRpmCalculator={() => {
             setShowRpmCalculator(true);
@@ -150,7 +150,7 @@ export default function HomePage() {
 
   // Show Main Landing Page
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-bg-primary transition-colors duration-300">
+    <div className="min-h-screen bg-background transition-colors duration-300">
       <Header 
         onShowRpmCalculator={() => {
           setShowRpmCalculator(true);
@@ -164,14 +164,14 @@ export default function HomePage() {
       />
       
       <main className="flex-grow flex flex-col justify-center items-center px-4 py-16 animate-fade-in">
-        <div className="mb-8">
-          <TailwindTest />
-        </div>
         <AnalysisForm 
           onAnalyze={handleAnalyze} 
           isLoading={isLoading}
           error={error}
         />
+        <div className="mt-16">
+          <TailwindTest />
+        </div>
       </main>
     </div>
   );

@@ -1,4 +1,4 @@
-import { YouTubeVideo, YouTubeChannel } from '@/src/types/youtube';
+import { YouTubeVideo, YouTubeChannel } from '@/types/youtube';
 
 /**
  * Data validation utilities for ensuring accurate YouTube analytics

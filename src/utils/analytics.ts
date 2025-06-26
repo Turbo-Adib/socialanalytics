@@ -1,6 +1,6 @@
-import { YouTubeVideo } from '@/src/types/youtube';
-import { YouTubeAPI } from '@/src/lib/youtube';
-import { calculateLongFormRevenue, calculateShortsRevenue } from '@/src/utils/revenueCalculations';
+import { YouTubeVideo } from '@/types/youtube';
+import { YouTubeAPI } from '@/lib/youtube';
+import { calculateLongFormRevenue, calculateShortsRevenue } from '@/utils/revenueCalculations';
 import { subMonths, format, startOfMonth } from 'date-fns';
 
 export async function generateHistoricalData(

@@ -21,14 +21,14 @@ interface ChannelProfileCardProps {
 
 const ChannelProfileCard: React.FC<ChannelProfileCardProps> = ({ channel }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-dark-bg-card rounded-xl shadow-sm border border-dark-border p-6">
       <div className="flex flex-col md:flex-row gap-6">
         {/* Channel Avatar */}
         <div className="flex-shrink-0">
           <img
             src={channel.thumbnailUrl || '/default-avatar.png'}
             alt={channel.title}
-            className="w-24 h-24 rounded-full object-cover border-4 border-gray-100"
+            className="w-24 h-24 rounded-full object-cover border-4 border-dark-border"
           />
         </div>
 
@@ -36,12 +36,12 @@ const ChannelProfileCard: React.FC<ChannelProfileCardProps> = ({ channel }) => {
         <div className="flex-grow">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl font-bold text-white mb-2">
                 {channel.title}
               </h1>
               <div className="flex flex-wrap gap-2 mb-3">
                 {channel.niche && (
-                  <div className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                  <div className="inline-flex items-center gap-1 px-3 py-1 bg-accent-blue/20 text-accent-blue rounded-full text-sm font-medium">
                     <Tag className="h-3 w-3" />
                     {channel.niche}
                   </div>
@@ -49,8 +49,8 @@ const ChannelProfileCard: React.FC<ChannelProfileCardProps> = ({ channel }) => {
                 {channel.monetization && (
                   <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
                     channel.monetization.isMonetized 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-gray-100 text-gray-600'
+                      ? 'bg-accent-green/20 text-accent-green' 
+                      : 'bg-dark-bg-secondary text-dark-text-tertiary'
                   }`}>
                     <DollarSign className="h-3 w-3" />
                     {channel.monetization.status}
@@ -60,39 +60,39 @@ const ChannelProfileCard: React.FC<ChannelProfileCardProps> = ({ channel }) => {
             </div>
           </div>
 
-          <p className="text-gray-600 mb-4 line-clamp-3">
+          <p className="text-dark-text-secondary mb-4 line-clamp-3">
             {channel.description || 'No description available.'}
           </p>
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-gray-400" />
+              <Users className="h-4 w-4 text-dark-text-tertiary" />
               <div>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-white">
                   {channel.subscriberCount.toLocaleString()}
                 </p>
-                <p className="text-xs text-gray-500">Subscribers</p>
+                <p className="text-xs text-dark-text-tertiary">Subscribers</p>
               </div>
             </div>
             
             <div className="flex items-center gap-2">
-              <Video className="h-4 w-4 text-gray-400" />
+              <Video className="h-4 w-4 text-dark-text-tertiary" />
               <div>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-white">
                   {channel.videoCount.toLocaleString()}
                 </p>
-                <p className="text-xs text-gray-500">Videos</p>
+                <p className="text-xs text-dark-text-tertiary">Videos</p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-gray-400" />
+              <Calendar className="h-4 w-4 text-dark-text-tertiary" />
               <div>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-white">
                   Active
                 </p>
-                <p className="text-xs text-gray-500">Status</p>
+                <p className="text-xs text-dark-text-tertiary">Status</p>
               </div>
             </div>
           </div>

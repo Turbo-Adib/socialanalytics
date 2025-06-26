@@ -3,6 +3,7 @@ export interface YouTubeChannel {
   snippet: {
     title: string;
     description: string;
+    publishedAt: string; // Channel creation date
     thumbnails: {
       default?: { url: string };
       medium?: { url: string };

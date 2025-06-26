@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { YouTubeAPI } from '@/src/lib/youtube';
+import { YouTubeAPI } from '@/lib/youtube';
 
 export async function GET(request: NextRequest) {
   try {

@@ -1,7 +1,7 @@
 // Comprehensive Niche Database with Keyword Mappings
 // Maps 100+ specific search terms to main RPM categories
 
-import { IntelligentCategoryMapper } from '@/src/utils/intelligentCategoryMapper';
+import { IntelligentCategoryMapper } from '@/utils/intelligentCategoryMapper';
 
 export interface NicheData {
   id: string;

@@ -3,7 +3,7 @@
  * Focus on accurate, actionable insights without complex historical data
  */
 
-import { calculateLongFormRevenue, calculateShortsRevenue } from './revenueCalculations';
+import { calculateLongFormRevenue, calculateShortsRevenue, calculateTotalRevenue } from './revenueCalculations';
 
 export interface ChannelOverview {
   id: string;
@@ -74,30 +74,45 @@ export class MinimalAnalyticsCalculator {
   /**
    * Calculate channel overview from basic YouTube data
    */
-  static calculateChannelOverview(
+  static async calculateChannelOverview(
     channelData: any,
     videos: any[],
     niche: string
-  ): ChannelOverview {
+  ): Promise<ChannelOverview> {
     
-    // Estimate channel age from oldest video (rough approximation)
-    const oldestVideo = videos.length > 0 ? 
-      videos.sort((a, b) => new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime())[0] : null;
+    // Use actual channel creation date if available, otherwise estimate from oldest video
+    let ageInMonths: number;
     
-    const ageInMonths = oldestVideo ? 
-      Math.max(1, Math.round((Date.now() - new Date(oldestVideo.publishedAt).getTime()) / (1000 * 60 * 60 * 24 * 30))) : 12;
+    if (channelData.snippet?.publishedAt) {
+      // Use actual channel creation date from YouTube API
+      ageInMonths = Math.max(1, Math.round((Date.now() - new Date(channelData.snippet.publishedAt).getTime()) / (1000 * 60 * 60 * 24 * 30)));
+    } else {
+      // Fallback: estimate from oldest video (less accurate)
+      const oldestVideo = videos.length > 0 ? 
+        videos.sort((a, b) => new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime())[0] : null;
+      
+      ageInMonths = oldestVideo ? 
+        Math.max(1, Math.round((Date.now() - new Date(oldestVideo.publishedAt).getTime()) / (1000 * 60 * 60 * 24 * 30))) : 12;
+    }
     
     const ageYears = Math.floor(ageInMonths / 12);
     const remainingMonths = ageInMonths % 12;
 
-    // Calculate rough monthly revenue estimate
+    // Calculate realistic monthly revenue estimate using proper niche-based calculations
     const recentViews = videos.reduce((sum, v) => sum + v.viewCount, 0);
     const avgMonthlyViews = Math.round(recentViews / Math.min(ageInMonths, 12));
     
-    // Conservative revenue estimate
-    const baseRevenue = avgMonthlyViews * 0.001; // $1 per 1000 views (conservative)
-    const minRevenue = baseRevenue * 0.5;
-    const maxRevenue = baseRevenue * 2;
+    // Separate long-form and shorts views for accurate calculation
+    const longFormViews = videos.filter(v => !v.isShort).reduce((sum, v) => sum + v.viewCount, 0);
+    const shortsViews = videos.filter(v => v.isShort).reduce((sum, v) => sum + v.viewCount, 0);
+    const avgMonthlyLongFormViews = Math.round(longFormViews / Math.min(ageInMonths, 12));
+    const avgMonthlyShortsViews = Math.round(shortsViews / Math.min(ageInMonths, 12));
+    
+    // Use accurate revenue calculation based on niche
+    const revenueBreakdown = await calculateTotalRevenue(avgMonthlyLongFormViews, avgMonthlyShortsViews, niche);
+    const baseRevenue = revenueBreakdown.totalRevenue;
+    const minRevenue = baseRevenue * 0.8;  // More realistic range
+    const maxRevenue = baseRevenue * 1.5;
 
     return {
       id: channelData.id,
@@ -123,7 +138,7 @@ export class MinimalAnalyticsCalculator {
   /**
    * Analyze recent performance from last 20 videos
    */
-  static analyzeRecentPerformance(videos: any[], niche: string): RecentPerformanceAnalysis {
+  static async analyzeRecentPerformance(videos: any[], niche: string): Promise<RecentPerformanceAnalysis> {
     if (videos.length === 0) {
       return {
         averageViews: 0,
@@ -157,8 +172,14 @@ export class MinimalAnalyticsCalculator {
     const longFormCount = recentVideos.filter(v => !v.isShort).length;
     const shortsCount = recentVideos.length - longFormCount;
     
-    // Simple revenue estimate
-    const monthlyRevenue = Math.round(averageViews * uploadFrequency * 0.001);
+    // Accurate revenue estimate using niche-based calculations
+    const recentLongFormViews = longFormCount > 0 ? Math.round(totalViews * (longFormCount / recentVideos.length)) : 0;
+    const recentShortsViews = shortsCount > 0 ? Math.round(totalViews * (shortsCount / recentVideos.length)) : 0;
+    const monthlyLongFormViews = Math.round(recentLongFormViews * uploadFrequency / recentVideos.length);
+    const monthlyShortsViews = Math.round(recentShortsViews * uploadFrequency / recentVideos.length);
+    
+    const revenueBreakdown = await calculateTotalRevenue(monthlyLongFormViews, monthlyShortsViews, niche);
+    const monthlyRevenue = Math.round(revenueBreakdown.totalRevenue);
 
     return {
       averageViews,

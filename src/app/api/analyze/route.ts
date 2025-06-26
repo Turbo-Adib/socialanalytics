@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { YouTubeAPI } from '@/src/lib/youtube';
-import { SimplifiedAnalytics } from '@/src/utils/analyticsSimplified';
-import { prisma } from '@/src/lib/prisma';
-import { validateAgainstSocialBlade } from '@/src/utils/validationAndComparison';
-import { ViewCountValidator } from '@/src/utils/viewCountValidation';
-import { ChannelAnalytics } from '@/src/types/youtube';
+import { YouTubeAPI } from '@/lib/youtube';
+import { SimplifiedAnalytics } from '@/utils/analyticsSimplified';
+import { prisma } from '@/lib/prisma';
+import { validateAgainstSocialBlade } from '@/utils/validationAndComparison';
+import { ViewCountValidator } from '@/utils/viewCountValidation';
+import { ChannelAnalytics } from '@/types/youtube';
 import { detectMonetization, needsMonetizationRefresh, formatMonetizationStatus } from '@/utils/monetization';
+import { IntelligentAnalysisEngine } from '@/lib/intelligentAnalysis';
 
 export async function GET(request: NextRequest) {
   try {
@@ -254,6 +255,49 @@ export async function GET(request: NextRequest) {
         estRevenueShortsUsd: currentStats.estimatedRevenue.shorts,
       },
     });
+
+    // Save video analysis data for intelligent insights
+    for (const video of channelData.recentVideos) {
+      await prisma.videoAnalysis.upsert({
+        where: {
+          channelId_videoId: {
+            channelId: channelData.id,
+            videoId: video.id
+          }
+        },
+        update: {
+          title: video.title,
+          viewCount: BigInt(video.viewCount),
+          duration: video.duration || 'PT0S',
+          isShort: video.isShort,
+          publishedAt: new Date(video.publishedAt),
+          videoUrl: `https://youtube.com/watch?v=${video.id}`,
+          thumbnailUrl: video.thumbnailUrl
+        },
+        create: {
+          channelId: channelData.id,
+          videoId: video.id,
+          title: video.title,
+          viewCount: BigInt(video.viewCount),
+          duration: video.duration || 'PT0S',
+          isShort: video.isShort,
+          publishedAt: new Date(video.publishedAt),
+          videoUrl: `https://youtube.com/watch?v=${video.id}`,
+          thumbnailUrl: video.thumbnailUrl
+        }
+      });
+    }
+
+    // Trigger intelligent analysis
+    try {
+      const analysisEngine = new IntelligentAnalysisEngine();
+      await analysisEngine.initialize();
+      await analysisEngine.analyzeChannel(channelData.id);
+      console.log('✅ Intelligent analysis completed for channel:', channelData.id);
+    } catch (analysisError) {
+      console.error('⚠️ Intelligent analysis failed:', analysisError);
+      // Don't fail the main request if analysis fails
+    }
 
     // Prepare response with accurate data
     const response: ChannelAnalytics = {

@@ -50,96 +50,102 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
                 <Users className="h-6 w-6 text-accent-blue" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-all">
                   {overview.subscriberCount.toLocaleString()}
                 </p>
-                <p className="text-sm text-gray-500">Subscribers</p>
+                <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Subscribers</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className="card card-hover group">
             <div className="flex items-center gap-3">
-              <Eye className="h-8 w-8 text-green-600" />
+              <div className="p-2 bg-accent-green/10 dark:bg-accent-green/20 rounded-lg group-hover:scale-110 transition-transform">
+                <Eye className="h-6 w-6 text-accent-green" />
+              </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-all">
                   {overview.totalViews.toLocaleString()}
                 </p>
-                <p className="text-sm text-gray-500">Total Views</p>
+                <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Total Views</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className="card card-hover group">
             <div className="flex items-center gap-3">
-              <Video className="h-8 w-8 text-purple-600" />
+              <div className="p-2 bg-accent-purple/10 dark:bg-accent-purple/20 rounded-lg group-hover:scale-110 transition-transform">
+                <Video className="h-6 w-6 text-accent-purple" />
+              </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-all">
                   {overview.videoCount.toLocaleString()}
                 </p>
-                <p className="text-sm text-gray-500">Total Videos</p>
+                <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Total Videos</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className="card card-hover group">
             <div className="flex items-center gap-3">
-              <DollarSign className="h-8 w-8 text-yellow-600" />
+              <div className="p-2 bg-accent-yellow/10 dark:bg-accent-yellow/20 rounded-lg group-hover:scale-110 transition-transform">
+                <DollarSign className="h-6 w-6 text-accent-yellow" />
+              </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-all">
                   ${overview.monthlyRevenue.estimated.toLocaleString()}
                 </p>
-                <p className="text-sm text-gray-500">Monthly Revenue</p>
+                <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Monthly Revenue</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Recent Performance */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
+        <div className="card mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-accent-blue" />
             Recent Performance
-            <span className="text-sm font-normal text-gray-500">
+            <span className="text-sm font-normal text-gray-500 dark:text-dark-text-tertiary">
               (Last {recentPerformance.totalVideos} videos)
             </span>
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <p className="text-sm text-gray-500 mb-1">Average Views</p>
-              <p className="text-xl font-bold text-gray-900">
+              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-1">Average Views</p>
+              <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white break-all">
                 {recentPerformance.averageViews.toLocaleString()}
               </p>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mt-1">
                 Upload frequency: {recentPerformance.uploadFrequency} videos/month
               </p>
             </div>
 
             <div>
-              <p className="text-sm text-gray-500 mb-1">Content Mix</p>
+              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-1">Content Mix</p>
               <div className="flex gap-4">
                 <div>
-                  <p className="text-lg font-bold text-gray-900">
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">
                     {recentPerformance.contentMix.longFormPercentage}%
                   </p>
-                  <p className="text-xs text-gray-500">Long-form</p>
+                  <p className="text-xs text-gray-500 dark:text-dark-text-tertiary">Long-form</p>
                 </div>
                 <div>
-                  <p className="text-lg font-bold text-gray-900">
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">
                     {recentPerformance.contentMix.shortsPercentage}%
                   </p>
-                  <p className="text-xs text-gray-500">Shorts</p>
+                  <p className="text-xs text-gray-500 dark:text-dark-text-tertiary">Shorts</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <p className="text-sm text-gray-500 mb-1">Revenue Estimate</p>
-              <p className="text-xl font-bold text-gray-900">
+              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-1">Revenue Estimate</p>
+              <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white break-all">
                 ${recentPerformance.revenueEstimate.monthly.toLocaleString()}/month
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 dark:text-dark-text-tertiary mt-1">
                 Range: ${overview.monthlyRevenue.min} - ${overview.monthlyRevenue.max}
               </p>
             </div>
@@ -148,53 +154,53 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
 
         {/* Best/Worst Performers */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Star className="h-5 w-5 text-green-600" />
+          <div className="card">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <Star className="h-5 w-5 text-accent-green" />
               Best Performer
             </h3>
             <div>
-              <p className="font-medium text-gray-900 line-clamp-2">
+              <p className="font-medium text-gray-900 dark:text-white line-clamp-2">
                 {recentPerformance.bestVideo.title}
               </p>
-              <p className="text-lg font-bold text-green-600 mt-2">
+              <p className="text-lg font-bold text-accent-green mt-2">
                 {recentPerformance.bestVideo.views?.toLocaleString()} views
               </p>
               <div className="flex items-center gap-2 mt-2">
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
-                  recentPerformance.bestVideo.performance === 'excellent' ? 'bg-green-100 text-green-800' :
-                  recentPerformance.bestVideo.performance === 'good' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
+                  recentPerformance.bestVideo.performance === 'excellent' ? 'bg-accent-green/20 text-accent-green' :
+                  recentPerformance.bestVideo.performance === 'good' ? 'bg-accent-blue/20 text-accent-blue' :
+                  'bg-dark-bg-secondary text-dark-text-secondary'
                 }`}>
                   {recentPerformance.bestVideo.performance}
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-500 dark:text-dark-text-tertiary">
                   {recentPerformance.bestVideo.isShort ? 'Short' : 'Long-form'}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-red-600" />
+          <div className="card">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-youtube-red" />
               Needs Improvement
             </h3>
             <div>
-              <p className="font-medium text-gray-900 line-clamp-2">
+              <p className="font-medium text-gray-900 dark:text-white line-clamp-2">
                 {recentPerformance.worstVideo.title}
               </p>
-              <p className="text-lg font-bold text-red-600 mt-2">
+              <p className="text-lg font-bold text-youtube-red mt-2">
                 {recentPerformance.worstVideo.views?.toLocaleString()} views
               </p>
               <div className="flex items-center gap-2 mt-2">
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
-                  recentPerformance.worstVideo.performance === 'poor' ? 'bg-red-100 text-red-800' :
-                  'bg-gray-100 text-gray-800'
+                  recentPerformance.worstVideo.performance === 'poor' ? 'bg-youtube-red/20 text-youtube-red' :
+                  'bg-dark-bg-secondary text-dark-text-secondary'
                 }`}>
                   {recentPerformance.worstVideo.performance}
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-500 dark:text-dark-text-tertiary">
                   {recentPerformance.worstVideo.isShort ? 'Short' : 'Long-form'}
                 </span>
               </div>
@@ -203,34 +209,34 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
         </div>
 
         {/* Projections */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
+        <div className="card">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-accent-purple" />
             Growth Projections
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <p className="text-sm text-gray-500 mb-2">Next Subscriber Milestone</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-2">Next Subscriber Milestone</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {projections.subscribers.nextMilestone.toLocaleString()}
               </p>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-gray-600 dark:text-dark-text-secondary mt-1">
                 {projections.subscribers.estimatedDays} days to reach
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 dark:text-dark-text-tertiary mt-1">
                 Growth rate: {projections.subscribers.growthRate.toLocaleString()}/month
               </p>
             </div>
 
             <div>
-              <p className="text-sm text-gray-500 mb-2">Revenue Projections</p>
+              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-2">Revenue Projections</p>
               <div className="space-y-2">
                 <div>
-                  <p className="text-lg font-bold text-gray-900">
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">
                     ${projections.revenue.nextMonth.toLocaleString()}/month
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-dark-text-secondary">
                     ${projections.revenue.nextYear.toLocaleString()}/year
                   </p>
                 </div>

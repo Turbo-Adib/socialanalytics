@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { YouTubeAPI } from '@/src/lib/youtube';
-import { MinimalAnalyticsCalculator, MinimalAnalytics } from '@/src/utils/minimalAnalytics';
-import { prisma } from '@/src/lib/prisma';
+import { YouTubeAPI } from '@/lib/youtube';
+import { MinimalAnalyticsCalculator, MinimalAnalytics } from '@/utils/minimalAnalytics';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
@@ -152,13 +152,13 @@ export async function GET(request: NextRequest) {
     const niche = api.detectChannelNiche(videoTitles);
 
     // Calculate minimal analytics
-    const overview = MinimalAnalyticsCalculator.calculateChannelOverview(
+    const overview = await MinimalAnalyticsCalculator.calculateChannelOverview(
       channelData, 
       fetchedVideos, 
       niche
     );
     
-    const recentPerformance = MinimalAnalyticsCalculator.analyzeRecentPerformance(
+    const recentPerformance = await MinimalAnalyticsCalculator.analyzeRecentPerformance(
       fetchedVideos, 
       niche
     );

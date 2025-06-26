@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { YouTubeChannel, YouTubeVideo } from '@/src/types/youtube';
+import { YouTubeChannel, YouTubeVideo } from '@/types/youtube';
 
 const YOUTUBE_API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
 const API_KEY = process.env.YOUTUBE_API_KEY;
@@ -316,5 +316,35 @@ export class YouTubeAPI {
     
     // Conservative approach: anything over 65 seconds is likely long-form
     return false;
+  }
+
+  extractChannelIdFromUrl(url: string): string | null {
+    try {
+      // Handle different YouTube URL formats
+      const urlPatterns = [
+        // @handle format: youtube.com/@channelname
+        /(?:youtube\.com\/@([a-zA-Z0-9_-]+))/,
+        // Handle format: youtube.com/c/channelname or youtube.com/user/username
+        /(?:youtube\.com\/(?:c\/|user\/|channel\/)([a-zA-Z0-9_-]+))/,
+        // Direct channel ID: youtube.com/channel/UCxxxxxxxxx
+        /(?:youtube\.com\/channel\/)([a-zA-Z0-9_-]{24})/,
+        // Just @handle without domain
+        /^@([a-zA-Z0-9_-]+)$/,
+        // Just channel ID
+        /^UC[a-zA-Z0-9_-]{22}$/
+      ];
+
+      for (const pattern of urlPatterns) {
+        const match = url.match(pattern);
+        if (match) {
+          return match[1] || match[0]; // Return captured group or full match
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error extracting channel ID from URL:', error);
+      return null;
+    }
   }
 }

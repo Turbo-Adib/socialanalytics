@@ -1,4 +1,4 @@
-import { prisma } from '@/src/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { AnalysisCache } from '@prisma/client';
 
 export type AnalysisTier = 'free' | 'standard' | 'premium';

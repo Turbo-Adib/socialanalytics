@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit3, Search, Trash2, Save, X, Database, TrendingUp } from 'lucide-react';
-import { nicheDatabase, parentCategories, NicheMapper, type NicheData, type ParentCategory } from '@/src/data/nicheDatabase';
+import { nicheDatabase, parentCategories, NicheMapper, type NicheData, type ParentCategory } from '@/data/nicheDatabase';
 
 interface NicheAdminProps {
   onClose?: () => void;

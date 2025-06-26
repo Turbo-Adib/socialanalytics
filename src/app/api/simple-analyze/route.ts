@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { YouTubeAPI } from '@/src/lib/youtube';
-import { MinimalAnalyticsCalculator, MinimalAnalytics } from '@/src/utils/minimalAnalytics';
+import { YouTubeAPI } from '@/lib/youtube';
+import { MinimalAnalyticsCalculator, MinimalAnalytics } from '@/utils/minimalAnalytics';
 
 export async function GET(request: NextRequest) {
   try {
@@ -56,8 +56,8 @@ export async function GET(request: NextRequest) {
     const niche = api.detectChannelNiche(videoTitles);
 
     // Calculate minimal analytics
-    const overview = MinimalAnalyticsCalculator.calculateChannelOverview(channelData, recentVideos, niche);
-    const recentPerformance = MinimalAnalyticsCalculator.analyzeRecentPerformance(recentVideos, niche);
+    const overview = await MinimalAnalyticsCalculator.calculateChannelOverview(channelData, recentVideos, niche);
+    const recentPerformance = await MinimalAnalyticsCalculator.analyzeRecentPerformance(recentVideos, niche);
     const projections = MinimalAnalyticsCalculator.calculateSimpleProjections(overview, recentPerformance);
 
     const response: MinimalAnalytics = {

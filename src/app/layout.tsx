@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import '../styles/globals.css';
-import { ThemeProvider } from '../components/ThemeProvider';
+import '@/styles/globals.css';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -42,17 +42,15 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.documentElement.classList.add('dark')
-                } else {
-                  document.documentElement.classList.remove('dark')
-                }
+                // Always apply dark mode
+                document.documentElement.classList.add('dark')
+                localStorage.setItem('theme', 'dark')
               } catch (_) {}
             `,
           }}
         />
       </head>
-      <body className={`${inter.className} bg-white dark:bg-dark-bg-primary transition-colors duration-300`}>
+      <body className={`${inter.className} antialiased`}>
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

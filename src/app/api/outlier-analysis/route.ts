@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { YouTubeAPI } from '@/src/lib/youtube';
-import { VideoAnalyzer } from '@/src/lib/videoAnalyzer';
-import { PatternAnalyzer, AnalysisResults } from '@/src/utils/patternAnalyzer';
-import { prisma } from '@/src/lib/prisma';
-import { CacheManager, AnalysisTier } from '@/src/utils/cacheManager';
+import { YouTubeAPI } from '@/lib/youtube';
+import { VideoAnalyzer } from '@/lib/videoAnalyzer';
+import { PatternAnalyzer, AnalysisResults } from '@/utils/patternAnalyzer';
+import { prisma } from '@/lib/prisma';
+import { CacheManager, AnalysisTier } from '@/utils/cacheManager';
 
 export async function GET(request: NextRequest) {
   try {
@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
     console.log(`Fetching last 100 videos for outlier analysis${formatFilter ? ` [${formatFilter} only]` : ''}...`);
 
     const videoAnalyzer = new VideoAnalyzer();
-    const videosResult = await videoAnalyzer.fetchLast100Videos(channel.id, formatFilter || undefined);
+    const videosResult = await videoAnalyzer.fetchLast100Videos(channel.id, formatFilter as "shorts" | "longform" | undefined);
 
     if (videosResult.totalVideos === 0) {
       return NextResponse.json({ 

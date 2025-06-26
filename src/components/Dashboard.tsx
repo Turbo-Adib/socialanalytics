@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { ChannelAnalytics } from '@/src/types/youtube';
+import { ChannelAnalytics } from '@/types/youtube';
 import ChannelProfileCard from './ChannelProfileCard';
 import StatCard from './StatCard';
 import HistoricalChart from './HistoricalChart';
@@ -10,6 +10,8 @@ import RevenueTransparency from './RevenueTransparency';
 import DataQualityIndicator from './DataQualityIndicator';
 import DataTransparency from './DataTransparency';
 import TimeframeToggle from './TimeframeToggle';
+import IntelligentInsights from './IntelligentInsights';
+import MonetizationStatus from './MonetizationStatus';
 
 interface DashboardProps {
   analytics: ChannelAnalytics;
@@ -21,20 +23,31 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics, onReset }) => {
   const [revenueTimeframe, setRevenueTimeframe] = useState<'daily' | 'monthly'>('daily');
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-dark-bg-primary">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back button */}
         <button
           onClick={onReset}
-          className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+          className="mb-6 flex items-center gap-2 text-dark-text-secondary hover:text-white transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Analyze Another Channel
         </button>
 
-        {/* Channel Profile */}
+        {/* Channel Profile with Monetization Status */}
         <div className="mb-8">
-          <ChannelProfileCard channel={analytics.channel} />
+          <div className="bg-dark-bg-card rounded-lg shadow-sm border border-dark-border p-6">
+            <div className="flex items-start justify-between">
+              <ChannelProfileCard channel={analytics.channel} />
+              {analytics.channel.monetization && (
+                <MonetizationStatus 
+                  isMonetized={analytics.channel.monetization.isMonetized}
+                  estimatedRevenue={analytics.projections.nextMonth.revenue}
+                  className="ml-4 flex-shrink-0"
+                />
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Data Transparency */}
@@ -70,9 +83,9 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics, onReset }) => {
 
         {/* Charts and Projections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-dark-bg-card rounded-lg shadow-sm border border-dark-border p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-white">
                 {viewsTimeframe === 'daily' ? 'Daily' : 'Monthly'} Views Trend
               </h3>
               <TimeframeToggle 
@@ -88,9 +101,9 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics, onReset }) => {
             />
           </div>
           
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-dark-bg-card rounded-lg shadow-sm border border-dark-border p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-white">
                 {revenueTimeframe === 'daily' ? 'Daily' : 'Monthly'} Revenue Trend
               </h3>
               <TimeframeToggle 
@@ -138,8 +151,13 @@ const Dashboard: React.FC<DashboardProps> = ({ analytics, onReset }) => {
           </div>
         )}
 
+        {/* Intelligent Insights */}
+        <div className="mb-8">
+          <IntelligentInsights channelId={analytics.channel.id} />
+        </div>
+
         {/* Recent Videos */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-dark-bg-card rounded-lg shadow-sm border border-dark-border p-6">
           <RecentVideos videos={analytics.recentVideos} />
         </div>
       </div>

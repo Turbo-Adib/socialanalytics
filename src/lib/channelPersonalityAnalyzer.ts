@@ -740,7 +740,7 @@ export class ChannelPersonalityAnalyzer {
       recommendations.push('Strengthen unique personality traits by being more authentic and personal in content');
     }
     
-    if (personality.voiceCharacteristics.consistency < 80) {
+    if (personality.voiceCharacteristics.tone.consistency < 80) {
       recommendations.push('Maintain more consistent tone and messaging across all content');
     }
     

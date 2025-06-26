@@ -3,7 +3,7 @@
  * Uses semantic analysis to suggest relevant categories for unknown niches
  */
 
-import { parentCategories, type ParentCategory } from '@/src/data/nicheDatabase';
+import { parentCategories, type ParentCategory } from '@/data/nicheDatabase';
 
 // Extended keyword patterns for each category (including related terms)
 const categorySemanticPatterns = {

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { YouTubeAPI } from './youtube';
-import { AnalysisTier } from '@/src/utils/cacheManager';
+import { AnalysisTier } from '@/utils/cacheManager';
 
 export interface VideoData {
   id: string;

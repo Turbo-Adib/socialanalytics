@@ -25,6 +25,8 @@ model Channel {
   snapshots               ChannelSnapshot[]
   videoAnalysis           VideoAnalysis[]
   analysisCache           AnalysisCache?
+  intelligentInsights     IntelligentInsight[]
+  contentRecommendations  ContentRecommendation[]
   
   @@map("channels")
 }
@@ -102,4 +104,86 @@ model AnalysisCache {
   channel               Channel   @relation(fields: [channelId], references: [id])
   
   @@map("analysis_cache")
+}
+
+model IntelligentInsight {
+  id                    Int       @id @default(autoincrement())
+  channelId             String    @map("channel_id")
+  insightType           String    @map("insight_type") // "outlier", "pattern", "opportunity", "warning"
+  category              String    // "hook", "format", "niche", "monetization", "growth"
+  title                 String
+  description           String    // Detailed explanation
+  knowledgeBaseRef      String    @map("knowledge_base_ref") // Reference to specific KB principle
+  severity              String    // "critical", "high", "medium", "low"
+  score                 Float     // 0-100 score based on importance
+  actionable            Boolean   @default(true)
+  relatedVideoIds       String?   @map("related_video_ids") // JSON array of video IDs
+  metrics               String?   // JSON object with supporting metrics
+  createdAt             DateTime  @default(now()) @map("created_at")
+  expiresAt             DateTime  @map("expires_at") // When this insight becomes stale
+  
+  channel               Channel   @relation(fields: [channelId], references: [id])
+  
+  @@index([channelId, insightType])
+  @@index([channelId, category])
+  @@map("intelligent_insights")
+}
+
+model ContentRecommendation {
+  id                    Int       @id @default(autoincrement())
+  channelId             String    @map("channel_id")
+  priority              Int       // 1 (highest) to 10 (lowest)
+  recommendationType    String    @map("recommendation_type") // "content", "strategy", "optimization", "format"
+  title                 String
+  description           String    // Detailed recommendation
+  expectedImpact        String    @map("expected_impact") // "10x views", "2x revenue", etc.
+  implementationSteps   String    @map("implementation_steps") // JSON array of steps
+  requiredResources     String?   @map("required_resources") // JSON object (tools, time, skills)
+  difficultyLevel       String    @map("difficulty_level") // "easy", "medium", "hard"
+  timeToImplement       String    @map("time_to_implement") // "1 hour", "1 day", "1 week"
+  knowledgeBaseRef      String    @map("knowledge_base_ref") // KB principle reference
+  successExamples       String?   @map("success_examples") // JSON array of similar successful cases
+  potentialScore        Float     @map("potential_score") // 0-100 based on QVS framework
+  createdAt             DateTime  @default(now()) @map("created_at")
+  status                String    @default("pending") // "pending", "implemented", "rejected"
+  
+  channel               Channel   @relation(fields: [channelId], references: [id])
+  
+  @@index([channelId, priority])
+  @@index([channelId, status])
+  @@map("content_recommendations")
+}
+
+model VideoInsight {
+  id                    Int       @id @default(autoincrement())
+  videoId               String    @map("video_id")
+  channelId             String    @map("channel_id")
+  insightType           String    @map("insight_type") // "hook_analysis", "retention_pattern", "format_success"
+  hookEffectiveness     Float?    @map("hook_effectiveness") // 0-100 score
+  formatAlignment       Float?    @map("format_alignment") // How well it aligns with successful formats
+  viralFactors          String?   @map("viral_factors") // JSON array of factors contributing to success
+  improvementAreas      String?   @map("improvement_areas") // JSON array of specific improvements
+  competitorComparison  String?   @map("competitor_comparison") // JSON object comparing to similar videos
+  createdAt             DateTime  @default(now()) @map("created_at")
+  
+  @@unique([videoId, insightType])
+  @@index([channelId])
+  @@map("video_insights")
+}
+
+model NicheAnalysis {
+  id                    Int       @id @default(autoincrement())
+  niche                 String    @unique
+  saturationLevel       Float     @map("saturation_level") // 0-100 (0 = opportunity, 100 = oversaturated)
+  competitorCount       Int       @map("competitor_count")
+  avgViewsPerVideo      BigInt    @map("avg_views_per_video")
+  topPerformers         String    @map("top_performers") // JSON array of top channel IDs
+  emergingTrends        String?   @map("emerging_trends") // JSON array of trending topics
+  entryBarrier          String    @map("entry_barrier") // "low", "medium", "high"
+  monetizationPotential Float     @map("monetization_potential") // 0-100 score
+  recommendedFormats    String    @map("recommended_formats") // JSON array of format suggestions
+  crossPlatformData     String?   @map("cross_platform_data") // JSON object with TikTok/Instagram data
+  lastUpdated           DateTime  @default(now()) @map("last_updated")
+  
+  @@map("niche_analysis")
 }
