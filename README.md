@@ -18,20 +18,34 @@ A comprehensive SaaS platform that helps YouTube creators understand their chann
 - **Niche Detection**: Automatic channel categorization with tailored insights
 - **Social Listening**: Top creator pain points and trends by niche
 
+### Pro Tools (Course Members)
+- **RPM Calculator**: Calculate exact revenue with niche-specific rates
+- **Video Downloader**: YouTube to MP4/MP3 converter (multi-platform support)
+- **AI Content Tools**: Hook generation and viral pattern analysis
+- **Competition Analysis**: See what's working in your niche
+
+### FREE Bonus: Creator Camp Academy ($997 Value)
+- 40+ video modules on YouTube monetization
+- Learn from creators earning $130K+/month
+- Topics: Automation, scaling, team building, monetization
+- Lifetime access with all plans
+
 ### Security & Authentication
 - **Role-Based Access Control**: FREE_TRIAL, SAAS_SUBSCRIBER, COURSE_MEMBER, ADMIN
 - **Enterprise Security**: Comprehensive audit logging and rate limiting
-- **OAuth & Credentials**: Multiple authentication methods
-- **Course Code System**: Special access for course purchasers
+- **OAuth & Credentials**: Multiple authentication methods including Discord OAuth
+- **Course Code System**: Special access codes for course purchasers
+- **Admin Bypass**: Secure admin codes for testing and support
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 15, React 19, Tailwind CSS
+- **Frontend**: Next.js 15.3.4, React 19.1.0, Tailwind CSS 4.1.10
 - **Backend**: Next.js API Routes, Prisma ORM
 - **Database**: PostgreSQL (SQLite for development)
-- **Authentication**: NextAuth.js with JWT
+- **Authentication**: NextAuth.js with JWT & Discord OAuth
 - **External APIs**: YouTube Data API v3
 - **Charts**: Recharts for data visualization
+- **Video Processing**: yt-dlp-wrap integration
 - **Deployment**: Render, Vercel compatible
 
 ## 📋 Prerequisites
@@ -71,6 +85,15 @@ A comprehensive SaaS platform that helps YouTube creators understand their chann
    NEXTAUTH_URL=http://localhost:3000
    NEXTAUTH_SECRET=generate_with_openssl_rand_base64_32
    
+   # Discord OAuth (optional)
+   DISCORD_CLIENT_ID=your_discord_client_id
+   DISCORD_CLIENT_SECRET=your_discord_client_secret
+   DISCORD_GUILD_ID=your_discord_guild_id
+   DISCORD_COURSE_ROLE_ID=your_course_role_id
+   
+   # Admin Access
+   ADMIN_MASTER_CODE=your_secure_admin_code
+   
    # Stripe (optional)
    STRIPE_SECRET_KEY=your_stripe_secret
    STRIPE_WEBHOOK_SECRET=your_webhook_secret
@@ -103,6 +126,16 @@ Follow the prompts to create or promote admin users. Admin users can:
 - View audit logs
 - Access usage statistics
 
+### Course Member Codes
+
+Generate course member access codes:
+
+```bash
+npx tsx scripts/generate-codes.ts
+```
+
+This creates 50 unique course codes for distribution to course purchasers.
+
 ## 📁 Project Structure
 
 ```
@@ -116,6 +149,7 @@ socialanalytics/
 │   │   ├── admin/       # Admin dashboard
 │   │   ├── auth/        # Authentication pages
 │   │   ├── tools/       # Course member tools
+│   │   ├── course/      # Course information page
 │   │   └── dashboard/   # User dashboard
 │   ├── components/       # React components
 │   ├── lib/             # Utility functions
@@ -128,10 +162,12 @@ socialanalytics/
 ├── prisma/
 │   └── schema.prisma    # Database schema
 ├── scripts/
-│   └── setup-admin.ts   # Admin setup script
-└── docs/
-    ├── SECURITY.md      # Security documentation
-    └── authentication-system.md
+│   ├── setup-admin.ts   # Admin setup script
+│   └── generate-codes.ts # Course code generator
+├── docs/
+│   ├── SECURITY.md      # Security documentation
+│   └── authentication-system.md
+└── PRODUCT-OVERVIEW.md  # Complete product documentation
 ```
 
 ## 📊 API Endpoints
@@ -222,11 +258,25 @@ STRIPE_WEBHOOK_SECRET=... (if using payments)
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=... (if using payments)
 ```
 
-## 📈 Usage Limits
+## 📈 Usage Limits & Access Levels
 
-- **Free Trial**: 3 analyses
-- **Course Members**: Unlimited analyses
-- **SaaS Subscribers**: Based on plan
+### Free Trial
+- 3 channel analyses
+- Basic features only
+- Upgrade prompts after limit
+
+### Course Members (FREE with code)
+- Unlimited channel analyses
+- All pro tools unlocked
+- Video downloader access
+- Priority support
+- Creator Camp Academy access
+
+### SaaS Subscribers (Coming Soon)
+- Everything in Course Members
+- API access
+- Bulk analysis
+- White-label options
 
 ## 🔧 Development Commands
 
@@ -242,7 +292,8 @@ npm run db:push         # Push schema changes
 npm run db:studio       # Open Prisma Studio
 
 # Admin
-npx tsx scripts/setup-admin.ts  # Set up admin users
+npx tsx scripts/setup-admin.ts      # Set up admin users
+npx tsx scripts/generate-codes.ts   # Generate course codes
 
 # Testing
 npm run lint            # Run ESLint
@@ -260,6 +311,14 @@ The app uses a consistent design system with:
 
 ## 🛣️ Roadmap
 
+### Recently Completed
+- [x] Discord OAuth integration
+- [x] Course member access system
+- [x] Video downloader integration
+- [x] Modern tools dashboard
+- [x] Intelligent insights with AI
+
+### Coming Soon
 - [ ] Mobile app (React Native)
 - [ ] Browser extension
 - [ ] Competitor analysis
@@ -293,10 +352,19 @@ This project is proprietary software. All rights reserved.
 
 ## 🆘 Support
 
-- **Documentation**: See `/docs` folder
+- **Documentation**: See `/docs` folder and `PRODUCT-OVERVIEW.md`
 - **Issues**: GitHub Issues
 - **Email**: support@insightsync.io
 - **Discord**: [Join our community](#)
+
+## 💡 Quick Start Guide
+
+1. Visit the landing page
+2. Click "Analyze Your Channel" 
+3. Enter any YouTube channel URL
+4. Get instant insights and revenue estimates
+5. Sign up with course code for full access
+6. Access all pro tools from /tools dashboard
 
 ## 🙏 Acknowledgments
 
