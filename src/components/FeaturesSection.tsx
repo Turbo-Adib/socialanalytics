@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { TrendingUp, DollarSign, Target, Brain, Clock, Shield, BarChart3, Download, Users, Sparkles, Calculator, History } from 'lucide-react';
+import { TrendingUp, DollarSign, Brain, BarChart3, Download, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { useScrollAnimation, useStaggeredAnimation } from '@/hooks/useScrollAnimation';
@@ -59,12 +59,12 @@ const FeaturesSection: React.FC = () => {
       bgColor: 'bg-accent-orange/10'
     },
     {
-      icon: Clock,
-      title: 'Real-time Updates',
-      description: 'Live channel statistics refreshed every 24 hours with comprehensive performance tracking and alerts.',
-      badge: 'Live Data',
-      color: 'text-accent-green',
-      bgColor: 'bg-accent-green/10'
+      icon: Download,
+      title: 'Video Converter',
+      description: 'Convert YouTube, Instagram, and TikTok videos to MP4 or MP3. Perfect for content analysis, reference, and cross-platform sharing.',
+      badge: 'Multi-Platform',
+      color: 'text-orange-500',
+      bgColor: 'bg-orange-500/10'
     }
   ];
 
