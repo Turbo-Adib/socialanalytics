@@ -47,10 +47,10 @@ export default function VideoDownloader({ onClose, initialUrl = '' }: VideoDownl
           <div>
             <CardTitle className="text-2xl font-bold flex items-center gap-2">
               <Download className="h-6 w-6" />
-              Video & Audio Downloader
+              Video to MP4/MP3 Converter
             </CardTitle>
             <CardDescription className="mt-1 flex items-center gap-2">
-              Download content from multiple platforms
+              Convert and download videos to MP4 or MP3 format
               <div className="flex gap-1">
                 <Badge variant="secondary" className="text-xs">YouTube</Badge>
                 <Badge variant="secondary" className="text-xs">TikTok</Badge>

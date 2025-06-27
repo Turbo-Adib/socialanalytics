@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Check, Star, Zap, Crown, ArrowRight } from 'lucide-react';
+import { Check, Star, Zap, Crown, ArrowRight, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { useScrollAnimation, useStaggeredAnimation } from '@/hooks/useScrollAnimation';
@@ -44,13 +44,13 @@ const PricingSection: React.FC = () => {
       color: "border-border"
     },
     {
-      name: "Creator Pro",
-      price: "$19",
+      name: "Pro",
+      price: "$29",
       period: "/month",
       description: "For serious content creators",
       icon: Zap,
       features: [
-        "25 analyses per day",
+        "Unlimited channel analyses",
         "Advanced outlier analysis",
         "Historical performance data",
         "AI-powered insights",
@@ -65,23 +65,24 @@ const PricingSection: React.FC = () => {
       badge: "Most Popular"
     },
     {
-      name: "Course Member",
+      name: "Creator Bundle",
       price: "$50",
-      period: "lifetime",
-      description: "Course + unlimited platform access",
+      period: "/month",
+      description: "Complete education + all tools",
       icon: Crown,
       features: [
-        "Complete YouTube monetization course",
-        "Unlimited channel analyses",
-        "All premium features",
-        "Weekly strategy sessions",
+        "Creator Camp Academy course ($997 value)",
+        "Everything in Pro plan",
+        "Weekly group coaching calls",
         "Private Discord community",
-        "1-on-1 consultation calls",
-        "Lifetime platform access",
-        "Future course updates"
+        "Course lifetime updates",
+        "Exclusive creator resources",
+        "1-on-1 onboarding call",
+        "Priority support"
       ],
+      courseValue: "$997",
       limitations: [],
-      cta: "Get Course + Access",
+      cta: "Get Course + Tools",
       popular: false,
       color: "border-accent-green",
       badge: "Best Value"
@@ -103,8 +104,8 @@ const PricingSection: React.FC = () => {
             <span className="block text-youtube-red">Growth Plan</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Start free, upgrade when ready. All plans include our core analytics—
-            choose the level of insights and support that fits your creator journey.
+            Start free, upgrade when ready. Choose tools-only for pure analytics, 
+            or get our complete creator education course bundled at an incredible price.
           </p>
         </div>
 
@@ -151,6 +152,12 @@ const PricingSection: React.FC = () => {
                     {plan.name}
                   </CardTitle>
                   <div className="mt-4">
+                    {plan.courseValue && (
+                      <div className="mb-2">
+                        <span className="text-sm text-muted-foreground line-through">{plan.courseValue} course</span>
+                        <span className="text-sm text-accent-green font-semibold ml-2">FREE</span>
+                      </div>
+                    )}
                     <span className="text-4xl font-bold text-foreground">{plan.price}</span>
                     <span className="text-muted-foreground">{plan.period}</span>
                   </div>
@@ -163,7 +170,16 @@ const PricingSection: React.FC = () => {
                     {plan.features.map((feature, i) => (
                       <div key={i} className="flex items-center gap-3">
                         <Check className="h-5 w-5 text-accent-green flex-shrink-0" />
-                        <span className="text-sm text-foreground">{feature}</span>
+                        <span className={`text-sm text-foreground ${
+                          feature.includes('($997 value)') ? 'font-semibold' : ''
+                        }`}>
+                          {feature.includes('($997 value)') ? (
+                            <>
+                              <BookOpen className="h-4 w-4 inline mr-1 text-accent-purple" />
+                              {feature}
+                            </>
+                          ) : feature}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -184,46 +200,21 @@ const PricingSection: React.FC = () => {
                   )}
 
                   {/* CTA Button */}
-                  {plan.name === "Course Member" ? (
-                    <div className="space-y-3">
-                      <Link href="https://your-launchpass-link.com" target="_blank" rel="noopener noreferrer">
-                        <AnimatedButton 
-                          className="w-full bg-accent-green hover:bg-accent-green/90 text-white group"
-                          rippleColor="rgba(255, 255, 255, 0.3)"
-                        >
-                          {plan.cta}
-                          <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
-                        </AnimatedButton>
-                      </Link>
-                      <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                          <span className="w-full border-t border-border" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                          <span className="bg-card px-2 text-muted-foreground">Already have access?</span>
-                        </div>
-                      </div>
-                      <DiscordLoginButton 
-                        text="Sign in with Discord" 
-                        variant="outline"
-                        className="w-full border-discord-blurple text-discord-blurple hover:bg-discord-blurple/10"
-                      />
-                    </div>
-                  ) : (
-                    <Link href="/auth/signup">
-                      <AnimatedButton 
-                        className={`w-full mt-8 group ${
-                          plan.popular 
-                            ? 'bg-youtube-red hover:bg-youtube-red-hover text-white' 
-                            : 'bg-card hover:bg-muted border border-border'
-                        }`}
-                        rippleColor={plan.popular ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.1)"}
-                      >
-                        {plan.cta}
-                        <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
-                      </AnimatedButton>
-                    </Link>
-                  )}
+                  <Link href={plan.name === 'Creator Bundle' ? '/course' : '/auth/signup'}>
+                    <AnimatedButton 
+                      className={`w-full mt-8 group ${
+                        plan.popular 
+                          ? 'bg-youtube-red hover:bg-youtube-red-hover text-white' 
+                          : plan.name === 'Creator Bundle'
+                          ? 'bg-accent-green hover:bg-accent-green/90 text-white'
+                          : 'bg-card hover:bg-muted border border-border'
+                      }`}
+                      rippleColor={plan.popular || plan.name === 'Creator Bundle' ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.1)"}
+                    >
+                      {plan.cta}
+                      <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
+                    </AnimatedButton>
+                  </Link>
                 </CardContent>
               </Card>
             );
@@ -251,10 +242,20 @@ const PricingSection: React.FC = () => {
             </div>
           </div>
           
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
             All plans include access to our core analytics engine. Upgrade or downgrade 
-            your subscription at any time. Course members get lifetime access with no recurring fees.
+            your subscription at any time.
           </p>
+          
+          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-accent-purple/10 border border-accent-purple/20">
+            <BookOpen className="h-5 w-5 text-accent-purple" />
+            <span className="text-sm font-medium">
+              Want to learn content creation? 
+              <Link href="/course" className="text-accent-purple hover:underline ml-1">
+                Check out our $997 course →
+              </Link>
+            </span>
+          </div>
         </div>
       </div>
     </section>

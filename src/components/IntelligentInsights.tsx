@@ -130,10 +130,10 @@ const IntelligentInsights: React.FC<IntelligentInsightsProps> = ({ channelId }) 
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/20';
-      case 'medium': return 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/20';
-      case 'hard': return 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/20';
-      default: return 'text-gray-300 bg-gray-100 dark:text-gray-400 dark:bg-gray-900/20';
+      case 'easy': return 'text-green-700 bg-green-100 dark:text-green-400 dark:bg-green-900/20';
+      case 'medium': return 'text-yellow-700 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/20';
+      case 'hard': return 'text-red-700 bg-red-100 dark:text-red-400 dark:bg-red-900/20';
+      default: return 'text-gray-700 bg-gray-100 dark:text-gray-400 dark:bg-gray-900/20';
     }
   };
 
@@ -233,21 +233,21 @@ const IntelligentInsights: React.FC<IntelligentInsightsProps> = ({ channelId }) 
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-white dark:text-white">
+                        <h3 className="font-semibold text-gray-900 dark:text-white">
                           {insight.title}
                         </h3>
-                        <span className="text-xs px-2 py-1 bg-muted text-muted-foreground rounded-full">
+                        <span className="text-xs px-2 py-1 bg-gray-700/10 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full">
                           Score: {insight.score.toFixed(0)}
                         </span>
                       </div>
-                      <p className="text-gray-200 dark:text-gray-300 text-sm mb-2">
+                      <p className="text-gray-700 dark:text-gray-300 text-sm mb-2">
                         {insight.description}
                       </p>
-                      <div className="flex items-center gap-4 text-xs text-gray-400 dark:text-gray-400">
+                      <div className="flex items-center gap-4 text-xs text-gray-600 dark:text-gray-400">
                         <span>Category: {insight.category}</span>
                         <span>Knowledge Base: {insight.knowledgeBaseRef}</span>
                         {insight.actionable && (
-                          <span className="flex items-center gap-1 text-green-600">
+                          <span className="flex items-center gap-1 text-green-700 dark:text-green-400">
                             <CheckCircle className="h-3 w-3" />
                             Actionable
                           </span>
@@ -276,7 +276,7 @@ const IntelligentInsights: React.FC<IntelligentInsightsProps> = ({ channelId }) 
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="bg-blue-100 text-blue-200 dark:bg-blue-900 dark:text-blue-200 text-xs font-medium px-2 py-1 rounded">
+                        <span className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 text-xs font-medium px-2 py-1 rounded">
                           Priority {rec.priority}
                         </span>
                         <span className={`text-xs font-medium px-2 py-1 rounded ${getDifficultyColor(rec.difficultyLevel)}`}>
@@ -290,7 +290,7 @@ const IntelligentInsights: React.FC<IntelligentInsightsProps> = ({ channelId }) 
                       <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                         {rec.title}
                       </h3>
-                      <p className="text-gray-200 dark:text-gray-300 text-sm mb-2">
+                      <p className="text-gray-700 dark:text-gray-300 text-sm mb-2">
                         {rec.description}
                       </p>
                       <div className="flex items-center gap-4 mb-3">
@@ -309,7 +309,7 @@ const IntelligentInsights: React.FC<IntelligentInsightsProps> = ({ channelId }) 
                           View Implementation Steps
                         </summary>
                         <div className="mt-2 pl-4">
-                          <ol className="list-decimal list-inside space-y-1 text-gray-300 dark:text-gray-400">
+                          <ol className="list-decimal list-inside space-y-1 text-gray-600 dark:text-gray-400">
                             {JSON.parse(rec.implementationSteps).map((step: string, index: number) => (
                               <li key={index}>{step}</li>
                             ))}
@@ -337,7 +337,7 @@ const IntelligentInsights: React.FC<IntelligentInsightsProps> = ({ channelId }) 
             ) : (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                       Saturation Level
                     </h3>
@@ -358,35 +358,35 @@ const IntelligentInsights: React.FC<IntelligentInsightsProps> = ({ channelId }) 
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                       Competition
                     </h3>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">
                       {nicheAnalysis.competitorCount}
                     </p>
-                    <p className="text-xs text-gray-400">competitors</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">competitors</p>
                   </div>
 
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                       Avg Views/Video
                     </h3>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">
                       {nicheAnalysis.avgViewsPerVideo.toLocaleString()}
                     </p>
-                    <p className="text-xs text-gray-400">views</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">views</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                    <h3 className="font-semibold text-white dark:text-white mb-2">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                       Entry Barrier
                     </h3>
                     <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
                       nicheAnalysis.entryBarrier === 'high' ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' :
-                      nicheAnalysis.entryBarrier === 'medium' ? 'bg-yellow-100 text-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400' :
+                      nicheAnalysis.entryBarrier === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
                       'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
                     }`}>
                       {nicheAnalysis.entryBarrier} barrier
@@ -394,12 +394,12 @@ const IntelligentInsights: React.FC<IntelligentInsightsProps> = ({ channelId }) 
                   </div>
 
                   <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                    <h3 className="font-semibold text-white dark:text-white mb-2">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                       Monetization Potential
                     </h3>
                     <div className="flex items-center gap-2">
                       <DollarSign className="h-5 w-5 text-green-600" />
-                      <span className="text-lg font-bold text-white dark:text-white">
+                      <span className="text-lg font-bold text-gray-900 dark:text-white">
                         {nicheAnalysis.monetizationPotential.toFixed(0)}/100
                       </span>
                     </div>
@@ -407,14 +407,14 @@ const IntelligentInsights: React.FC<IntelligentInsightsProps> = ({ channelId }) 
                 </div>
 
                 <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                  <h3 className="font-semibold text-white dark:text-white mb-2">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                     Recommended Formats
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {JSON.parse(nicheAnalysis.recommendedFormats).map((format: string, index: number) => (
                       <span
                         key={index}
-                        className="px-3 py-1 bg-blue-100 text-blue-200 dark:bg-blue-900/20 dark:text-blue-400 rounded-full text-sm"
+                        className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 rounded-full text-sm"
                       >
                         {format}
                       </span>

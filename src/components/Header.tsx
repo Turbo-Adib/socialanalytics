@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BarChart3, Calculator, TrendingUp, Play, Palette, User, LogOut } from 'lucide-react';
+import { BarChart3, Calculator, TrendingUp, Play, Palette, User, LogOut, BookOpen } from 'lucide-react';
 import { DiscordLoginButton } from './DiscordLoginButton';
 import { Button } from './ui/button';
 import { useSession, signOut } from 'next-auth/react';
@@ -62,14 +62,24 @@ const Header: React.FC<HeaderProps> = ({ onShowRpmCalculator, onShowOutlierAnaly
             )}
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/design-system">
+            <Link href="/course">
               <Button
                 variant="ghost"
                 size="sm"
-                className="flex items-center gap-2 text-accent-green hover:bg-accent-green/10 group"
+                className="flex items-center gap-2 text-accent-purple hover:bg-accent-purple/10 group"
               >
-                <Palette className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                <span className="hidden sm:inline">Design System</span>
+                <BookOpen className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">Course</span>
+              </Button>
+            </Link>
+            <Link href="/tools">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-2 text-accent-blue hover:bg-accent-blue/10 group"
+              >
+                <BarChart3 className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">Tools</span>
               </Button>
             </Link>
             {onShowOutlierAnalyzer && (
