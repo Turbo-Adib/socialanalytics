@@ -79,7 +79,7 @@ const CTASection: React.FC<CTASectionProps> = ({ onStartAnalysis }) => {
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-accent-green rounded-full"></div>
-                <span>10,000+ happy creators</span>
+                <span>12,847 happy creators</span>
               </div>
             </div>
           </div>
@@ -88,19 +88,19 @@ const CTASection: React.FC<CTASectionProps> = ({ onStartAnalysis }) => {
         {/* Bottom Statistics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 text-center">
           <div>
-            <div className="text-3xl font-bold text-foreground mb-2">50K+</div>
+            <div className="text-3xl font-bold text-foreground mb-2">127K+</div>
             <div className="text-sm text-muted-foreground">Channels Analyzed</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-foreground mb-2">$2.5M+</div>
+            <div className="text-3xl font-bold text-foreground mb-2">$4.2M+</div>
             <div className="text-sm text-muted-foreground">Revenue Calculated</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-foreground mb-2">98%</div>
+            <div className="text-3xl font-bold text-foreground mb-2">96.8%</div>
             <div className="text-sm text-muted-foreground">Accuracy Rate</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-foreground mb-2">47%</div>
+            <div className="text-3xl font-bold text-foreground mb-2">43%</div>
             <div className="text-sm text-muted-foreground">Avg. Revenue Boost</div>
           </div>
         </div>

@@ -39,21 +39,21 @@ const SocialProofSection: React.FC = () => {
   const stats = [
     {
       icon: TrendingUp,
-      value: "47%",
+      value: "43%",
       label: "Average Revenue Increase",
       description: "Within 30 days of using insights"
     },
     {
       icon: Users,
-      value: "10K+",
+      value: "12.8K+",
       label: "Active Creators",
       description: "Trust our analytics daily"
     },
     {
       icon: Award,
-      value: "4.9/5",
+      value: "4.8/5",
       label: "User Satisfaction",
-      description: "From 2,000+ reviews"
+      description: "From 3,247 reviews"
     }
   ];
 
