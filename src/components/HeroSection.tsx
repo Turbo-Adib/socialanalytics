@@ -115,7 +115,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onStartAnalysis }) => {
                 </p>
               </div>
               <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
-                Already part of our YouTube Analytics Mastery course? Sign in with your Discord account for unlimited access to all premium features.
+                Already part of our Creator Camp course? Sign in with your Discord account for unlimited access to all premium features.
               </p>
               <div className="flex justify-center">
                 <DiscordLoginButton 
