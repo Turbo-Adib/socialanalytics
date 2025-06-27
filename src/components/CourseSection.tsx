@@ -210,12 +210,12 @@ export default function CourseSection() {
               <div className="text-4xl font-bold text-accent-green">+</div>
               <div className="text-center">
                 <p className="text-sm text-muted-foreground">Analytics Tools</p>
-                <p className="text-2xl font-bold">$29/mo</p>
+                <p className="text-2xl font-bold">$49/mo</p>
               </div>
               <div className="text-4xl font-bold text-accent-green">=</div>
               <div className="text-center">
                 <p className="text-sm font-semibold text-accent-green">You Pay Only</p>
-                <p className="text-3xl font-bold bg-gradient-to-r from-accent-green to-accent-blue bg-clip-text text-transparent">$29/mo</p>
+                <p className="text-3xl font-bold bg-gradient-to-r from-accent-green to-accent-blue bg-clip-text text-transparent">$49/mo</p>
               </div>
             </div>
             
