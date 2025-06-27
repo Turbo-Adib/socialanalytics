@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { BarChart3, Calculator, TrendingUp, Play, Palette, User, LogOut } from 'lucide-react';
+import { DiscordLoginButton } from './DiscordLoginButton';
 import { Button } from './ui/button';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
@@ -116,16 +117,23 @@ const Header: React.FC<HeaderProps> = ({ onShowRpmCalculator, onShowOutlierAnaly
               </DropdownMenu>
             ) : !showAuth ? (
               <div className="flex items-center gap-2">
-                <Link href="/auth/signin">
-                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link href="/auth/signup">
-                  <Button size="sm" className="bg-youtube-red hover:bg-youtube-red-hover text-white">
-                    Get Started
-                  </Button>
-                </Link>
+                <DiscordLoginButton 
+                  text="Course Login" 
+                  variant="outline"
+                  className="border-discord-blurple text-discord-blurple hover:bg-discord-blurple/10"
+                />
+                <div className="hidden sm:flex items-center gap-2">
+                  <Link href="/auth/signin">
+                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/auth/signup">
+                    <Button size="sm" className="bg-youtube-red hover:bg-youtube-red-hover text-white">
+                      Get Started
+                    </Button>
+                  </Link>
+                </div>
               </div>
             ) : null}
           </div>

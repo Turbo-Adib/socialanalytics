@@ -12,6 +12,7 @@ import Footer from '@/components/Footer';
 import MinimalDashboard from '@/components/MinimalDashboard';
 import LoadingState from '@/components/LoadingState';
 import ErrorState from '@/components/ErrorState';
+import { FloatingDiscordButton } from '@/components/FloatingDiscordButton';
 
 export default function HomePage() {
   const [analytics, setAnalytics] = useState<any>(null);
@@ -142,6 +143,9 @@ export default function HomePage() {
       
       {/* Footer */}
       <Footer />
+      
+      {/* Floating Discord Button */}
+      <FloatingDiscordButton />
     </div>
   );
 }

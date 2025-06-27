@@ -59,6 +59,11 @@ module.exports = {
   				'red-hover': '#CC0000',
   				'red-light': '#FF4444'
   			},
+  			discord: {
+  				blurple: '#5865F2',
+  				'blurple-hover': '#4752C4',
+  				'blurple-light': '#7289DA'
+  			},
   			dark: {
   				bg: {
   					primary: '#0f1419', /* PRD Background */
