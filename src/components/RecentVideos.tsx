@@ -1,6 +1,8 @@
-import React from 'react';
-import { Play, Eye, Calendar, Zap, TrendingUp, TrendingDown, DollarSign, ThumbsUp, MessageCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { Play, Eye, Calendar, Zap, TrendingUp, TrendingDown, DollarSign, ThumbsUp, MessageCircle, Download, ExternalLink } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import DownloaderModal from '@/components/DownloaderModal';
 
 interface RecentVideo {
   id: string;
@@ -20,6 +22,14 @@ interface RecentVideosProps {
 }
 
 const RecentVideos: React.FC<RecentVideosProps> = ({ videos }) => {
+  const [showDownloader, setShowDownloader] = useState(false);
+  const [selectedVideoUrl, setSelectedVideoUrl] = useState<string>('');
+
+  const handleDownloadClick = (videoId: string) => {
+    setSelectedVideoUrl(`https://youtube.com/watch?v=${videoId}`);
+    setShowDownloader(true);
+  };
+
   if (!videos || videos.length === 0) {
     return (
       <div className="text-center py-8">
@@ -126,9 +136,29 @@ const RecentVideos: React.FC<RecentVideosProps> = ({ videos }) => {
                 )}
               </div>
             </div>
+            
+            {/* Download Button */}
+            <div className="flex-shrink-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDownloadClick(video.id)}
+                className="text-dark-text-secondary hover:text-white"
+                title="Download video/audio"
+              >
+                <Download className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         ))}
       </div>
+      
+      {/* Downloader Modal */}
+      <DownloaderModal 
+        isOpen={showDownloader} 
+        onClose={() => setShowDownloader(false)}
+        initialUrl={selectedVideoUrl}
+      />
     </div>
   );
 };

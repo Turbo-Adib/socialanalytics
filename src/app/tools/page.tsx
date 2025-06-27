@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Calculator, TrendingUp, BarChart3, Play, Crown, Code2, Sparkles, ArrowRight } from 'lucide-react';
+import { Calculator, TrendingUp, BarChart3, Play, Crown, Code2, Sparkles, ArrowRight, Download, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ import LoadingState from '@/components/LoadingState';
 import ErrorState from '@/components/ErrorState';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import DownloaderModal from '@/components/DownloaderModal';
 
 export default function ToolsPage() {
   const { data: session, status } = useSession();
@@ -25,6 +26,7 @@ export default function ToolsPage() {
   const [redeemError, setRedeemError] = useState<string | null>(null);
   const [showRpmCalculator, setShowRpmCalculator] = useState(false);
   const [showOutlierAnalyzer, setShowOutlierAnalyzer] = useState(false);
+  const [showDownloader, setShowDownloader] = useState(false);
   const [analytics, setAnalytics] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -80,6 +82,7 @@ export default function ToolsPage() {
     setCurrentUrl(url);
     setShowRpmCalculator(false);
     setShowOutlierAnalyzer(false);
+    setShowDownloader(false);
 
     try {
       setLoadingStage('fetching');
@@ -312,7 +315,7 @@ export default function ToolsPage() {
         </div>
 
         {/* Tools Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-12">
           {/* Channel Analyzer */}
           <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer group" 
                 onClick={() => {
@@ -361,6 +364,31 @@ export default function ToolsPage() {
               <CardDescription className="text-center">
                 AI-powered analysis to identify your highest-performing content patterns
               </CardDescription>
+            </CardContent>
+          </Card>
+
+          {/* Video Downloader */}
+          <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer group" 
+                onClick={() => setShowDownloader(true)}>
+            <CardHeader className="text-center pb-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-full mb-4 mx-auto group-hover:scale-110 transition-transform">
+                <div className="relative">
+                  <Download className="h-8 w-8 text-orange-500" />
+                  <Globe className="h-4 w-4 text-red-500 absolute -bottom-1 -right-1" />
+                </div>
+              </div>
+              <CardTitle className="text-xl font-semibold">Video & Audio Downloader</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription className="text-center">
+                Download content from YouTube, TikTok, Instagram, and more platforms
+              </CardDescription>
+              <div className="flex flex-wrap justify-center gap-1 mt-3">
+                <Badge variant="secondary" className="text-xs">YouTube</Badge>
+                <Badge variant="secondary" className="text-xs">TikTok</Badge>
+                <Badge variant="secondary" className="text-xs">Instagram</Badge>
+                <Badge variant="secondary" className="text-xs">More</Badge>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -426,6 +454,12 @@ export default function ToolsPage() {
           </CardContent>
         </Card>
       </div>
+      
+      {/* Downloader Modal */}
+      <DownloaderModal 
+        isOpen={showDownloader} 
+        onClose={() => setShowDownloader(false)} 
+      />
     </div>
   );
 }

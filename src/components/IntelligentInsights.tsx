@@ -287,7 +287,7 @@ const IntelligentInsights: React.FC<IntelligentInsightsProps> = ({ channelId }) 
                           {rec.timeToImplement}
                         </span>
                       </div>
-                      <h3 className="font-semibold text-white dark:text-white mb-1">
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                         {rec.title}
                       </h3>
                       <p className="text-gray-200 dark:text-gray-300 text-sm mb-2">
@@ -338,7 +338,7 @@ const IntelligentInsights: React.FC<IntelligentInsightsProps> = ({ channelId }) 
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <h3 className="font-semibold text-white dark:text-white mb-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                       Saturation Level
                     </h3>
                     <div className="flex items-center gap-2">
@@ -359,20 +359,20 @@ const IntelligentInsights: React.FC<IntelligentInsightsProps> = ({ channelId }) 
                   </div>
 
                   <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <h3 className="font-semibold text-white dark:text-white mb-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                       Competition
                     </h3>
-                    <p className="text-2xl font-bold text-white dark:text-white">
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
                       {nicheAnalysis.competitorCount}
                     </p>
                     <p className="text-xs text-gray-400">competitors</p>
                   </div>
 
                   <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <h3 className="font-semibold text-white dark:text-white mb-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                       Avg Views/Video
                     </h3>
-                    <p className="text-2xl font-bold text-white dark:text-white">
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
                       {nicheAnalysis.avgViewsPerVideo.toLocaleString()}
                     </p>
                     <p className="text-xs text-gray-400">views</p>
