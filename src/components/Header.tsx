@@ -64,12 +64,13 @@ const Header: React.FC<HeaderProps> = ({ onShowRpmCalculator, onShowOutlierAnaly
           <div className="flex items-center gap-3">
             <Link href="/course">
               <Button
-                variant="ghost"
-                size="sm"
-                className="flex items-center gap-2 text-accent-purple hover:bg-accent-purple/10 group"
+                variant="outline"
+                size="default"
+                className="flex items-center gap-2 border-accent-purple text-accent-purple hover:bg-accent-purple hover:text-white group font-semibold px-4 py-2"
               >
-                <BookOpen className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                <span className="hidden sm:inline">Course</span>
+                <BookOpen className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">Check out the Course</span>
+                <span className="sm:hidden">Course</span>
               </Button>
             </Link>
             <Link href="/tools">
