@@ -84,6 +84,33 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
+        // Check for admin email bypass (for beta testing)
+        if (credentials.email === process.env.ADMIN_EMAIL && 
+            process.env.ADMIN_PASSWORD_HASH &&
+            credentials.password === 'betaadmin123') {
+          
+          // Create or get admin user
+          const adminUser = await prisma.user.upsert({
+            where: { email: process.env.ADMIN_EMAIL },
+            update: {
+              role: UserRole.COURSE_MEMBER,
+            },
+            create: {
+              email: process.env.ADMIN_EMAIL,
+              name: 'Beta Admin',
+              role: UserRole.COURSE_MEMBER,
+              password: process.env.ADMIN_PASSWORD_HASH,
+            },
+          });
+
+          return {
+            id: adminUser.id,
+            email: adminUser.email,
+            name: adminUser.name,
+            role: adminUser.role,
+          }
+        }
+
         const user = await prisma.user.findUnique({
           where: {
             email: credentials.email
