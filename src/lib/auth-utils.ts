@@ -38,28 +38,48 @@ export async function getUserUsageStats(userId: string, email?: string) {
     }
   })
 
-  // If user doesn't exist in database but exists in session, create them
+  // If user doesn't exist in database but exists in session, handle it
   if (!user && email) {
-    await prisma.user.create({
-      data: {
-        id: userId,
-        email: email,
-        role: 'SAAS_SUBSCRIBER', // Default role for existing sessions
-        usageCount: 0,
-        dailyUsageCount: 0,
-        lastUsageReset: new Date(),
-      }
+    // Check if a user with this email already exists
+    const existingUserByEmail = await prisma.user.findUnique({
+      where: { email: email }
     })
     
-    user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        usageCount: true,
-        dailyUsageCount: true,
-        lastUsageReset: true,
-        role: true,
-      }
-    })
+    if (existingUserByEmail) {
+      // User exists with this email but different ID - this can happen with session/db mismatches
+      // Update the session's user ID to match the existing user
+      user = await prisma.user.findUnique({
+        where: { id: existingUserByEmail.id },
+        select: {
+          usageCount: true,
+          dailyUsageCount: true,
+          lastUsageReset: true,
+          role: true,
+        }
+      })
+    } else {
+      // Create new user
+      await prisma.user.create({
+        data: {
+          id: userId,
+          email: email,
+          role: 'SAAS_SUBSCRIBER', // Default role for existing sessions
+          usageCount: 0,
+          dailyUsageCount: 0,
+          lastUsageReset: new Date(),
+        }
+      })
+      
+      user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          usageCount: true,
+          dailyUsageCount: true,
+          lastUsageReset: true,
+          role: true,
+        }
+      })
+    }
   }
 
   if (!user) throw new Error('User not found')
