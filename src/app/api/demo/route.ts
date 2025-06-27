@@ -52,8 +52,21 @@ export async function GET(request: NextRequest) {
       filteredData.currentStats.shortsViews = Math.floor(filteredData.currentStats.shortsViews * 1.5);
     }
 
+    // Convert recentVideos to AccurateVideoData format for generateImprovedChartData
+    const accurateVideos = filteredData.recentVideos.map(video => ({
+      id: video.id,
+      title: video.title,
+      viewCount: video.views,
+      publishedAt: video.publishedAt,
+      duration: video.isShort ? 30 : 600, // Approximate duration
+      isShort: video.isShort,
+      thumbnailUrl: `https://i.ytimg.com/vi/${video.id}/maxresdefault.jpg`,
+      channelId: filteredData.channel.id,
+      description: ''
+    }));
+    
     // Generate improved chart data for better visualization
-    const improvedChartData = await generateImprovedChartData(filteredData.recentVideos, filteredData.channel.niche || 'General');
+    const improvedChartData = await generateImprovedChartData(accurateVideos, filteredData.channel.niche || 'General');
     
     // Return the data in ChannelAnalytics format expected by Dashboard component
     return NextResponse.json({

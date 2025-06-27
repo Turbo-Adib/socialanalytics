@@ -5,7 +5,7 @@ import { prisma } from '@/lib/db'
 import { checkDiscordMembership } from '@/lib/discord'
 import { UserRole } from '@prisma/client'
 
-export async function POST() {
+export async function POST(request: Request) {
   const session = await getServerSession(authOptions)
   
   if (!session?.user?.id) {
@@ -59,12 +59,15 @@ export async function POST() {
       await prisma.auditLog.create({
         data: {
           userId: user.id,
+          userEmail: user.email,
           action: isMember ? 'DISCORD_ACCESS_GRANTED' : 'DISCORD_ACCESS_REVOKED',
-          details: `Discord membership verification: ${isMember ? 'granted' : 'revoked'} access`,
-          metadata: {
+          details: JSON.stringify({
+            message: `Discord membership verification: ${isMember ? 'granted' : 'revoked'} access`,
             previousRole: user.role,
             newRole: newRole
-          }
+          }),
+          ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
+          userAgent: request.headers.get('user-agent') || 'unknown'
         }
       })
     } else {

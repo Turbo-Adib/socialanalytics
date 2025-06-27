@@ -68,12 +68,15 @@ export async function GET(request: Request) {
           await prisma.auditLog.create({
             data: {
               userId: user.id,
+              userEmail: user.email,
               action: 'DISCORD_ACCESS_REVOKED',
-              details: 'User no longer has course Discord role',
-              metadata: {
+              details: JSON.stringify({
+                message: 'User no longer has course Discord role',
                 previousRole: UserRole.COURSE_MEMBER,
                 newRole: UserRole.FREE_TRIAL
-              }
+              }),
+              ipAddress: 'cron-job',
+              userAgent: 'system'
             }
           })
           

@@ -51,7 +51,7 @@ export function convertToMinimalAnalytics(analytics: ChannelAnalytics): MinimalA
         max: Math.round(recentMonthlyRevenue * 1.3),
         estimated: Math.round(recentMonthlyRevenue)
       },
-      niche: analytics.channel.niche
+      niche: analytics.channel.niche || 'General'
     },
     recentPerformance: {
       averageViews,
