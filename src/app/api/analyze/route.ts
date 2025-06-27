@@ -431,23 +431,28 @@ export async function GET(request: NextRequest) {
     // Increment user usage count after successful analysis (skip for admin bypass)
     if (session?.user) {
       await incrementUsage(session.user.id, session.user.email);
-    }
-
-    // Save analysis record for user (skip for admin bypass)
-    if (session?.user) {
-      await prisma.channelAnalysis.create({
-        data: {
-          userId: session.user.id,
-        channelId: channelData.id,
-        channelName: channelData.title,
-        channelHandle: (channelData as any).customUrl || null,
-        subscriberCount: channelData.subscriberCount,
-        totalViews: BigInt(channelData.totalViews),
-        videoCount: channelData.videoCount,
-        estimatedNiche: niche,
-        analysisData: response as any, // Store full analysis as JSON
-        }
+      
+      // Get the actual user from database to ensure we have the correct ID
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email }
       });
+      
+      if (user) {
+        // Save analysis record for user
+        await prisma.channelAnalysis.create({
+          data: {
+            userId: user.id, // Use the actual database user ID
+            channelId: channelData.id,
+            channelName: channelData.title,
+            channelHandle: (channelData as any).customUrl || null,
+            subscriberCount: channelData.subscriberCount,
+            totalViews: BigInt(channelData.totalViews),
+            videoCount: channelData.videoCount,
+            estimatedNiche: niche,
+            analysisData: response as any, // Store full analysis as JSON
+          }
+        });
+      }
     }
 
     return NextResponse.json(response);

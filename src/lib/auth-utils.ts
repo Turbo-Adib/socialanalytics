@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { authOptions } from './auth'
 import { UserRole } from '@prisma/client'
 import { prisma } from './db'
+import { logger } from './logger'
 
 export async function getSession() {
   return await getServerSession(authOptions)
@@ -27,80 +28,91 @@ export async function requireRole(requiredRole: UserRole | UserRole[]) {
   return session
 }
 
-export async function getUserUsageStats(userId: string, email?: string) {
-  let user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      usageCount: true,
-      dailyUsageCount: true,
-      lastUsageReset: true,
-      role: true,
+// Helper function to ensure user exists in database
+async function ensureUserExists(userId: string, email: string, role: UserRole = 'SAAS_SUBSCRIBER') {
+  try {
+    // First, try to find by ID
+    let user = await prisma.user.findUnique({
+      where: { id: userId }
+    })
+    
+    if (user) {
+      return user
     }
-  })
-
-  // If user doesn't exist in database but exists in session, handle it
-  if (!user && email) {
-    // Check if a user with this email already exists
-    const existingUserByEmail = await prisma.user.findUnique({
+    
+    // If not found by ID, check by email
+    const userByEmail = await prisma.user.findUnique({
       where: { email: email }
     })
     
-    if (existingUserByEmail) {
-      // User exists with this email but different ID - this can happen with session/db mismatches
-      // Update the session's user ID to match the existing user
-      user = await prisma.user.findUnique({
-        where: { id: existingUserByEmail.id },
-        select: {
-          usageCount: true,
-          dailyUsageCount: true,
-          lastUsageReset: true,
-          role: true,
-        }
-      })
-    } else {
-      // Create new user
-      await prisma.user.create({
-        data: {
-          id: userId,
-          email: email,
-          role: 'SAAS_SUBSCRIBER', // Default role for existing sessions
-          usageCount: 0,
-          dailyUsageCount: 0,
-          lastUsageReset: new Date(),
-        }
-      })
-      
-      user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-          usageCount: true,
-          dailyUsageCount: true,
-          lastUsageReset: true,
-          role: true,
-        }
-      })
+    if (userByEmail) {
+      // User exists with different ID - return the existing user
+      logger.log(`User ID mismatch: Session has ${userId}, DB has ${userByEmail.id} for email ${email}`)
+      return userByEmail
     }
-  }
-
-  if (!user) throw new Error('User not found')
-
-  // Reset daily usage if last reset was more than 24 hours ago
-  const now = new Date()
-  const lastReset = new Date(user.lastUsageReset)
-  const hoursSinceReset = (now.getTime() - lastReset.getTime()) / (1000 * 60 * 60)
-
-  if (hoursSinceReset >= 24) {
-    await prisma.user.update({
-      where: { id: userId },
+    
+    // No user found - create new one
+    logger.log(`Creating new user: ${userId} with email ${email}`)
+    return await prisma.user.create({
       data: {
+        id: userId,
+        email: email,
+        role: role,
+        usageCount: 0,
         dailyUsageCount: 0,
-        lastUsageReset: now,
+        lastUsageReset: new Date(),
       }
     })
-    user.dailyUsageCount = 0
+  } catch (error) {
+    logger.error('Error in ensureUserExists:', error)
+    throw error
   }
+}
 
-  return user
+export async function getUserUsageStats(userId: string, email?: string) {
+  try {
+    // If we have an email, ensure the user exists
+    if (email) {
+      const user = await ensureUserExists(userId, email)
+      userId = user.id // Use the actual user ID from the database
+    }
+    
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        usageCount: true,
+        dailyUsageCount: true,
+        lastUsageReset: true,
+        role: true,
+      }
+    })
+
+    if (!user) {
+      throw new Error(`User not found: ${userId}`)
+    }
+
+    // Reset daily usage if last reset was more than 24 hours ago
+    const now = new Date()
+    const lastReset = new Date(user.lastUsageReset)
+    const hoursSinceReset = (now.getTime() - lastReset.getTime()) / (1000 * 60 * 60)
+
+    if (hoursSinceReset >= 24) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          dailyUsageCount: 0,
+          lastUsageReset: now,
+        }
+      })
+      user.dailyUsageCount = 0
+    }
+
+    return user
+  } catch (error) {
+    logger.error('Error in getUserUsageStats:', error)
+    throw error
+  }
 }
 
 export async function checkUsageLimit(userId: string, email?: string): Promise<{ 
@@ -109,53 +121,65 @@ export async function checkUsageLimit(userId: string, email?: string): Promise<{
   limit: number; 
   resetAt: Date;
 }> {
-  const user = await getUserUsageStats(userId, email)
-  
-  const limits = {
-    FREE_TRIAL: 3, // Total lifetime limit
-    SAAS_SUBSCRIBER: 50, // Daily limit
-    COURSE_MEMBER: -1, // Unlimited
-    ADMIN: -1, // Unlimited
-  }
-
-  const limit = limits[user.role]
-  
-  if (limit === -1) {
-    return {
-      allowed: true,
-      remaining: -1,
-      limit: -1,
-      resetAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+  try {
+    const user = await getUserUsageStats(userId, email)
+    
+    const limits = {
+      FREE_TRIAL: 3, // Total lifetime limit
+      SAAS_SUBSCRIBER: 50, // Daily limit
+      COURSE_MEMBER: -1, // Unlimited
+      ADMIN: -1, // Unlimited
     }
-  }
 
-  const currentUsage = user.role === 'FREE_TRIAL' ? user.usageCount : user.dailyUsageCount
-  const allowed = currentUsage < limit
-  const remaining = Math.max(0, limit - currentUsage)
-  
-  // Reset time is tomorrow for daily limits, never for lifetime limits
-  const resetAt = user.role === 'FREE_TRIAL' 
-    ? new Date('2099-12-31') // Never resets for free trial
-    : new Date(Date.now() + 24 * 60 * 60 * 1000) // Tomorrow for paid users
+    const limit = limits[user.role]
+    
+    if (limit === -1) {
+      return {
+        allowed: true,
+        remaining: -1,
+        limit: -1,
+        resetAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      }
+    }
 
-  return {
-    allowed,
-    remaining,
-    limit,
-    resetAt,
+    const currentUsage = user.role === 'FREE_TRIAL' ? user.usageCount : user.dailyUsageCount
+    const allowed = currentUsage < limit
+    const remaining = Math.max(0, limit - currentUsage)
+    
+    // Reset time is tomorrow for daily limits, never for lifetime limits
+    const resetAt = user.role === 'FREE_TRIAL' 
+      ? new Date('2099-12-31') // Never resets for free trial
+      : new Date(Date.now() + 24 * 60 * 60 * 1000) // Tomorrow for paid users
+
+    return {
+      allowed,
+      remaining,
+      limit,
+      resetAt,
+    }
+  } catch (error) {
+    logger.error('Error in checkUsageLimit:', error)
+    throw error
   }
 }
 
 export async function incrementUsage(userId: string, email?: string) {
-  const user = await getUserUsageStats(userId, email)
-  
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      usageCount: user.usageCount + 1,
-      dailyUsageCount: user.dailyUsageCount + 1,
-    }
-  })
+  try {
+    // Get the correct user (handles ID mismatches)
+    const user = await getUserUsageStats(userId, email)
+    
+    // Use the actual user ID from the database
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        usageCount: user.usageCount + 1,
+        dailyUsageCount: user.dailyUsageCount + 1,
+      }
+    })
+  } catch (error) {
+    logger.error('Error in incrementUsage:', error)
+    throw error
+  }
 }
 
 export function getRoleDisplayName(role: UserRole): string {
@@ -166,6 +190,8 @@ export function getRoleDisplayName(role: UserRole): string {
       return 'SaaS Subscriber'
     case 'COURSE_MEMBER':
       return 'Course Member'
+    case 'ADMIN':
+      return 'Admin'
     default:
       return 'Unknown'
   }
@@ -190,6 +216,14 @@ export function getRolePermissions(role: UserRole) {
         prioritySupport: true,
       }
     case 'COURSE_MEMBER':
+      return {
+        analysesPerDay: -1, // Unlimited
+        totalAnalyses: -1, // Unlimited
+        exportData: true,
+        advancedFeatures: true,
+        prioritySupport: true,
+      }
+    case 'ADMIN':
       return {
         analysesPerDay: -1, // Unlimited
         totalAnalyses: -1, // Unlimited
