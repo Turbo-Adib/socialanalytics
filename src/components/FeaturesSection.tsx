@@ -12,20 +12,12 @@ const FeaturesSection: React.FC = () => {
     triggerOnce: true
   });
   
-  const { containerRef, visibleItems } = useStaggeredAnimation(12, 150, {
+  const { containerRef, visibleItems } = useStaggeredAnimation(6, 150, {
     threshold: 0.2,
     rootMargin: '0px 0px -100px 0px'
   });
 
   const features = [
-    {
-      icon: BarChart3,
-      title: 'Full Channel Analytics',
-      description: 'Complete YouTube channel analysis with subscriber counts, view trends, engagement metrics, and performance history.',
-      badge: 'Core Feature',
-      color: 'text-youtube-red',
-      bgColor: 'bg-youtube-red/10'
-    },
     {
       icon: DollarSign,
       title: 'Revenue Calculator',
@@ -33,6 +25,14 @@ const FeaturesSection: React.FC = () => {
       badge: 'Most Popular',
       color: 'text-accent-green',
       bgColor: 'bg-accent-green/10'
+    },
+    {
+      icon: BarChart3,
+      title: 'Full Channel Analytics',
+      description: 'Complete YouTube channel analysis with subscriber counts, view trends, engagement metrics, and performance history.',
+      badge: 'Core Feature',
+      color: 'text-youtube-red',
+      bgColor: 'bg-youtube-red/10'
     },
     {
       icon: TrendingUp,
@@ -43,10 +43,10 @@ const FeaturesSection: React.FC = () => {
       bgColor: 'bg-accent-purple/10'
     },
     {
-      icon: Target,
-      title: 'Niche Detection',
-      description: 'Automatic channel categorization with smart keyword mapping for accurate revenue calculations.',
-      badge: 'Automatic',
+      icon: Sparkles,
+      title: 'Growth Projections',
+      description: 'AI-powered forecasts predict your channel growth and revenue potential for the next month and year.',
+      badge: 'Predictive',
       color: 'text-accent-blue',
       bgColor: 'bg-accent-blue/10'
     },
@@ -54,63 +54,15 @@ const FeaturesSection: React.FC = () => {
       icon: Brain,
       title: 'Intelligent Insights',
       description: 'Get actionable recommendations on content strategy, upload timing, and optimization opportunities.',
-      badge: 'Premium',
+      badge: 'Smart AI',
       color: 'text-accent-orange',
       bgColor: 'bg-accent-orange/10'
     },
     {
-      icon: Sparkles,
-      title: 'Growth Projections',
-      description: 'AI-powered forecasts predict your channel growth and revenue potential for the next month and year.',
-      badge: 'Predictive',
-      color: 'text-accent-purple',
-      bgColor: 'bg-accent-purple/10'
-    },
-    {
-      icon: Download,
-      title: 'Video Downloader',
-      description: 'Convert and download YouTube videos to MP4 or MP3. Perfect for content analysis and reference.',
-      badge: 'New',
-      color: 'text-orange-500',
-      bgColor: 'bg-orange-500/10'
-    },
-    {
-      icon: Calculator,
-      title: 'RPM Database',
-      description: 'Access our extensive database of RPM rates across 100+ niches, updated daily with real creator data.',
-      badge: 'Updated Daily',
-      color: 'text-accent-blue',
-      bgColor: 'bg-accent-blue/10'
-    },
-    {
-      icon: History,
-      title: 'Historical Tracking',
-      description: 'Track channel performance over time with detailed monthly snapshots and trend analysis.',
-      badge: 'Time Series',
-      color: 'text-accent-green',
-      bgColor: 'bg-accent-green/10'
-    },
-    {
-      icon: Users,
-      title: 'Course Integration',
-      description: 'Seamless Discord authentication for Creator Camp members with instant access to all premium features.',
-      badge: 'Members Only',
-      color: 'text-discord-blurple',
-      bgColor: 'bg-discord-blurple/10'
-    },
-    {
       icon: Clock,
       title: 'Real-time Updates',
-      description: 'Live channel statistics refreshed every 24 hours with comprehensive performance tracking.',
+      description: 'Live channel statistics refreshed every 24 hours with comprehensive performance tracking and alerts.',
       badge: 'Live Data',
-      color: 'text-youtube-red',
-      bgColor: 'bg-youtube-red/10'
-    },
-    {
-      icon: Shield,
-      title: 'Data Transparency',
-      description: 'Full transparency in calculations with data sources, methodology, and confidence levels.',
-      badge: 'Trusted',
       color: 'text-accent-green',
       bgColor: 'bg-accent-green/10'
     }
@@ -137,7 +89,7 @@ const FeaturesSection: React.FC = () => {
         </div>
 
         {/* Features Grid */}
-        <div ref={containerRef as any} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div ref={containerRef as any} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             const isVisible = visibleItems.has(index);
@@ -147,29 +99,29 @@ const FeaturesSection: React.FC = () => {
                 key={index} 
                 className={`
                   group hover:shadow-lg transition-all duration-500 border-border/50 hover:border-border
-                  hover:scale-[1.02] hover:-translate-y-1
+                  hover:scale-105 hover:-translate-y-2
                   ${isVisible ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-8'}
                 `}
                 style={{ 
-                  animationDelay: `${index * 100}ms`,
+                  animationDelay: `${index * 150}ms`,
                   animationFillMode: 'both'
                 }}
               >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className={`p-2.5 rounded-lg ${feature.bgColor} group-hover:scale-110 transition-transform duration-200`}>
-                      <IconComponent className={`h-5 w-5 ${feature.color} group-hover:animate-bounce-gentle`} />
+                <CardHeader className="pb-4">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`p-3 rounded-lg ${feature.bgColor} group-hover:scale-110 transition-transform duration-200`}>
+                      <IconComponent className={`h-6 w-6 ${feature.color} group-hover:animate-bounce-gentle`} />
                     </div>
                     <Badge variant="outline" className="text-xs font-medium group-hover:scale-105 transition-transform duration-200">
                       {feature.badge}
                     </Badge>
                   </div>
-                  <CardTitle className="text-lg font-semibold text-foreground group-hover:text-youtube-red transition-colors duration-200">
+                  <CardTitle className="text-xl font-semibold text-foreground group-hover:text-youtube-red transition-colors duration-200">
                     {feature.title}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="pt-0">
-                  <CardDescription className="text-sm text-muted-foreground leading-relaxed">
+                <CardContent>
+                  <CardDescription className="text-muted-foreground leading-relaxed">
                     {feature.description}
                   </CardDescription>
                 </CardContent>
