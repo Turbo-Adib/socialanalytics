@@ -27,8 +27,8 @@ export async function requireRole(requiredRole: UserRole | UserRole[]) {
   return session
 }
 
-export async function getUserUsageStats(userId: string) {
-  const user = await prisma.user.findUnique({
+export async function getUserUsageStats(userId: string, email?: string) {
+  let user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
       usageCount: true,
@@ -37,6 +37,30 @@ export async function getUserUsageStats(userId: string) {
       role: true,
     }
   })
+
+  // If user doesn't exist in database but exists in session, create them
+  if (!user && email) {
+    await prisma.user.create({
+      data: {
+        id: userId,
+        email: email,
+        role: 'SAAS_SUBSCRIBER', // Default role for existing sessions
+        usageCount: 0,
+        dailyUsageCount: 0,
+        lastUsageReset: new Date(),
+      }
+    })
+    
+    user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        usageCount: true,
+        dailyUsageCount: true,
+        lastUsageReset: true,
+        role: true,
+      }
+    })
+  }
 
   if (!user) throw new Error('User not found')
 
@@ -59,13 +83,13 @@ export async function getUserUsageStats(userId: string) {
   return user
 }
 
-export async function checkUsageLimit(userId: string): Promise<{ 
+export async function checkUsageLimit(userId: string, email?: string): Promise<{ 
   allowed: boolean; 
   remaining: number; 
   limit: number; 
   resetAt: Date;
 }> {
-  const user = await getUserUsageStats(userId)
+  const user = await getUserUsageStats(userId, email)
   
   const limits = {
     FREE_TRIAL: 3, // Total lifetime limit
@@ -102,8 +126,8 @@ export async function checkUsageLimit(userId: string): Promise<{
   }
 }
 
-export async function incrementUsage(userId: string) {
-  const user = await getUserUsageStats(userId)
+export async function incrementUsage(userId: string, email?: string) {
+  const user = await getUserUsageStats(userId, email)
   
   await prisma.user.update({
     where: { id: userId },

@@ -8,8 +8,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
-    const usageStats = await getUserUsageStats(session.user.id)
-    const usageLimit = await checkUsageLimit(session.user.id)
+    const usageStats = await getUserUsageStats(session.user.id, session.user.email)
+    const usageLimit = await checkUsageLimit(session.user.id, session.user.email)
 
     return NextResponse.json({
       role: session.user.role,

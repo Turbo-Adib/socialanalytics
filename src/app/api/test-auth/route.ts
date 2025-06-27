@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    const usageCheck = await checkUsageLimit(session.user.id)
+    const usageCheck = await checkUsageLimit(session.user.id, session.user.email)
 
     return NextResponse.json({
       authenticated: true,

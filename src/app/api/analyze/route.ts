@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     // Check usage limits
     if (session?.user) {
-      const usageCheck = await checkUsageLimit(session.user.id);
+      const usageCheck = await checkUsageLimit(session.user.id, session.user.email);
       if (!usageCheck.allowed) {
         return NextResponse.json({
           error: 'Usage limit exceeded',
@@ -430,7 +430,7 @@ export async function GET(request: NextRequest) {
 
     // Increment user usage count after successful analysis (skip for admin bypass)
     if (session?.user) {
-      await incrementUsage(session.user.id);
+      await incrementUsage(session.user.id, session.user.email);
     }
 
     // Save analysis record for user (skip for admin bypass)
