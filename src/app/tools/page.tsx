@@ -553,8 +553,8 @@ export default function ToolsPage() {
 
             <ToolCard
               icon={Download}
-              title="Video to MP4/MP3"
-              description="Convert and download YouTube videos to MP4 or MP3 format. Perfect for content analysis and reference material."
+              title="Video Converter"
+              description="Convert YouTube, Instagram, and TikTok videos to MP4 or MP3. Perfect for content analysis, reference, and cross-platform sharing."
               badges={[
                 { text: "Multi-Platform" },
                 { text: "HD Quality" }
