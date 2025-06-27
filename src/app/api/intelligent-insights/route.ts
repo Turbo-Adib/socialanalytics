@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { IntelligentAnalysisEngine } from '@/lib/intelligentAnalysis';
+import { serializeBigInt } from '@/utils/json-serialization';
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,14 +17,14 @@ export async function GET(request: NextRequest) {
     // Get existing insights or trigger new analysis if needed
     const insights = await engine.getChannelInsights(channelId);
 
-    return NextResponse.json({
+    return NextResponse.json(serializeBigInt({
       success: true,
       data: insights,
       meta: {
         timestamp: new Date().toISOString(),
         analysisVersion: '1.0.0'
       }
-    });
+    }));
   } catch (error) {
     console.error('Intelligent Insights API Error:', error);
     return NextResponse.json(
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
     // Return new insights
     const insights = await engine.getChannelInsights(channelId);
 
-    return NextResponse.json({
+    return NextResponse.json(serializeBigInt({
       success: true,
       data: insights,
       meta: {
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
         analysisType: 'fresh',
         analysisVersion: '1.0.0'
       }
-    });
+    }));
   } catch (error) {
     console.error('Intelligent Analysis API Error:', error);
     return NextResponse.json(
