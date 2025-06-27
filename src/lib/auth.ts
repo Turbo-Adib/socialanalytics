@@ -1,13 +1,24 @@
 import { NextAuthOptions } from 'next-auth'
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import CredentialsProvider from 'next-auth/providers/credentials'
+import DiscordProvider from 'next-auth/providers/discord'
 import bcrypt from 'bcryptjs'
 import { prisma } from './db'
 import { UserRole } from '@prisma/client'
+import { checkDiscordMembership, getUserDiscordInfo, determineUserRole } from './discord'
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
   providers: [
+    DiscordProvider({
+      clientId: process.env.DISCORD_CLIENT_ID!,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          scope: 'identify email guilds guilds.members.read'
+        }
+      }
+    }),
     CredentialsProvider({
       name: 'credentials',
       credentials: {
@@ -86,10 +97,75 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt'
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === 'discord') {
+        const guildId = process.env.DISCORD_GUILD_ID
+        const courseRoleId = process.env.DISCORD_COURSE_ROLE_ID
+        
+        if (!guildId) {
+          console.error('DISCORD_GUILD_ID not configured')
+          return false
+        }
+
+        // Check Discord membership
+        const isMember = await checkDiscordMembership(
+          account.access_token!,
+          guildId,
+          courseRoleId
+        )
+
+        // Get Discord user info
+        const discordUser = await getUserDiscordInfo(account.access_token!)
+        
+        if (!discordUser) {
+          return false
+        }
+
+        // Find or create user
+        const existingUser = await prisma.user.findUnique({
+          where: { email: discordUser.email }
+        })
+
+        const userRole = determineUserRole(isMember, existingUser?.role)
+
+        // Update or create user
+        await prisma.user.upsert({
+          where: { email: discordUser.email },
+          update: {
+            name: discordUser.username,
+            role: userRole,
+            discordId: discordUser.id,
+            lastDiscordCheck: new Date()
+          },
+          create: {
+            email: discordUser.email,
+            name: discordUser.username,
+            role: userRole,
+            discordId: discordUser.id,
+            lastDiscordCheck: new Date()
+          }
+        })
+
+        return true
+      }
+      
+      return true
+    },
+    async jwt({ token, user, account }) {
       if (user) {
         token.role = user.role
       }
+      
+      // For Discord logins, always fetch fresh role from DB
+      if (account?.provider === 'discord' && token.email) {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: token.email as string }
+        })
+        if (dbUser) {
+          token.role = dbUser.role
+        }
+      }
+      
       return token
     },
     async session({ session, token }) {

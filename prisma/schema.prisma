@@ -52,6 +52,8 @@ model User {
   subscriptionId    String?        @map("subscription_id") // Stripe subscription ID
   customerId        String?        @map("customer_id") // Stripe customer ID
   discountCodeUsed  String?        @map("discount_code_used") // Track which code was redeemed
+  discordId         String?        @map("discord_id") // Discord user ID
+  lastDiscordCheck  DateTime?      @map("last_discord_check") // Last time we verified Discord membership
   usageCount        Int            @default(0) @map("usage_count")
   dailyUsageCount   Int            @default(0) @map("daily_usage_count")
   lastUsageReset    DateTime       @default(now()) @map("last_usage_reset")

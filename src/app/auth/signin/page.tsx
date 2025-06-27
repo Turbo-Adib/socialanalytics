@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Loader2, Shield, Mail, Key } from 'lucide-react'
+import { DiscordLoginButton } from '@/components/DiscordLoginButton'
 
 export default function SignInPage() {
   const [email, setEmail] = useState('')
@@ -86,6 +87,39 @@ export default function SignInPage() {
         </CardHeader>
         
         <CardContent>
+          <div className="mb-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Course Members
+                </span>
+              </div>
+            </div>
+            <div className="mt-4">
+              <DiscordLoginButton 
+                text="Sign in with Discord" 
+                className="w-full"
+              />
+              <p className="text-center text-xs text-muted-foreground mt-2">
+                For course members with Discord access
+              </p>
+            </div>
+          </div>
+          
+          <div className="relative mb-4">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
+          </div>
+          
           <Tabs defaultValue="email" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="email" className="flex items-center gap-2">
