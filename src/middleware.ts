@@ -12,6 +12,7 @@ export default withAuth(
     // Public routes that don't require authentication
     const publicRoutes = [
       '/',
+      '/course',
       '/auth/signin',
       '/auth/signup',
       '/auth/error',
@@ -141,6 +142,7 @@ export default withAuth(
         // Allow access to public routes
         const publicRoutes = [
           '/',
+          '/course',
           '/auth/signin',
           '/auth/signup',
           '/auth/error',
