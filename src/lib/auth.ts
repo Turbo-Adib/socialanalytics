@@ -27,28 +27,37 @@ export const authOptions: NextAuthOptions = {
         adminCode: { label: 'Admin Code', type: 'text' }
       },
       async authorize(credentials) {
-        // SIMPLIFIED ADMIN BYPASS - JUST MAKE IT WORK
-        if (credentials?.adminCode && credentials.adminCode === 'admin123') {
-          // Create or get admin user
-          const adminUser = await prisma.user.upsert({
-            where: { email: 'admin@beta.test' },
-            update: {
-              role: UserRole.COURSE_MEMBER,
-            },
-            create: {
-              email: 'admin@beta.test',
-              name: 'Admin User',
-              role: UserRole.COURSE_MEMBER,
-              password: await bcrypt.hash('betaadmin123', 10),
-            },
-          });
+        try {
+          // SIMPLIFIED ADMIN BYPASS - JUST MAKE IT WORK
+          if (credentials?.adminCode && credentials.adminCode === 'admin123') {
+            console.log('Admin code login attempt with code:', credentials.adminCode);
+            
+            // Create or get admin user
+            const adminUser = await prisma.user.upsert({
+              where: { email: 'admin@beta.test' },
+              update: {
+                role: UserRole.COURSE_MEMBER,
+              },
+              create: {
+                email: 'admin@beta.test',
+                name: 'Admin User',
+                role: UserRole.COURSE_MEMBER,
+                password: await bcrypt.hash('betaadmin123', 10),
+              },
+            });
 
-          return {
-            id: adminUser.id,
-            email: adminUser.email,
-            name: adminUser.name,
-            role: adminUser.role,
+            console.log('Admin user created/found:', adminUser.email);
+
+            return {
+              id: adminUser.id,
+              email: adminUser.email,
+              name: adminUser.name,
+              role: adminUser.role,
+            }
           }
+        } catch (error) {
+          console.error('Admin login error:', error);
+          // Continue to regular auth flow
         }
 
         // Regular email/password auth
@@ -58,25 +67,34 @@ export const authOptions: NextAuthOptions = {
 
         // SIMPLE HARDCODED ADMIN ACCESS
         if (credentials.email === 'admin@beta.test' && credentials.password === 'betaadmin123') {
-          // Create or get admin user
-          const adminUser = await prisma.user.upsert({
-            where: { email: 'admin@beta.test' },
-            update: {
-              role: UserRole.COURSE_MEMBER,
-            },
-            create: {
-              email: 'admin@beta.test',
-              name: 'Beta Admin',
-              role: UserRole.COURSE_MEMBER,
-              password: await bcrypt.hash('betaadmin123', 10),
-            },
-          });
+          console.log('Admin email login attempt');
+          
+          try {
+            // Create or get admin user
+            const adminUser = await prisma.user.upsert({
+              where: { email: 'admin@beta.test' },
+              update: {
+                role: UserRole.COURSE_MEMBER,
+              },
+              create: {
+                email: 'admin@beta.test',
+                name: 'Beta Admin',
+                role: UserRole.COURSE_MEMBER,
+                password: await bcrypt.hash('betaadmin123', 10),
+              },
+            });
 
-          return {
-            id: adminUser.id,
-            email: adminUser.email,
-            name: adminUser.name,
-            role: adminUser.role,
+            console.log('Admin user created/found via email:', adminUser.email);
+
+            return {
+              id: adminUser.id,
+              email: adminUser.email,
+              name: adminUser.name,
+              role: adminUser.role,
+            }
+          } catch (error) {
+            console.error('Admin email login error:', error);
+            return null;
           }
         }
 

@@ -20,6 +20,7 @@ export default withAuth(
       '/demo-admin',
       '/api/demo',
       '/test-access',
+      '/api/setup-admin',
     ]
 
     // API routes that require authentication
@@ -153,6 +154,7 @@ export default withAuth(
           '/demo-admin',
           '/api/demo',
           '/test-access',
+          '/api/setup-admin',
         ]
         
         if (publicRoutes.includes(pathname)) {
