@@ -2,6 +2,17 @@
 
 A comprehensive SaaS platform that helps YouTube creators understand their channel's performance, analyze revenue potential, and identify growth opportunities through AI-powered insights.
 
+## 🚀 Live Demo
+
+**Beta Version Available**: [https://insight-sync.onrender.com](https://insight-sync.onrender.com)
+
+### Quick Access (Beta Testing)
+- **Demo Admin Page**: `/demo-admin` (no login required)
+- **Admin Code**: `admin123`
+- **Test Credentials**: 
+  - Email: `admin@beta.test`
+  - Password: `betaadmin123`
+
 ## 🚀 Features
 
 ### Core Analytics
@@ -39,27 +50,28 @@ A comprehensive SaaS platform that helps YouTube creators understand their chann
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 15.3.4, React 19.1.0, Tailwind CSS 4.1.10
-- **Backend**: Next.js API Routes, Prisma ORM
-- **Database**: PostgreSQL (SQLite for development)
-- **Authentication**: NextAuth.js with JWT & Discord OAuth
+- **Frontend**: Next.js 15.3.4, React 19.1.0, Tailwind CSS 3.4.1
+- **Backend**: Next.js API Routes (serverless functions)
+- **Database**: PostgreSQL (production), SQLite (development)
+- **ORM**: Prisma 6.10.1
+- **Authentication**: NextAuth.js with JWT
 - **External APIs**: YouTube Data API v3
 - **Charts**: Recharts for data visualization
-- **Video Processing**: yt-dlp-wrap integration
-- **Deployment**: Render, Vercel compatible
+- **Deployment**: Render (optimized for)
 
 ## 📋 Prerequisites
 
 - Node.js 18+ and npm
 - YouTube Data API key
-- PostgreSQL database (or SQLite for development)
-- Stripe account (for payments - optional)
+- PostgreSQL database (provided by Render)
+- Stripe account (optional - disabled for beta)
+- Discord OAuth app (optional - disabled for beta)
 
 ## 🔧 Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/socialanalytics.git
+   git clone https://github.com/Turbo-Adib/socialanalytics.git
    cd socialanalytics
    ```
 
@@ -233,29 +245,50 @@ See [docs/SECURITY.md](docs/SECURITY.md) for detailed security documentation.
 
 ### Deploy to Render
 
-1. Create a new Web Service on Render
-2. Connect your GitHub repository
-3. Set environment variables
-4. Add build command: `npm run build`
-5. Add start command: `npm run start`
+This project is optimized for deployment on Render.
 
-### Deploy to Vercel
+See [DEPLOY-RENDER.md](DEPLOY-RENDER.md) for detailed deployment instructions.
 
-1. Import project to Vercel
-2. Configure environment variables
-3. Deploy (automatic from GitHub)
+**Quick Steps:**
+1. Create PostgreSQL database on Render
+2. Create Web Service and connect GitHub repo  
+3. Set environment variables (see below)
+4. Build command: `npm install && npm run build && npx prisma migrate deploy`
+5. Start command: `npm run start`
+
+**Post-Deployment:**
+- Run `npm run db:seed` in Render Shell to seed RPM rates
+- First load may take 30-60 seconds (free tier spin-up)
+
+**Beta Testing Configuration:**
+- See [BETA-TESTING.md](BETA-TESTING.md) for beta deployment guide
+- Includes simplified auth and disabled payment processing
+- Demo access available at `/demo-admin`
 
 ### Environment Variables
 
 Required for production:
 ```env
+# Database (PostgreSQL for production)
 DATABASE_URL=postgresql://...
-YOUTUBE_API_KEY=...
+
+# Authentication
 NEXTAUTH_URL=https://yourdomain.com
-NEXTAUTH_SECRET=...
+NEXTAUTH_SECRET=generate_with_openssl_rand_base64_32
+
+# YouTube API
+YOUTUBE_API_KEY=your_api_key_here
+
+# Admin Access (Beta)
+ADMIN_EMAIL=admin@beta.test
+ADMIN_PASSWORD_HASH=bcrypt_hash_here
+
+# Optional for full production
 STRIPE_SECRET_KEY=... (if using payments)
 STRIPE_WEBHOOK_SECRET=... (if using payments)
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=... (if using payments)
+DISCORD_CLIENT_ID=... (if using Discord login)
+DISCORD_CLIENT_SECRET=... (if using Discord login)
 ```
 
 ## 📈 Usage Limits & Access Levels
@@ -359,12 +392,18 @@ This project is proprietary software. All rights reserved.
 
 ## 💡 Quick Start Guide
 
-1. Visit the landing page
+### For Users:
+1. Visit [https://insight-sync.onrender.com](https://insight-sync.onrender.com)
 2. Click "Analyze Your Channel" 
-3. Enter any YouTube channel URL
+3. Enter any YouTube channel URL (e.g., @MrBeast)
 4. Get instant insights and revenue estimates
-5. Sign up with course code for full access
-6. Access all pro tools from /tools dashboard
+5. Sign up for full access (3 free analyses)
+
+### For Beta Testers:
+1. Visit `/demo-admin` for direct access links
+2. Or use admin code: `admin123`
+3. Or login with: admin@beta.test / betaadmin123
+4. Access all tools from `/tools` dashboard
 
 ## 🙏 Acknowledgments
 
