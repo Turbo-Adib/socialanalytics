@@ -13,7 +13,7 @@ async function checkDatabase() {
     console.log('Database RPM Rates:');
     console.log('='.repeat(50));
     
-    rates.forEach(rate => {
+    rates.forEach((rate: any) => {
       console.log(`${rate.displayName.padEnd(25)}: $${rate.averageRpmUsd.toString().padStart(6)} RPM (${rate.niche})`);
     });
     
