@@ -74,11 +74,11 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
               <Database className="h-8 w-8 text-blue-600" />
               Niche Admin Panel
             </h1>
-            <p className="text-gray-600 mt-2">Manage keywords, categories, and search analytics</p>
+            <p className="text-gray-300 mt-2">Manage keywords, categories, and search analytics</p>
           </div>
           {onClose && (
             <button
@@ -107,7 +107,7 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
                     className={`flex items-center gap-2 py-4 px-1 border-b-2 text-sm font-medium transition-colors ${
                       activeTab === tab.id
                         ? 'border-blue-500 text-blue-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -124,19 +124,19 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-blue-50 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-blue-900 mb-2">Total Categories</h3>
+                    <h3 className="text-lg font-semibold text-blue-100 mb-2">Total Categories</h3>
                     <p className="text-3xl font-bold text-blue-600">{parentCategories.length}</p>
-                    <p className="text-sm text-blue-700 mt-1">Main RPM categories</p>
+                    <p className="text-sm text-blue-300 mt-1">Main RPM categories</p>
                   </div>
                   
                   <div className="bg-green-50 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-green-900 mb-2">Total Niches</h3>
+                    <h3 className="text-lg font-semibold text-green-100 mb-2">Total Niches</h3>
                     <p className="text-3xl font-bold text-green-600">{nicheDatabase.length}</p>
-                    <p className="text-sm text-green-700 mt-1">Specific sub-niches</p>
+                    <p className="text-sm text-green-300 mt-1">Specific sub-niches</p>
                   </div>
                   
                   <div className="bg-purple-50 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-purple-900 mb-2">Total Keywords</h3>
+                    <h3 className="text-lg font-semibold text-purple-100 mb-2">Total Keywords</h3>
                     <p className="text-3xl font-bold text-purple-600">
                       {nicheDatabase.reduce((sum, niche) => sum + niche.keywords.length + niche.aliases.length, 0)}
                     </p>
@@ -146,7 +146,7 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
 
                 {/* Category Breakdown */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Category Breakdown</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4">Category Breakdown</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {parentCategories.map((category) => {
                       const nicheCount = nicheDatabase.filter(n => n.parentCategory === category.id).length;
@@ -156,8 +156,8 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
                       
                       return (
                         <div key={category.id} className="bg-card border border-border rounded-lg p-4">
-                          <h4 className="font-medium text-gray-900">{category.name}</h4>
-                          <div className="mt-2 space-y-1 text-sm text-gray-600">
+                          <h4 className="font-medium text-white">{category.name}</h4>
+                          <div className="mt-2 space-y-1 text-sm text-gray-300">
                             <div>RPM: ${category.longFormRpm}/1K views</div>
                             <div>{nicheCount} sub-niches</div>
                             <div>{keywordCount} keywords</div>
@@ -210,22 +210,22 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <h4 className="font-medium text-gray-900">{niche.displayName}</h4>
+                              <h4 className="font-medium text-white">{niche.displayName}</h4>
                               <span className={`px-2 py-1 text-xs rounded bg-${parentCategory?.color || 'gray'}-100 text-${parentCategory?.color || 'gray'}-700`}>
                                 {parentCategory?.name}
                               </span>
                             </div>
                             
-                            <p className="text-sm text-gray-600 mb-3">{niche.description}</p>
+                            <p className="text-sm text-gray-300 mb-3">{niche.description}</p>
                             
                             {/* Keywords */}
                             <div className="mb-3">
-                              <h5 className="text-sm font-medium text-gray-700 mb-2">Keywords:</h5>
+                              <h5 className="text-sm font-medium text-gray-200 mb-2">Keywords:</h5>
                               <div className="flex flex-wrap gap-1">
                                 {niche.keywords.map((keyword) => (
                                   <span
                                     key={keyword}
-                                    className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded"
+                                    className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-200 text-xs rounded"
                                   >
                                     {keyword}
                                     <button
@@ -241,12 +241,12 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
 
                             {/* Aliases */}
                             <div className="mb-3">
-                              <h5 className="text-sm font-medium text-gray-700 mb-2">Aliases:</h5>
+                              <h5 className="text-sm font-medium text-gray-200 mb-2">Aliases:</h5>
                               <div className="flex flex-wrap gap-1">
                                 {niche.aliases.map((alias) => (
                                   <span
                                     key={alias}
-                                    className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
+                                    className="px-2 py-1 bg-gray-100 text-gray-200 text-xs rounded"
                                   >
                                     {alias}
                                   </span>
@@ -279,7 +279,7 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
 
                           <button
                             onClick={() => setEditingNiche(isEditing ? null : niche)}
-                            className="ml-4 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                            className="ml-4 p-2 text-gray-400 hover:text-gray-300 transition-colors"
                           >
                             <Edit3 className="h-4 w-4" />
                           </button>
@@ -295,21 +295,21 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
             {activeTab === 'analytics' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Search Analytics (Last 30 Days)</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4">Search Analytics (Last 30 Days)</h3>
                   <div className="bg-card border border-border rounded-lg overflow-hidden">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                             Search Term
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                             Searches
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                             Mapped Category
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                             Match Type
                           </th>
                         </tr>
@@ -332,22 +332,22 @@ const NicheAdmin: React.FC<NicheAdminProps> = ({ onClose }) => {
                             
                             return (
                               <tr key={term}>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                                   {term}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                   {count.toLocaleString()}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                   {mockResult.parentCategory.name}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <span className={`px-2 py-1 text-xs rounded ${
                                     mockResult.matchType === 'exact' ? 'bg-green-100 text-green-800' :
-                                    mockResult.matchType === 'partial' ? 'bg-blue-100 text-blue-800' :
-                                    mockResult.matchType === 'fuzzy' ? 'bg-yellow-100 text-yellow-800' :
+                                    mockResult.matchType === 'partial' ? 'bg-blue-100 text-blue-200' :
+                                    mockResult.matchType === 'fuzzy' ? 'bg-yellow-100 text-yellow-200' :
                                     mockResult.matchType === 'ai_semantic' ? 'bg-indigo-100 text-indigo-800' :
-                                    'bg-gray-100 text-gray-800'
+                                    'bg-gray-100 text-gray-100'
                                   }`}>
                                     {mockResult.matchType}
                                   </span>

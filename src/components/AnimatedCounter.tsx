@@ -25,15 +25,17 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   preserveValue = false
 }) => {
   const [currentValue, setCurrentValue] = useState(preserveValue ? end : start);
+  const [hasStarted, setHasStarted] = useState(false);
   const { ref, isVisible, hasAnimated } = useScrollAnimation({
     threshold: 0.3,
     triggerOnce: true
   });
 
   useEffect(() => {
-    if (isVisible && !hasAnimated) {
+    if (isVisible && !hasStarted) {
+      setHasStarted(true);
       let startTime: number | null = null;
-      const startValue = preserveValue ? end : start;
+      const startValue = start;
       
       const animate = (timestamp: number) => {
         if (!startTime) startTime = timestamp;
@@ -50,11 +52,9 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
         }
       };
       
-      if (!preserveValue) {
-        requestAnimationFrame(animate);
-      }
+      requestAnimationFrame(animate);
     }
-  }, [isVisible, hasAnimated, start, end, duration, preserveValue]);
+  }, [isVisible, hasStarted, start, end, duration]);
 
   const formatValue = (value: number) => {
     const formattedValue = decimals > 0 
@@ -66,7 +66,7 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
 
   return (
     <span 
-      ref={ref} 
+      ref={ref as React.RefObject<HTMLSpanElement>} 
       className={`inline-block ${isVisible ? 'animate-counter-up' : 'opacity-0'} ${className}`}
     >
       {formatValue(currentValue)}

@@ -10,10 +10,11 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import RpmCalculator from '@/components/RpmCalculator';
 import OutlierAnalyzer from '@/components/OutlierAnalyzer';
-import MinimalDashboard from '@/components/MinimalDashboard';
+import Dashboard from '@/components/Dashboard';
 import LoadingState from '@/components/LoadingState';
 import ErrorState from '@/components/ErrorState';
-import { convertToMinimalAnalytics } from '@/utils/convertAnalyticsFormat';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export default function ToolsPage() {
   const { data: session, status } = useSession();
@@ -124,9 +125,8 @@ export default function ToolsPage() {
       setLoadingStage('finalizing');
       await new Promise(resolve => setTimeout(resolve, 200));
       
-      // Convert to MinimalAnalytics format for MinimalDashboard
-      const minimalAnalytics = convertToMinimalAnalytics(data);
-      setAnalytics(minimalAnalytics);
+      // Use the data directly as it's already in ChannelAnalytics format
+      setAnalytics(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
@@ -216,23 +216,16 @@ export default function ToolsPage() {
     );
   }
 
-  // Show Analytics Dashboard
+  // Show Analytics Dashboard (using the same Dashboard component as the demo)
   if (analytics) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="border-b border-border p-4">
-          <Button 
-            variant="ghost" 
-            onClick={handleReset}
-            className="mb-2"
-          >
-            ← Back to Tools
-          </Button>
-        </div>
-        <MinimalDashboard 
+      <div className="min-h-screen bg-background transition-colors duration-300">
+        <Header onNavigateHome={handleReset} />
+        <Dashboard 
           analytics={analytics} 
           onReset={handleReset}
         />
+        <Footer />
       </div>
     );
   }

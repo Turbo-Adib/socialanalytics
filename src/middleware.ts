@@ -92,6 +92,9 @@ export default withAuth(
       response.headers.set('X-XSS-Protection', '1; mode=block')
       response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
       response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+      
+      // Practical CSP for Next.js app
+      response.headers.set('Content-Security-Policy', `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: yt3.ggpht.com yt3.googleusercontent.com i.ytimg.com; connect-src 'self' https://api.stripe.com https://checkout.stripe.com; font-src 'self'; object-src 'none'; media-src 'self'; frame-src 'self' https://checkout.stripe.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;`)
       Object.entries(getRateLimitHeaders(globalRateLimit)).forEach(([key, value]) => {
         response.headers.set(key, value)
       })
@@ -114,7 +117,8 @@ export default withAuth(
     response.headers.set('X-XSS-Protection', '1; mode=block')
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
     response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
-    response.headers.set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: yt3.ggpht.com yt3.googleusercontent.com i.ytimg.com; connect-src 'self'; font-src 'self'; object-src 'none'; media-src 'self'; frame-src 'none';")
+    // Practical CSP for Next.js app
+    response.headers.set('Content-Security-Policy', `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: yt3.ggpht.com yt3.googleusercontent.com i.ytimg.com; connect-src 'self' https://api.stripe.com https://checkout.stripe.com; font-src 'self'; object-src 'none'; media-src 'self'; frame-src 'self' https://checkout.stripe.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;`)
     
     // Add rate limiting headers
     Object.entries(getRateLimitHeaders(globalRateLimit)).forEach(([key, value]) => {

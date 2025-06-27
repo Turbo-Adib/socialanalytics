@@ -314,7 +314,7 @@ export default function DesignSystemShowcase() {
                       <span className="text-white text-xs font-mono">#FF7626</span>
                     </div>
                     <div className="h-20 bg-accent-yellow rounded-lg flex items-end p-2">
-                      <span className="text-gray-900 text-xs font-mono">#FFD600</span>
+                      <span className="text-white text-xs font-mono">#FFD600</span>
                     </div>
                   </div>
                 </div>

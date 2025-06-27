@@ -18,10 +18,10 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
             <div className="flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                <p className="text-sm font-medium text-yellow-200 dark:text-yellow-200">
                   Demo Mode - Sample Data
                 </p>
-                <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
+                <p className="text-sm text-yellow-300 dark:text-yellow-300 mt-1">
                   {demoNote}
                 </p>
                 {requestedUrl && (
@@ -31,7 +31,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
                 )}
                 <a 
                   href="/auth/signup" 
-                  className="inline-flex items-center gap-1 mt-3 text-sm font-medium text-yellow-900 dark:text-yellow-100 hover:underline"
+                  className="inline-flex items-center gap-1 mt-3 text-sm font-medium text-yellow-100 dark:text-yellow-100 hover:underline"
                 >
                   Sign up for free to analyze real channels →
                 </a>
@@ -43,7 +43,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
         {/* Back button */}
         <button
           onClick={onReset}
-          className="mb-6 flex items-center gap-2 text-gray-600 dark:text-dark-text-secondary hover:text-gray-900 dark:hover:text-white transition-all duration-200 group"
+          className="mb-6 flex items-center gap-2 text-gray-300 dark:text-dark-text-secondary hover:text-white dark:hover:text-white transition-all duration-200 group"
         >
           <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
           Analyze Another Channel
@@ -75,12 +75,12 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
               </div>
             )}
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{overview.title}</h1>
-              <p className="text-gray-600 dark:text-dark-text-secondary mt-1 flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-white dark:text-white">{overview.title}</h1>
+              <p className="text-gray-300 dark:text-dark-text-secondary mt-1 flex items-center gap-2">
                 <span className="inline-block w-2 h-2 bg-youtube-red rounded-full"></span>
                 {overview.niche} Channel
               </p>
-              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mt-2">
+              <p className="text-sm text-gray-400 dark:text-dark-text-tertiary mt-2">
                 Channel Age: {overview?.estimatedAge?.years || 0}y {overview?.estimatedAge?.months || 0}m
               </p>
             </div>
@@ -95,10 +95,10 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
                 <Users className="h-6 w-6 text-accent-blue" />
               </div>
               <div>
-                <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate">
+                <p className="text-lg sm:text-xl font-bold text-white dark:text-white truncate">
                   {overview?.subscriberCount?.toLocaleString() || '0'}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Subscribers</p>
+                <p className="text-sm text-gray-400 dark:text-dark-text-tertiary">Subscribers</p>
               </div>
             </div>
           </div>
@@ -109,10 +109,10 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
                 <Eye className="h-6 w-6 text-accent-green" />
               </div>
               <div>
-                <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate">
+                <p className="text-lg sm:text-xl font-bold text-white dark:text-white truncate">
                   {overview?.totalViews?.toLocaleString() || '0'}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Total Views</p>
+                <p className="text-sm text-gray-400 dark:text-dark-text-tertiary">Total Views</p>
               </div>
             </div>
           </div>
@@ -123,10 +123,10 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
                 <Video className="h-6 w-6 text-accent-purple" />
               </div>
               <div>
-                <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate">
+                <p className="text-lg sm:text-xl font-bold text-white dark:text-white truncate">
                   {overview?.videoCount?.toLocaleString() || '0'}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Total Videos</p>
+                <p className="text-sm text-gray-400 dark:text-dark-text-tertiary">Total Videos</p>
               </div>
             </div>
           </div>
@@ -137,10 +137,10 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
                 <DollarSign className="h-6 w-6 text-accent-yellow" />
               </div>
               <div>
-                <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate">
+                <p className="text-lg sm:text-xl font-bold text-white dark:text-white truncate">
                   ${overview?.monthlyRevenue?.estimated?.toLocaleString() || '0'}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">Monthly Revenue</p>
+                <p className="text-sm text-gray-400 dark:text-dark-text-tertiary">Monthly Revenue</p>
               </div>
             </div>
           </div>
@@ -148,49 +148,49 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
 
         {/* Recent Performance */}
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-white dark:text-white mb-4 flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-accent-blue" />
             Recent Performance
-            <span className="text-sm font-normal text-gray-500 dark:text-dark-text-tertiary">
+            <span className="text-sm font-normal text-gray-400 dark:text-dark-text-tertiary">
               (Last {recentPerformance?.totalVideos || 0} videos)
             </span>
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-1">Average Views</p>
-              <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+              <p className="text-sm text-gray-400 dark:text-dark-text-tertiary mb-1">Average Views</p>
+              <p className="text-base sm:text-lg font-bold text-white dark:text-white">
                 {recentPerformance?.averageViews?.toLocaleString() || '0'}
               </p>
-              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mt-1">
+              <p className="text-sm text-gray-400 dark:text-dark-text-tertiary mt-1">
                 Upload frequency: {recentPerformance?.uploadFrequency || 0} videos/month
               </p>
             </div>
 
             <div>
-              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-1">Content Mix</p>
+              <p className="text-sm text-gray-400 dark:text-dark-text-tertiary mb-1">Content Mix</p>
               <div className="flex gap-4">
                 <div>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">
+                  <p className="text-lg font-bold text-white dark:text-white">
                     {recentPerformance?.contentMix?.longFormPercentage || 0}%
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-dark-text-tertiary">Long-form</p>
+                  <p className="text-xs text-gray-400 dark:text-dark-text-tertiary">Long-form</p>
                 </div>
                 <div>
-                  <p className="text-lg font-bold text-gray-900 dark:text-white">
+                  <p className="text-lg font-bold text-white dark:text-white">
                     {recentPerformance?.contentMix?.shortsPercentage || 0}%
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-dark-text-tertiary">Shorts</p>
+                  <p className="text-xs text-gray-400 dark:text-dark-text-tertiary">Shorts</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-1">Revenue Estimate</p>
-              <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+              <p className="text-sm text-gray-400 dark:text-dark-text-tertiary mb-1">Revenue Estimate</p>
+              <p className="text-base sm:text-lg font-bold text-white dark:text-white">
                 ${recentPerformance?.revenueEstimate?.monthly?.toLocaleString() || '0'}/mo
               </p>
-              <p className="text-xs text-gray-500 dark:text-dark-text-tertiary mt-1">
+              <p className="text-xs text-gray-400 dark:text-dark-text-tertiary mt-1">
                 Range: ${overview?.monthlyRevenue?.min || 0} - ${overview?.monthlyRevenue?.max || 0}
               </p>
             </div>
@@ -200,12 +200,12 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
         {/* Best/Worst Performers */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="card">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-white dark:text-white mb-4 flex items-center gap-2">
               <Star className="h-5 w-5 text-accent-green" />
               Best Performer
             </h3>
             <div>
-              <p className="font-medium text-gray-900 dark:text-white line-clamp-2">
+              <p className="font-medium text-white dark:text-white line-clamp-2">
                 {recentPerformance?.bestVideo?.title || 'No videos found'}
               </p>
               <p className="text-lg font-bold text-accent-green mt-2">
@@ -219,7 +219,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
                 }`}>
                   {recentPerformance?.bestVideo?.performance || 'average'}
                 </span>
-                <span className="text-xs text-gray-500 dark:text-dark-text-tertiary">
+                <span className="text-xs text-gray-400 dark:text-dark-text-tertiary">
                   {recentPerformance?.bestVideo?.isShort ? 'Short' : 'Long-form'}
                 </span>
               </div>
@@ -227,12 +227,12 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
           </div>
 
           <div className="card">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-white dark:text-white mb-4 flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-youtube-red" />
               Needs Improvement
             </h3>
             <div>
-              <p className="font-medium text-gray-900 dark:text-white line-clamp-2">
+              <p className="font-medium text-white dark:text-white line-clamp-2">
                 {recentPerformance?.worstVideo?.title || 'No videos found'}
               </p>
               <p className="text-lg font-bold text-youtube-red mt-2">
@@ -245,7 +245,7 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
                 }`}>
                   {recentPerformance?.worstVideo?.performance || 'average'}
                 </span>
-                <span className="text-xs text-gray-500 dark:text-dark-text-tertiary">
+                <span className="text-xs text-gray-400 dark:text-dark-text-tertiary">
                   {recentPerformance?.worstVideo?.isShort ? 'Short' : 'Long-form'}
                 </span>
               </div>
@@ -255,33 +255,33 @@ const MinimalDashboard: React.FC<MinimalDashboardProps> = ({ analytics, onReset 
 
         {/* Projections */}
         <div className="card">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-white dark:text-white mb-4 flex items-center gap-2">
             <Calendar className="h-5 w-5 text-accent-purple" />
             Growth Projections
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-2">Next Subscriber Milestone</p>
-              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-sm text-gray-400 dark:text-dark-text-tertiary mb-2">Next Subscriber Milestone</p>
+              <p className="text-xl sm:text-2xl font-bold text-white dark:text-white">
                 {projections?.subscribers?.nextMilestone?.toLocaleString() || '0'}
               </p>
-              <p className="text-sm text-gray-600 dark:text-dark-text-secondary mt-1">
+              <p className="text-sm text-gray-300 dark:text-dark-text-secondary mt-1">
                 {projections?.subscribers?.estimatedDays || '0'} days to reach
               </p>
-              <p className="text-xs text-gray-500 dark:text-dark-text-tertiary mt-1">
+              <p className="text-xs text-gray-400 dark:text-dark-text-tertiary mt-1">
                 Growth rate: {projections?.subscribers?.growthRate?.toLocaleString() || '0'}/month
               </p>
             </div>
 
             <div>
-              <p className="text-sm text-gray-500 dark:text-dark-text-tertiary mb-2">Revenue Projections</p>
+              <p className="text-sm text-gray-400 dark:text-dark-text-tertiary mb-2">Revenue Projections</p>
               <div className="space-y-2">
                 <div>
-                  <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+                  <p className="text-base sm:text-lg font-bold text-white dark:text-white">
                     ${projections?.revenue?.nextMonth?.toLocaleString() || '0'}/mo
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-dark-text-secondary">
+                  <p className="text-sm text-gray-300 dark:text-dark-text-secondary">
                     ${projections?.revenue?.nextYear?.toLocaleString() || '0'}/yr
                   </p>
                 </div>

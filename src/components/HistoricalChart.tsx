@@ -60,18 +60,18 @@ const HistoricalChart: React.FC<HistoricalChartProps> = ({
             bottom: 5,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#303030" opacity={0.3} />
           <XAxis 
             dataKey={timeframe === 'daily' ? 'date' : 'month'} 
             tick={{ fontSize: 12 }}
             tickFormatter={formatXAxis}
-            stroke="#666"
+            stroke="#aaaaaa"
             interval={timeframe === 'daily' ? 2 : 0}
           />
           <YAxis 
             tick={{ fontSize: 12 }}
             tickFormatter={(value) => formatValue(value)}
-            stroke="#666"
+            stroke="#aaaaaa"
           />
           <Tooltip
             formatter={formatTooltipValue}
@@ -85,6 +85,7 @@ const HistoricalChart: React.FC<HistoricalChartProps> = ({
             }}
           />
           <Legend 
+            wrapperStyle={{ color: '#e1e5e9' }}
             formatter={(value: string) => 
               value
                 .replace(/([A-Z])/g, ' $1')

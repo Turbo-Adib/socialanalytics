@@ -39,8 +39,8 @@ const MonetizationStatus: React.FC<MonetizationStatusProps> = ({
       <div className="flex flex-col">
         <span className={`text-sm font-medium ${
           isMonetized 
-            ? 'text-green-700 dark:text-green-300' 
-            : 'text-red-700 dark:text-red-300'
+            ? 'text-green-300 dark:text-green-300' 
+            : 'text-red-300 dark:text-red-300'
         }`}>
           {isMonetized ? 'Monetized' : 'Not Monetized'}
         </span>

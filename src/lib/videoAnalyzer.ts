@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { YouTubeAPI } from './youtube';
 import { AnalysisTier } from '@/utils/cacheManager';
+import { logger } from '@/lib/logger';
 
 export interface VideoData {
   id: string;
@@ -62,7 +63,7 @@ export class VideoAnalyzer {
     
     // PRIMARY: Duration ≤ 60 seconds = Shorts (guaranteed)
     if (durationInSeconds <= 60) {
-      console.log(`[SHORTS DETECTION] ${debugInfo.videoId}: PRIMARY - Duration ${durationInSeconds}s ≤ 60s = SHORTS`);
+      logger.log(`[SHORTS DETECTION] ${debugInfo.videoId}: PRIMARY - Duration ${durationInSeconds}s ≤ 60s = SHORTS`);
       return true;
     }
     
@@ -81,7 +82,7 @@ export class VideoAnalyzer {
       );
       
       if (hasHashtagIndicator) {
-        console.log(`[SHORTS DETECTION] ${debugInfo.videoId}: SECONDARY - Duration ${durationInSeconds}s + hashtag = SHORTS`);
+        logger.log(`[SHORTS DETECTION] ${debugInfo.videoId}: SECONDARY - Duration ${durationInSeconds}s + hashtag = SHORTS`);
         return true;
       }
     }
@@ -107,7 +108,7 @@ export class VideoAnalyzer {
       );
       
       if (hasFormatIndicator) {
-        console.log(`[SHORTS DETECTION] ${debugInfo.videoId}: TERTIARY - Duration ${durationInSeconds}s + format indicator = SHORTS`);
+        logger.log(`[SHORTS DETECTION] ${debugInfo.videoId}: TERTIARY - Duration ${durationInSeconds}s + format indicator = SHORTS`);
         return true;
       }
     }
@@ -127,14 +128,14 @@ export class VideoAnalyzer {
       );
       
       if (hasVerticalHint) {
-        console.log(`[SHORTS DETECTION] ${debugInfo.videoId}: FALLBACK - Duration ${durationInSeconds}s + vertical hint = SHORTS`);
+        logger.log(`[SHORTS DETECTION] ${debugInfo.videoId}: FALLBACK - Duration ${durationInSeconds}s + vertical hint = SHORTS`);
         return true;
       }
     }
     
     // Not a Short - log the decision for videos in the gray area
     if (durationInSeconds > 60 && durationInSeconds <= 180) {
-      console.log(`[SHORTS DETECTION] ${debugInfo.videoId}: NOT SHORTS - Duration ${durationInSeconds}s without indicators = LONGFORM`);
+      logger.log(`[SHORTS DETECTION] ${debugInfo.videoId}: NOT SHORTS - Duration ${durationInSeconds}s without indicators = LONGFORM`);
     }
     
     return false;
@@ -162,11 +163,11 @@ export class VideoAnalyzer {
     let nextPageToken: string | undefined;
     let totalApiCalls = 0;
     
-    // Set max videos based on tier
+    // Set max videos based on tier (reduced for API cost savings)
     const tierLimits = {
-      free: 250,
-      standard: 1000,
-      premium: 5000
+      free: 50,      // Reduced from 250 to save API costs
+      standard: 100,  // Reduced from 1000
+      premium: 200    // Reduced from 5000
     };
     const maxVideos = tierLimits[tier];
     const maxApiCalls = Math.ceil(maxVideos / 50); // Calculate based on desired video count (50 videos per API call)
@@ -191,7 +192,7 @@ export class VideoAnalyzer {
       do {
         totalApiCalls++;
         if (totalApiCalls > maxApiCalls || allVideos.length >= maxVideos) {
-          console.log(`Fetched ${allVideos.length} videos. ${totalApiCalls > maxApiCalls ? `Reached API calls limit (${maxApiCalls} calls = ~${maxApiCalls * 50} videos).` : `Reached requested limit of ${maxVideos} videos.`}`);
+          logger.log(`Fetched ${allVideos.length} videos. ${totalApiCalls > maxApiCalls ? `Reached API calls limit (${maxApiCalls} calls = ~${maxApiCalls * 50} videos).` : `Reached requested limit of ${maxVideos} videos.`}`);
           break;
         }
 
@@ -252,7 +253,7 @@ export class VideoAnalyzer {
       const longformVideos = allVideos.filter(video => !video.isShort);
       const shortsVideos = allVideos.filter(video => video.isShort);
 
-      console.log(`Fetched ${allVideos.length} videos (${longformVideos.length} long-form, ${shortsVideos.length} shorts) from channel ${channelId} [Tier: ${tier}]`);
+      logger.log(`Fetched ${allVideos.length} videos (${longformVideos.length} long-form, ${shortsVideos.length} shorts) from channel ${channelId} [Tier: ${tier}]`);
 
       // Determine if we fetched all available videos
       const fetchedAll = !nextPageToken || (totalVideoCount ? allVideos.length >= totalVideoCount : true);
@@ -267,7 +268,7 @@ export class VideoAnalyzer {
       };
 
     } catch (error) {
-      console.error('Error fetching channel videos:', error);
+      logger.error('Error fetching channel videos:', error);
       throw new Error(`Failed to fetch videos: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -386,7 +387,7 @@ export class VideoAnalyzer {
       const longformVideos = allVideos.filter(video => !video.isShort);
       const shortsVideos = allVideos.filter(video => video.isShort);
 
-      console.log(`Fetched ${allVideos.length} recent videos (out of ${actualTotalVideos} total) for outlier analysis${formatFilter ? ` [${formatFilter} only]` : ''}`);
+      logger.log(`Fetched ${allVideos.length} recent videos (out of ${actualTotalVideos} total) for outlier analysis${formatFilter ? ` [${formatFilter} only]` : ''}`);
 
       return {
         videos: allVideos,
@@ -399,7 +400,7 @@ export class VideoAnalyzer {
       };
 
     } catch (error) {
-      console.error('Error fetching last 100 videos:', error);
+      logger.error('Error fetching last 100 videos:', error);
       throw new Error(`Failed to fetch videos: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { YouTubeAPI } from '@/lib/youtube';
 import { MinimalAnalyticsCalculator, MinimalAnalytics } from '@/utils/minimalAnalytics';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,7 +19,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid YouTube channel URL' }, { status: 400 });
     }
 
-    console.log(`=== MINIMAL ANALYTICS for ${url} ===`);
+    logger.log(`=== MINIMAL ANALYTICS for ${url} ===`);
 
     // Get channel data
     let channel;

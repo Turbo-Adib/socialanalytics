@@ -9,7 +9,7 @@ import SocialProofSection from '@/components/SocialProofSection';
 import PricingSection from '@/components/PricingSection';
 import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
-import MinimalDashboard from '@/components/MinimalDashboard';
+import Dashboard from '@/components/Dashboard';
 import LoadingState from '@/components/LoadingState';
 import ErrorState from '@/components/ErrorState';
 import { FloatingDiscordButton } from '@/components/FloatingDiscordButton';
@@ -101,7 +101,7 @@ export default function HomePage() {
     return (
       <div className="min-h-screen bg-background transition-colors duration-300">
         <Header onNavigateHome={handleReset} />
-        <MinimalDashboard 
+        <Dashboard 
           analytics={analytics} 
           onReset={handleReset}
         />

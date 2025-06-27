@@ -23,8 +23,8 @@ const StatCard: React.FC<StatCardProps> = ({
     <div className="card card-hover group">
       <div className="flex items-start justify-between">
         <div className="flex-grow">
-          <p className="text-sm font-medium text-gray-500 dark:text-dark-text-tertiary mb-2">{title}</p>
-          <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-200 group-hover:text-accent-blue break-words">{value}</p>
+          <p className="text-sm font-medium text-gray-400 dark:text-dark-text-tertiary mb-2">{title}</p>
+          <p className="text-xl sm:text-2xl font-bold text-white dark:text-white mb-1 transition-colors duration-200 group-hover:text-accent-blue break-words">{value}</p>
           <p className="text-xs text-gray-400 dark:text-dark-text-tertiary">{subtitle}</p>
         </div>
         
@@ -34,7 +34,7 @@ const StatCard: React.FC<StatCardProps> = ({
               ? 'bg-green-100 dark:bg-accent-green/20 text-green-800 dark:text-accent-green' 
               : isNegative 
                 ? 'bg-red-100 dark:bg-youtube-red/20 text-red-800 dark:text-youtube-red-light'
-                : 'bg-gray-100 dark:bg-dark-bg-hover text-gray-800 dark:text-dark-text-secondary'
+                : 'bg-gray-100 dark:bg-dark-bg-hover text-gray-100 dark:text-dark-text-secondary'
           }`}>
             {isPositive && <TrendingUp className="h-3 w-3" />}
             {isNegative && <TrendingDown className="h-3 w-3" />}

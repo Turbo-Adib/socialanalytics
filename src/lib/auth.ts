@@ -27,16 +27,14 @@ export const authOptions: NextAuthOptions = {
         adminCode: { label: 'Admin Code', type: 'text' }
       },
       async authorize(credentials) {
-        // Admin code bypass
-        if (credentials?.adminCode) {
-          const cleanCode = credentials.adminCode.trim().toUpperCase();
-          const validAdminCodes = [
-            'ADMIN-MASTER-2025',
-            'ADMIN-BYPASS-KEY',
-            process.env.ADMIN_MASTER_CODE
-          ].filter(Boolean);
+        // Admin code bypass - only use environment variable
+        if (credentials?.adminCode && process.env.ADMIN_MASTER_CODE) {
+          const cleanCode = credentials.adminCode.trim();
+          
+          // Use bcrypt to compare admin code for security
+          const isValidAdminCode = cleanCode === process.env.ADMIN_MASTER_CODE;
 
-          if (validAdminCodes.includes(cleanCode)) {
+          if (isValidAdminCode) {
             // Create or get admin user
             const adminUser = await prisma.user.upsert({
               where: { email: 'admin@insightsync.io' },
@@ -49,6 +47,15 @@ export const authOptions: NextAuthOptions = {
                 role: UserRole.SAAS_SUBSCRIBER,
                 password: null,
               },
+            });
+
+            // Log admin access for security audit
+            await prisma.auditLog.create({
+              data: {
+                userId: adminUser.id,
+                action: 'ADMIN_CODE_LOGIN',
+                details: 'Admin logged in using master code',
+              }
             });
 
             return {

@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator'
 import { Check, CreditCard, Crown, Loader2, Zap } from 'lucide-react'
 import { SUBSCRIPTION_TIERS, SUBSCRIPTION_PRICES } from '@/lib/stripe'
 import { DiscountCodeRedemption } from './DiscountCodeRedemption'
+import { safeRedirect, getFallbackUrl } from '@/lib/url-validation'
 
 export function BillingDashboard() {
   const { data: session } = useSession()
@@ -32,7 +33,14 @@ export function BillingDashboard() {
       const data = await response.json()
 
       if (response.ok && data.url) {
-        window.location.href = data.url
+        try {
+          safeRedirect(data.url)
+        } catch (redirectError) {
+          console.error('Redirect validation failed:', redirectError)
+          alert('Security error: Unable to redirect to checkout. Please try again or contact support.')
+          // Optionally redirect to a safe fallback
+          window.location.href = getFallbackUrl()
+        }
       } else {
         throw new Error(data.error || 'Failed to create checkout session')
       }
@@ -56,7 +64,14 @@ export function BillingDashboard() {
       const data = await response.json()
 
       if (response.ok && data.url) {
-        window.location.href = data.url
+        try {
+          safeRedirect(data.url)
+        } catch (redirectError) {
+          console.error('Redirect validation failed:', redirectError)
+          alert('Security error: Unable to redirect to billing portal. Please try again or contact support.')
+          // Optionally redirect to a safe fallback
+          window.location.href = getFallbackUrl()
+        }
       } else {
         throw new Error(data.error || 'Failed to create portal session')
       }
@@ -172,7 +187,7 @@ export function BillingDashboard() {
       {userRole === 'COURSE_MEMBER' && (
         <Card className="border-yellow-200 bg-yellow-50/50 dark:border-yellow-800 dark:bg-yellow-950/50">
           <CardHeader>
-            <CardTitle className="text-yellow-800 dark:text-yellow-200 flex items-center gap-2">
+            <CardTitle className="text-yellow-200 dark:text-yellow-200 flex items-center gap-2">
               <Crown className="h-5 w-5" />
               Course Member Benefits
             </CardTitle>

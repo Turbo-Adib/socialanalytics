@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { YouTubeChannel, YouTubeVideo } from '@/types/youtube';
+import { logger } from '@/lib/logger';
 
 const YOUTUBE_API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
 const API_KEY = process.env.YOUTUBE_API_KEY;
@@ -32,7 +33,7 @@ export class YouTubeAPI {
       }
       return null;
     } catch (error) {
-      console.error('Error fetching channel by handle:', error);
+      logger.error('Error fetching channel by handle:', error);
       throw error;
     }
   }
@@ -52,12 +53,12 @@ export class YouTubeAPI {
       }
       return null;
     } catch (error) {
-      console.error('Error fetching channel by ID:', error);
+      logger.error('Error fetching channel by ID:', error);
       throw error;
     }
   }
 
-  async getChannelVideos(channelId: string, maxResults: number = 500): Promise<YouTubeVideo[]> {
+  async getChannelVideos(channelId: string, maxResults: number = 50): Promise<YouTubeVideo[]> {
     try {
       // First, get the uploads playlist ID
       const channelResponse = await axios.get(`${YOUTUBE_API_BASE_URL}/channels`, {
@@ -123,7 +124,7 @@ export class YouTubeAPI {
       // Return up to maxResults videos
       return allVideos.slice(0, maxResults);
     } catch (error) {
-      console.error('Error fetching channel videos:', error);
+      logger.error('Error fetching channel videos:', error);
       throw error;
     }
   }
@@ -197,20 +198,20 @@ export class YouTubeAPI {
     const text = titles.join(' ').toLowerCase();
     
     const niches = {
-      'Gaming': ['game', 'gaming', 'play', 'minecraft', 'fortnite', 'gta', 'valorant', 'roblox'],
-      'Tech': ['tech', 'review', 'unbox', 'gadget', 'phone', 'laptop', 'computer', 'apple', 'android'],
-      'Education': ['learn', 'tutorial', 'how to', 'explain', 'course', 'lesson', 'teach', 'study'],
-      'Entertainment': ['funny', 'comedy', 'laugh', 'prank', 'react', 'reaction', 'vlog', 'daily'],
-      'Music': ['music', 'song', 'sing', 'cover', 'lyrics', 'album', 'artist', 'band'],
-      'Beauty': ['makeup', 'beauty', 'cosmetic', 'skincare', 'fashion', 'style', 'outfit'],
-      'Finance': ['money', 'finance', 'invest', 'stock', 'crypto', 'trading', 'economy', 'business'],
-      'Fitness': ['fitness', 'workout', 'exercise', 'gym', 'health', 'diet', 'nutrition', 'weight'],
-      'Food': ['food', 'cook', 'recipe', 'kitchen', 'restaurant', 'eat', 'taste', 'chef'],
-      'Travel': ['travel', 'trip', 'tour', 'visit', 'explore', 'adventure', 'destination', 'journey']
+      'gaming': ['game', 'gaming', 'play', 'minecraft', 'fortnite', 'gta', 'valorant', 'roblox'],
+      'technology': ['tech', 'review', 'unbox', 'gadget', 'phone', 'laptop', 'computer', 'apple', 'android', 'iphone', 'samsung'],
+      'education': ['learn', 'tutorial', 'how to', 'explain', 'course', 'lesson', 'teach', 'study'],
+      'entertainment': ['funny', 'comedy', 'laugh', 'prank', 'react', 'reaction', 'vlog', 'daily'],
+      'music': ['music', 'song', 'sing', 'cover', 'lyrics', 'album', 'artist', 'band'],
+      'beauty_fashion': ['makeup', 'beauty', 'cosmetic', 'skincare', 'fashion', 'style', 'outfit'],
+      'finance': ['money', 'finance', 'invest', 'stock', 'crypto', 'trading', 'economy', 'business'],
+      'health_fitness': ['fitness', 'workout', 'exercise', 'gym', 'health', 'diet', 'nutrition', 'weight'],
+      'food_cooking': ['food', 'cook', 'recipe', 'kitchen', 'restaurant', 'eat', 'taste', 'chef'],
+      'travel': ['travel', 'trip', 'tour', 'visit', 'explore', 'adventure', 'destination', 'journey']
     };
 
     let maxScore = 0;
-    let detectedNiche = 'General';
+    let detectedNiche = 'general';
 
     for (const [niche, keywords] of Object.entries(niches)) {
       const score = keywords.filter(keyword => text.includes(keyword)).length;
@@ -233,14 +234,15 @@ export class YouTubeAPI {
         title: video.snippet.title,
         viewCount: parseInt(video.statistics?.viewCount || '0'),
         publishedAt: video.snippet.publishedAt,
-        duration: this.parseDuration(video.contentDetails?.duration || 'PT0S'),
+        duration: video.contentDetails?.duration || 'PT0S', // Keep as ISO 8601 string
+        durationSeconds: this.parseDuration(video.contentDetails?.duration || 'PT0S'), // Add numeric version for calculations
         isShort: this.isShortVideo(video),
         thumbnailUrl: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.medium?.url || '',
         channelId: channelId,
         description: video.snippet.description
       }));
     } catch (error) {
-      console.error('Error getting recent videos:', error);
+      logger.error('Error getting recent videos:', error);
       return [];
     }
   }
@@ -315,7 +317,7 @@ export class YouTubeAPI {
 
       return null;
     } catch (error) {
-      console.error('Error extracting channel ID from URL:', error);
+      logger.error('Error extracting channel ID from URL:', error);
       return null;
     }
   }

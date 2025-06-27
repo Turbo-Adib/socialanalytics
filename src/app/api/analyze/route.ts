@@ -8,53 +8,42 @@ import { ChannelAnalytics } from '@/types/youtube';
 import { detectMonetization, needsMonetizationRefresh, formatMonetizationStatus } from '@/utils/monetization';
 import { IntelligentAnalysisEngine } from '@/lib/intelligentAnalysis';
 import { getSession, checkUsageLimit, incrementUsage } from '@/lib/auth-utils';
+import { generateImprovedChartData } from '@/utils/improvedChartData';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
-  console.log('[Analyze API] Starting analysis request');
-  console.log('[Analyze API] Request headers:', request.headers.get('cookie'));
+  logger.log('[Analyze API] Starting analysis request');
+  logger.log('[Analyze API] Request headers:', request.headers.get('cookie'));
   
   try {
     // Check authentication
     const session = await getSession();
-    console.log('[Analyze API] Session:', session ? 'Found' : 'Not found');
-    console.log('[Analyze API] Session details:', session ? JSON.stringify({
+    logger.log('[Analyze API] Session:', session ? 'Found' : 'Not found');
+    logger.log('[Analyze API] Session details:', session ? JSON.stringify({
       userId: session.user.id,
       email: session.user.email,
       role: session.user.role
     }) : 'null');
     
-    // Temporary bypass for testing - check for admin header
-    const adminBypass = request.headers.get('x-admin-bypass');
-    const isAdminBypass = adminBypass === 'ADMIN-MASTER-2025' || adminBypass === 'ADMIN-BYPASS-KEY';
-    
-    if (!session?.user && !isAdminBypass) {
-      console.error('[Analyze API] No authenticated user');
+    if (!session?.user) {
+      logger.error('[Analyze API] No authenticated user');
       return NextResponse.json({ 
         error: 'Authentication required. Please sign in to analyze channels.',
         details: 'You must be logged in to use this feature',
         help: 'Sign in or create an account to continue'
       }, { status: 401 });
     }
-    
-    // Create temporary session for admin bypass
-    const effectiveSession = session || (isAdminBypass ? {
-      user: {
-        id: 'admin-bypass',
-        email: 'admin@insightsync.io',
-        role: 'SAAS_SUBSCRIBER' as const
-      }
-    } : null);
 
-    // Check usage limits (skip for admin bypass)
-    if (!isAdminBypass && effectiveSession?.user) {
-      const usageCheck = await checkUsageLimit(effectiveSession.user.id);
+    // Check usage limits
+    if (session?.user) {
+      const usageCheck = await checkUsageLimit(session.user.id);
       if (!usageCheck.allowed) {
         return NextResponse.json({
           error: 'Usage limit exceeded',
           limit: usageCheck.limit,
           remaining: usageCheck.remaining,
           resetAt: usageCheck.resetAt,
-          role: effectiveSession.user.role
+          role: session.user.role
         }, { status: 429 });
       }
     }
@@ -68,7 +57,7 @@ export async function GET(request: NextRequest) {
 
     // Check if YouTube API key is available
     if (!process.env.YOUTUBE_API_KEY) {
-      console.error('[Analyze API] YouTube API key not found in environment variables');
+      logger.error('[Analyze API] YouTube API key not found in environment variables');
       return NextResponse.json({ 
         error: 'YouTube API key is not configured. Please add YOUTUBE_API_KEY to your .env.local file.',
         details: 'Missing YOUTUBE_API_KEY environment variable',
@@ -80,7 +69,7 @@ export async function GET(request: NextRequest) {
     try {
       api = new YouTubeAPI();
     } catch (apiError) {
-      console.error('[Analyze API] Failed to initialize YouTube API:', apiError);
+      logger.error('[Analyze API] Failed to initialize YouTube API:', apiError);
       return NextResponse.json({ 
         error: 'Failed to initialize YouTube API',
         details: apiError instanceof Error ? apiError.message : 'Unknown error'
@@ -89,14 +78,14 @@ export async function GET(request: NextRequest) {
     
     // Extract channel ID or handle from URL
     const channelIdentifier = api.extractChannelIdFromUrl(url);
-    console.log(`[Analyze API] URL: ${url}, Extracted identifier: ${channelIdentifier}`);
+    logger.log(`[Analyze API] URL: ${url}, Extracted identifier: ${channelIdentifier}`);
     
     if (!channelIdentifier) {
-      console.error('[Analyze API] Failed to extract channel identifier from URL');
+      logger.error('[Analyze API] Failed to extract channel identifier from URL');
       return NextResponse.json({ error: 'Invalid YouTube channel URL' }, { status: 400 });
     }
 
-    console.log(`[Analyze API] Analyzing channel: ${url} (${channelIdentifier})`);
+    logger.log(`[Analyze API] Analyzing channel: ${url} (${channelIdentifier}`);
 
     // Check cache first (reduced cache time to 15 minutes for more accurate data)
     const cachedChannel = await prisma.channel.findUnique({
@@ -106,7 +95,7 @@ export async function GET(request: NextRequest) {
 
     const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
     if (cachedChannel && cachedChannel.lastSnapshotAt && cachedChannel.lastSnapshotAt > fifteenMinutesAgo) {
-      console.log('Using cached data (less than 15 minutes old)');
+      logger.log('Using cached data (less than 15 minutes old)');
       
       // Check if monetization data needs refresh
       let monetizationStatus: {isMonetized: boolean, status: string, lastChecked: string|null, badge: string} | null = null;
@@ -147,23 +136,23 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch fresh data using YouTube Data API v3
-    console.log('Fetching fresh data using YouTube API...');
+    logger.log('Fetching fresh data using YouTube API...');
     
     let channelData = null;
     
     // Use YouTube Data API v3 directly (skip yt-dlp due to bot verification issues)
-    console.log('[Analyze API] Using YouTube Data API v3...');
+    logger.log('[Analyze API] Using YouTube Data API v3...');
     let channel;
     try {
       if (channelIdentifier.startsWith('UC') && channelIdentifier.length === 24) {
-        console.log('[Analyze API] Fetching channel by ID:', channelIdentifier);
+        logger.log('[Analyze API] Fetching channel by ID:', channelIdentifier);
         channel = await api.getChannelById(channelIdentifier);
       } else {
-        console.log('[Analyze API] Fetching channel by handle:', channelIdentifier);
+        logger.log('[Analyze API] Fetching channel by handle:', channelIdentifier);
         channel = await api.getChannelByHandle(channelIdentifier);
       }
     } catch (apiError) {
-      console.error('[Analyze API] YouTube API call failed:', apiError);
+      logger.error('[Analyze API] YouTube API call failed:', apiError);
       if (apiError instanceof Error && apiError.message.includes('API key')) {
         return NextResponse.json({ 
           error: 'YouTube API key is invalid or missing',
@@ -177,7 +166,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (!channel) {
-      console.error('[Analyze API] Channel not found for identifier:', channelIdentifier);
+      logger.error('[Analyze API] Channel not found for identifier:', channelIdentifier);
       return NextResponse.json({ error: 'Channel not found' }, { status: 404 });
     }
 
@@ -185,17 +174,17 @@ export async function GET(request: NextRequest) {
     const fetchedVideos = await api.getRecentVideos(channel.id, 100);
 
     // Log raw API data for debugging
-    console.log('=== YouTube API Channel Data ===');
-    console.log('Channel:', channel.snippet.title);
-    console.log('Total Channel Views (all-time):', channel.statistics.viewCount);
-    console.log('Subscriber Count:', channel.statistics.subscriberCount);
-    console.log('Total Video Count:', channel.statistics.videoCount);
-    console.log('Fetched Videos Count:', fetchedVideos.length);
+    logger.log('=== YouTube API Channel Data ===');
+    logger.log('Channel:', channel.snippet.title);
+    logger.log('Total Channel Views (all-time):', channel.statistics.viewCount);
+    logger.log('Subscriber Count:', channel.statistics.subscriberCount);
+    logger.log('Total Video Count:', channel.statistics.videoCount);
+    logger.log('Fetched Videos Count:', fetchedVideos.length);
     
     // Calculate total views from fetched videos
     const sumOfFetchedVideoViews = fetchedVideos.reduce((sum, video) => sum + video.viewCount, 0);
-    console.log('Sum of Fetched Video Views:', sumOfFetchedVideoViews.toLocaleString());
-    console.log('================================');
+    logger.log('Sum of Fetched Video Views:', sumOfFetchedVideoViews.toLocaleString());
+    logger.log('================================');
 
     // Convert to our format
     channelData = {
@@ -238,14 +227,14 @@ export async function GET(request: NextRequest) {
     const projections = SimplifiedAnalytics.calculateSimpleProjections(recentPerformance);
     const contentFocus = SimplifiedAnalytics.analyzeContentFocus(channelData.recentVideos);
 
-    console.log('=== Analytics Calculation Results ===');
-    console.log(`Analyzed ${channelData.recentVideos.length} videos. Content focus: ${contentFocus.primaryFocus}`);
-    console.log('Channel Total Views (all-time):', channelData.totalViews.toLocaleString());
-    console.log('Recent Videos Total Views:', currentStats.recentVideoViews.toLocaleString());
-    console.log('Long-form Views (recent):', currentStats.longFormViews.toLocaleString());
-    console.log('Shorts Views (recent):', currentStats.shortsViews.toLocaleString());
-    console.log('Data Scope:', `${currentStats.dataScope.videosAnalyzed} videos over ${currentStats.dataScope.timeSpanDays} days`);
-    console.log('=====================================');
+    logger.log('=== Analytics Calculation Results ===');
+    logger.log(`Analyzed ${channelData.recentVideos.length} videos. Content focus: ${contentFocus.primaryFocus}`);
+    logger.log('Channel Total Views (all-time):', channelData.totalViews.toLocaleString());
+    logger.log('Recent Videos Total Views:', currentStats.recentVideoViews.toLocaleString());
+    logger.log('Long-form Views (recent):', currentStats.longFormViews.toLocaleString());
+    logger.log('Shorts Views (recent):', currentStats.shortsViews.toLocaleString());
+    logger.log('Data Scope:', `${currentStats.dataScope.videosAnalyzed} videos over ${currentStats.dataScope.timeSpanDays} days`);
+    logger.log('=====================================');
 
     // Validate view count data
     const viewValidation = ViewCountValidator.validateViewCounts(
@@ -259,12 +248,15 @@ export async function GET(request: NextRequest) {
     // Check against known channel benchmarks
     const knownChannelIssues = ViewCountValidator.validateKnownChannel(channelData.title, channelData.totalViews);
     if (knownChannelIssues.length > 0) {
-      console.log('⚠️  Known Channel Validation Issues:', knownChannelIssues);
+      logger.log('⚠️  Known Channel Validation Issues:', knownChannelIssues);
     }
 
     // Generate realistic chart data based on actual video upload dates  
     const chartData = await SimplifiedAnalytics.generateRealisticChartData(channelData.recentVideos, niche);
     const dailyData = await SimplifiedAnalytics.generateRealisticDailyData(channelData.recentVideos, niche);
+    
+    // Generate improved chart data for better visualization
+    const improvedChartData = await generateImprovedChartData(channelData.recentVideos, niche);
 
     // Prepare response structure for validation
     const responseForValidation = {
@@ -284,10 +276,10 @@ export async function GET(request: NextRequest) {
     const dailyIssues = ViewCountValidator.validateDailyPatterns(dailyData);
     
     if (mathIssues.length > 0) {
-      console.log('⚠️  Mathematical Consistency Issues:', mathIssues);
+      logger.log('⚠️  Mathematical Consistency Issues:', mathIssues);
     }
     if (dailyIssues.length > 0) {
-      console.log('⚠️  Daily Pattern Issues:', dailyIssues);
+      logger.log('⚠️  Daily Pattern Issues:', dailyIssues);
     }
 
     // Prepare recent videos for response
@@ -381,9 +373,9 @@ export async function GET(request: NextRequest) {
       const analysisEngine = new IntelligentAnalysisEngine();
       await analysisEngine.initialize();
       await analysisEngine.analyzeChannel(channelData.id);
-      console.log('✅ Intelligent analysis completed for channel:', channelData.id);
+      logger.log('✅ Intelligent analysis completed for channel:', channelData.id);
     } catch (analysisError) {
-      console.error('⚠️ Intelligent analysis failed:', analysisError);
+      logger.error('⚠️ Intelligent analysis failed:', analysisError);
       // Don't fail the main request if analysis fails
     }
 
@@ -408,6 +400,7 @@ export async function GET(request: NextRequest) {
       },
       historicalData: chartData, // Simplified chart data
       dailyData, // Add daily chart data
+      improvedChartData, // Add improved chart data for better visualization
       projections,
       recentVideos,
       validation, // Add validation data
@@ -436,15 +429,15 @@ export async function GET(request: NextRequest) {
     };
 
     // Increment user usage count after successful analysis (skip for admin bypass)
-    if (!isAdminBypass && effectiveSession?.user) {
-      await incrementUsage(effectiveSession.user.id);
+    if (session?.user) {
+      await incrementUsage(session.user.id);
     }
 
     // Save analysis record for user (skip for admin bypass)
-    if (!isAdminBypass && effectiveSession?.user) {
+    if (session?.user) {
       await prisma.channelAnalysis.create({
         data: {
-          userId: effectiveSession.user.id,
+          userId: session.user.id,
         channelId: channelData.id,
         channelName: channelData.title,
         channelHandle: (channelData as any).customUrl || null,
@@ -459,7 +452,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('API error:', error);
+    logger.error('API error:', error);
     
     // Provide more detailed error messages
     if (error instanceof Error) {

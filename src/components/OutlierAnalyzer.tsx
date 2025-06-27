@@ -570,7 +570,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
               <div className="space-y-3">
                 {analysis.recommendations.map((rec, index) => (
                   <div key={index} className="flex items-start gap-3 p-3 bg-dark-bg-card rounded-lg border border-dark-border">
-                    <div className="flex-shrink-0 w-6 h-6 bg-accent-yellow text-black rounded-full flex items-center justify-center text-sm font-semibold">
+                    <div className="flex-shrink-0 w-6 h-6 bg-accent-yellow text-white rounded-full flex items-center justify-center text-sm font-semibold">
                       {index + 1}
                     </div>
                     <span className="text-white font-medium">{rec}</span>
@@ -670,7 +670,7 @@ const OutlierAnalyzer: React.FC<OutlierAnalyzerProps> = ({ onClose }) => {
             
             {/* Format Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-200 mb-2">
                 Content Format to Analyze
               </label>
               <div className="flex gap-3">

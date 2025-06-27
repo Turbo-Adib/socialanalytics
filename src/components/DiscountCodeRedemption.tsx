@@ -72,11 +72,11 @@ export function DiscountCodeRedemption({ onSuccess }: DiscountCodeRedemptionProp
     return (
       <Card className="border-yellow-200 bg-yellow-50/50 dark:border-yellow-800 dark:bg-yellow-950/50">
         <CardHeader>
-          <CardTitle className="text-yellow-800 dark:text-yellow-200 flex items-center gap-2">
+          <CardTitle className="text-yellow-200 dark:text-yellow-200 flex items-center gap-2">
             <Crown className="h-5 w-5" />
             Course Member Access Active
           </CardTitle>
-          <CardDescription className="text-yellow-700 dark:text-yellow-300">
+          <CardDescription className="text-yellow-300 dark:text-yellow-300">
             You already have lifetime course member access with unlimited features.
           </CardDescription>
         </CardHeader>

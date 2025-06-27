@@ -29,18 +29,18 @@ const LoadingState: React.FC<LoadingStateProps> = ({ stage = 'fetching', channel
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-2xl font-bold text-white mb-2">
             Analyzing Channel
           </h2>
           
           {channelName && (
-            <p className="text-lg text-gray-600 dark:text-dark-text-secondary mb-6">
+            <p className="text-lg text-dark-text-secondary mb-6">
               {channelName}
             </p>
           )}
 
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-lg font-semibold text-white mb-2">
               {stages[currentStageIndex]?.label}
             </h3>
             <p className="text-sm text-dark-text-tertiary">
